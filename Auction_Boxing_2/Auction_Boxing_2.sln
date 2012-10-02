@@ -1,0 +1,24 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010 Express for Windows Phone
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Auction_Boxing_2", "Auction_Boxing_2\Auction_Boxing_2\Auction_Boxing_2.csproj", "{F5224588-1741-45D4-BF31-E68DEA8E5333}"
+EndProject
+Project("{96E2B04D-8817-42C6-938A-82C39BA4D311}") = "Auction_Boxing_2Content", "Auction_Boxing_2\Auction_Boxing_2Content\Auction_Boxing_2Content.contentproj", "{E6F16A82-6423-423F-936E-58FA8EF64E23}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F5224588-1741-45D4-BF31-E68DEA8E5333}.Debug|x86.ActiveCfg = Debug|x86
+		{F5224588-1741-45D4-BF31-E68DEA8E5333}.Debug|x86.Build.0 = Debug|x86
+		{F5224588-1741-45D4-BF31-E68DEA8E5333}.Release|x86.ActiveCfg = Release|x86
+		{F5224588-1741-45D4-BF31-E68DEA8E5333}.Release|x86.Build.0 = Release|x86
+		{E6F16A82-6423-423F-936E-58FA8EF64E23}.Debug|x86.ActiveCfg = Debug|x86
+		{E6F16A82-6423-423F-936E-58FA8EF64E23}.Release|x86.ActiveCfg = Release|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
