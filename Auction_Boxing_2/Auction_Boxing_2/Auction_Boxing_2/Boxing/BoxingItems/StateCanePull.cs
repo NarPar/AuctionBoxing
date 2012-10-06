@@ -43,8 +43,8 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
         public override void HitOtherPlayer(BoxingPlayer hitPlayer)
         {
             // Are we at the pull frame? and is the player in front of us?
-            if (player.sprite.FrameIndex == 7 || player.sprite.FrameIndex == 8
-                || player.sprite.FrameIndex == 9)
+            if (player.sprite.FrameIndex > 5  && player.sprite.FrameIndex < 9)  //6 || player.sprite.FrameIndex == 7
+                //|| player.sprite.FrameIndex == 8)
             {
                 if ((player.direction == -1 &&
                      player.position.X > hitPlayer.position.X) )
@@ -60,6 +60,8 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
                     if (hitPlayer.position.X < player.position.X + 30)
                         hitPlayer.position.X = player.position.X + 30;
                 }
+
+                // Stun player!
 
                 //hitPlayer.state.isHit(hitPlayer, new StateCaneHit(hitPlayer), 0);
             }

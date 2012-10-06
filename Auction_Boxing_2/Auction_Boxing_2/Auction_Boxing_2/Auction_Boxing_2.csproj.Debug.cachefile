@@ -35,6 +35,7 @@ Content\Boxing\Player_Punch.xnb
 Content\Boxing\Player_Punch_Hit.xnb
 Content\Boxing\Player_Running_Side.xnb
 Content\Boxing\Player_Walking_Side.xnb
+Content\Boxing\LevelBackground.xnb
 Content\BoxingItems\Player_BowlerHat.xnb
 Content\BoxingItems\Player_BowlerHat_Catch.xnb
 Content\BoxingItems\Player_BowlerHat_Rethrow.xnb
@@ -44,6 +45,5 @@ Content\BoxingItems\Player_Cane_Hit.xnb
 Content\BoxingItems\Player_Cane_Pull.xnb
 Content\BoxingItems\Player_Revolver.xnb
 Content\BoxingItems\Player_Revolver_Hit.xnb
-Content\Boxing\LevelBackground.xnb
 Content\Boxing\Player_Duck.xnb
 Content\BoxingItems\Player_Revolver_Reload.xnb

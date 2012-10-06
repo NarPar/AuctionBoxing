@@ -123,7 +123,7 @@ namespace Auction_Boxing_2
 
         #endregion
 
-        #region important stuff
+        #region Input/Position/move Stuff
         // List of keys currently down
         List<KeyPressed> keysPressed = new List<KeyPressed>();
 
@@ -287,11 +287,21 @@ namespace Auction_Boxing_2
         }
 
         public float scale = 4;
-        Vector3 scales = new Vector3(4, 4, 0);
+        Vector3 scales = new Vector3(4, 4, 1); // maybe z should be 0?
         float rotation = 0;
+        private Matrix transform;
+
+        public Matrix Transform
+        {
+            get { return transform; }
+        }
+
+
+        //--------------old variables-----------
+
         public Vector2 Origin
         {
-            get { return sprite.Origin; }
+            get { return sprite.Origin; } // i believe the origin is at the bottom center.
         }
 
         // How to do flipping?!
@@ -301,7 +311,7 @@ namespace Auction_Boxing_2
             get
             {
                 return 
-                    Matrix.CreateTranslation(new Vector3(new Vector2(-1 * Origin.X, -1 * Origin.Y), 0.0f)) *
+                    Matrix.CreateTranslation(new Vector3(-Origin, 0.0f)) *
                     Matrix.CreateScale(scales) *
                     Matrix.CreateRotationZ(rotation) *
                     Matrix.CreateTranslation(new Vector3(position, 0.0f));
@@ -346,10 +356,9 @@ namespace Auction_Boxing_2
         #region ComboControl
 
         List<KeyPressed> comboKeys = new List<KeyPressed>();
-        int comboCounter;
 
         float comboTimer = 0.0f;
-        float comboTime = .75f; // the time between keys
+        float comboTime = .5f; // the time between keys
 
         KeyPressed[,] combinations = new KeyPressed[4,3];
 
@@ -430,6 +439,7 @@ namespace Auction_Boxing_2
 
             // initial state
             this.state = new StateStopped(this);
+            
 
             // Set the direction of the player based on which player they are.
             switch (playerIndex)
@@ -452,6 +462,8 @@ namespace Auction_Boxing_2
             CurrentHealth = MaxHealth;
 
             isDead = false;
+            isReloadingRevolver = false;
+            isHit = false;
             //CurrentStamina = MaxStamina;
 
             //maxcooldown = Tools.BASE_COOLDOWN;
@@ -467,6 +479,8 @@ namespace Auction_Boxing_2
 
             if (comboTimer > 0)
                 comboTimer -= (float)gameTime.ElapsedGameTime.TotalSeconds;
+            else
+                comboKeys.Clear();
 
             state.Update(gameTime);
 
@@ -480,6 +494,8 @@ namespace Auction_Boxing_2
                 isFalling = false;
             }
 
+            UpdateTransform();
+
             // keep the collision rect current to the position.
             //CollisionRect.X = (int)position.X - CollisionRect.Width / 2;
             //CollisionRect.Y = (int)position.Y - CollisionRect.Height;
@@ -490,38 +506,34 @@ namespace Auction_Boxing_2
 
             //handleDirection();
 
-
+            // Collision transform is created when requested.
         }
+
+       
 
         public void ChangeAnimation(string index)
         {
             currentAnimationKey = index;
-
             sprite.PlayAnimation(animations[currentAnimationKey]);
-
-            //Origin = sprite.Origin;
         }
 
+        /// <summary>
+        /// Change the direction sets the spriteEffect and inverts the horizontal scale (flips the matrix)
+        /// </summary>
+        /// <param name="i">either 1 (right) or -1 (left)</param>
         public void ChangeDirection(int i)
         {
             direction = i;
             if (i == -1)
             {
                 spriteEffect = SpriteEffects.FlipHorizontally;
-
                 scales.X = -1 * scale;
-                
-                // We have to flip the matrix as well!
-                //_scaleMatrix *= (-1,1); How?!
             }
             else if (i == 1)
             {
                 spriteEffect = SpriteEffects.None;
-
                 scales.X = scale;
             }
-
-            //scales.X *= -1;
         }
 
 
@@ -537,8 +549,8 @@ namespace Auction_Boxing_2
             rHealthBar.X = (int)position.X - healthBarMaxWidth / 2;
             rHealthBar.Y = (int)position.Y;// +GetHeight;
             spriteBatch.Draw(blank, rHealthBar, Color.Red);
-            sprite.Draw(gameTime, spriteBatch, BoundingRectangle, 0, color, spriteEffect);
-           
+            //sprite.Draw(gameTime, spriteBatch, BoundingRectangle, 0, color, spriteEffect);
+            sprite.Draw(gameTime, spriteBatch, color, position, rotation, Origin, scale, spriteEffect);
         }
 
         // Add a key to the list
@@ -547,90 +559,60 @@ namespace Auction_Boxing_2
             if (!KeysDown.Contains(key))
                 KeysDown.Add(key);
 
+            //-----dbleTap-----
             if (dbleTapCounter == 2)
             {
                 dbleTapCounter = 0;
-
             }
-
             if(dbleTapCounter == 0)
                 dbleTapTimer = dbleTapTime;
-
             dbleTapCounter++;
+
+            //-----Combo detection-----
 
             // Add the new key, there will always be 3 keys in comboKeys.
             comboKeys.Add(key);
             if (comboKeys.Count > 3)
                 comboKeys.RemoveAt(0);
+            // This is cleared in the update after the timer is 0
 
-            if (comboTimer > 0 && comboCounter == 1)
-            {
-                //Debug.WriteLine("Check combo!");
-                CheckForCombo();
-                comboTimer = comboTime; // reset the combo timer.
-                comboCounter = 0; // reset the combo counter
-            }
-            else if (comboCounter > 1)
-            {
-                comboCounter = 0; // reset the combo counter
-            }
+            // Are we in a combo sequence? (Subequent keys pressed within a time limit)
+            if (comboTimer > 0 && comboKeys.Count == 3) { CheckForCombo(); }
 
-            string s = "";
+            comboTimer = comboTime; // reset combo timer
+
+            // (Debug) Print the key list
+            /*string s = "";
             for(int i = 0; i < comboKeys.Count; i++)
             {
                 s +=  comboKeys[i].ToString() + " ";
-            }
-            Debug.WriteLine("Keys: " + s);
+            }*/
+            //Debug.WriteLine("Keys: " + s);
         }
 
-        // Remove the key from the list
+        // Remove the key from the list + set prev key
         public void HandleKeyRelease(int player_index, KeyPressed key)
         {
             if (KeysDown.Contains(key))
                 KeysDown.Remove(key);
 
-
             prevKey = key;
-
-            
-
-
-            if (comboTimer > 0)
-            {
-                comboCounter++;
-
-                //Debug.WriteLine("Combo Counter = " + comboCounter);
-                comboTimer = comboTime; // reset the combo timer.
-            }
-            else
-            {
-                comboTimer = comboTime; // reset the combo timer.
-                comboCounter = 0; // reset the combo counter
-            }
         }
 
         public void CheckForCombo()
         {
-            int c = 0;
+            // Loop through the combinations list (set in the constructor) and look for 
+            // a match in the comboKeys.
             for (int i = 0; i < 4; i++)
             {
-                c = 0;
+                int c = 0;
                 for (int j = 0; j < 3; j++)
-                {
-                    if (items[i] && comboKeys[j] == combinations[i,j])
-                    {
-                        c++;
-
-                    }
+                {//C:\Users\Nicholas\Documents\GitHub\AuctionBoxing\Auction_Boxing_2\Auction_Boxing_2\Auction_Boxing_2\Boxing\BoxingPlayer.cs
+                    if (items[i] && comboKeys[j] == combinations[i, j]) { c++; }  
                     // We have a combo if all keys match!
-                    if (c == 3)
-                    {
-                        Debug.WriteLine("Combo detected!");
-                        state.OnCombo(i);
-                    }
+                    if (c == 3) { state.OnCombo(i); }
                 }
             }
-
         }
 
 
@@ -710,10 +692,108 @@ namespace Auction_Boxing_2
                         new Vector3(position.X, position.Y, position.Z), playerindex, effect));
             }
         }*/
-        
+
+        public void UpdateTransform()
+        {
+            if (direction == 1)
+            {
+                transform = Matrix.CreateTranslation(new Vector3(-Origin, 0.0f)) *
+                            Matrix.CreateScale(scales) *
+                            Matrix.CreateRotationZ(rotation) *
+                            Matrix.CreateTranslation(new Vector3(position, 0.0f));
+            }
+            else
+            {
+                transform = Matrix.CreateTranslation(new Vector3(-Origin, 0.0f)) *
+                            Matrix.CreateScale(scales) *
+                            Matrix.CreateRotationZ(rotation) *
+                            Matrix.CreateTranslation(new Vector3(position, 0.0f));
+            }
+        }
+
         public int CompareTo(BoxingPlayer player)
         {
             return this.position.Y.CompareTo(player.position.Y);
+        }
+
+        // Wrappa!
+        public bool IntersectPixels(BoxingPlayer b)
+        {
+            return IntersectPixels(Transform, sprite.Animation.FrameWidth, sprite.Animation.FrameHeight, sprite.GetData(),
+                           b.Transform, b.sprite.Animation.FrameWidth, b.sprite.Animation.FrameHeight, b.sprite.GetData());
+        }
+
+        /// <summary>
+        /// Determines if there is overlap of the non-transparent pixels between two
+        /// sprites.
+        /// </summary>
+        /// <param name="transformA">World transform of the first sprite.</param>
+        /// <param name="widthA">Width of the first sprite's texture.</param>
+        /// <param name="heightA">Height of the first sprite's texture.</param>
+        /// <param name="dataA">Pixel color data of the first sprite.</param>
+        /// <param name="transformB">World transform of the second sprite.</param>
+        /// <param name="widthB">Width of the second sprite's texture.</param>
+        /// <param name="heightB">Height of the second sprite's texture.</param>
+        /// <param name="dataB">Pixel color data of the second sprite.</param>
+        /// <returns>True if non-transparent pixels overlap; false otherwise</returns>
+        public static bool IntersectPixels(
+            Matrix transformA, int widthA, int heightA, Color[] dataA,
+            Matrix transformB, int widthB, int heightB, Color[] dataB)
+        {
+            // Calculate a matrix which transforms from A's local space into
+            // world space and then into B's local space
+            Matrix transformAToB = transformA * Matrix.Invert(transformB);
+
+            // When a point moves in A's local space, it moves in B's local space with a
+            // fixed direction and distance proportional to the movement in A.
+            // This algorithm steps through A one pixel at a time along A's X and Y axes
+            // Calculate the analogous steps in B:
+            Vector2 stepX = Vector2.TransformNormal(Vector2.UnitX, transformAToB);
+            Vector2 stepY = Vector2.TransformNormal(Vector2.UnitY, transformAToB);
+
+            // Calculate the top left corner of A in B's local space
+            // This variable will be reused to keep track of the start of each row
+            Vector2 yPosInB = Vector2.Transform(Vector2.Zero, transformAToB);
+
+            // For each row of pixels in A
+            for (int yA = 0; yA < heightA; yA++)
+            {
+                // Start at the beginning of the row
+                Vector2 posInB = yPosInB;
+
+                // For each pixel in this row
+                for (int xA = 0; xA < widthA; xA++)
+                {
+                    // Round to the nearest pixel
+                    int xB = (int)Math.Round(posInB.X);
+                    int yB = (int)Math.Round(posInB.Y);
+
+                    // If the pixel lies within the bounds of B
+                    if (0 <= xB && xB < widthB &&
+                        0 <= yB && yB < heightB)
+                    {
+                        // Get the colors of the overlapping pixels
+                        Color colorA = dataA[xA + yA * widthA];
+                        Color colorB = dataB[xB + yB * widthB];
+
+                        // If both pixels are not completely transparent,
+                        if (colorA.A != 0 && colorB.A != 0)
+                        {
+                            // then an intersection has been found
+                            return true;
+                        }
+                    }
+
+                    // Move to the next pixel in the row
+                    posInB += stepX;
+                }
+
+                // Move to the next row
+                yPosInB += stepY;
+            }
+
+            // No intersection found
+            return false;
         }
 
        

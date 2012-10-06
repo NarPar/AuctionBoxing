@@ -70,33 +70,6 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
                 ChangeState(new StateKnockedDown(player, 0));
             }
             
-            // Nothing happens! You can't phase me bro!
-
-            // well timed? Duck and weave!
-            /*if (dodgeThreshold > 0)
-            {
-                ChangeState(new StateDodge(player));
-                attackingPlayer.state.wasDodged();
-            }
-
-            // just get knocked back a little
-            else if (timer <= 0)
-            {
-                if ((player.direction == 1 && player.position.X < attackingPlayer.position.X)
-                || (player.direction == -1 && player.position.X > attackingPlayer.position.X))
-                {
-                    timer = waitTime;
-                    player.position.X += attackingPlayer.direction * hitVelocity;
-
-                    // and some chip damage
-                    player.CurrentHealth -= 5;
-                }
-                else
-                {
-                    // You're facing the wrong way and get knocked down, homie!
-                    base.isHit(attackingPlayer, expectedHitState, damage);
-                }
-            }*/
         }
 
         public override void OnCombo(int itemIndex)

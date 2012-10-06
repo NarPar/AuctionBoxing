@@ -43,7 +43,7 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
         public override void HitOtherPlayer(BoxingPlayer hitPlayer)
         {
             // Are we at the punch frame? and is the player in front of us?
-            if (player.sprite.FrameIndex == 5)
+            if (player.sprite.FrameIndex == 4)
             {
                 if ((player.direction == -1 &&
                      player.position.X > hitPlayer.position.X) ||

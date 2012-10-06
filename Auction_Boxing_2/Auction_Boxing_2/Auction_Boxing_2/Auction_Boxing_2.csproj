@@ -83,6 +83,9 @@
     <Compile Include="Auction\ItemStatDisplay.cs" />
     <Compile Include="Auction\ItemStatisticsDisplay.cs" />
     <Compile Include="Boxing\BitMap.cs" />
+    <Compile Include="Boxing\BoxingItems\StateBowlerHatCatch.cs" />
+    <Compile Include="Boxing\BoxingItems\StateBowlerHatReThrow.cs" />
+    <Compile Include="Boxing\BoxingItems\StateBowlerHatThrow.cs" />
     <Compile Include="Boxing\BoxingItems\StateCaneBonk.cs" />
     <Compile Include="Boxing\BoxingItems\ItemInstance.cs" />
     <Compile Include="Boxing\BoxingItems\StateCaneHit.cs" />

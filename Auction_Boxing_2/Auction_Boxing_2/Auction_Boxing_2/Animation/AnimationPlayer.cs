@@ -128,12 +128,33 @@ namespace Auction_Boxing_2
 
         public Color[] GetData()
         {
-            Color[] c;
+            Color[] c = Get1DColorDataArray();
 
-            c = new Color[Animation.Texture.Width * Animation.Texture.Height];
-            Animation.Texture.GetData(c);
+
+
+            //c = new Color[Animation.Texture.Width * Animation.Texture.Height];
+            //Animation.Texture.GetData(c);
+
 
             return c;
+        }
+
+        public Texture2D GetDataAsTexture(GraphicsDevice gd)
+        {
+
+
+
+            // Get data from spritesheet using the frame rectangle as a source
+            Color[] data = new Color[Animation.FrameWidth * Animation.FrameHeight];
+            Animation.Texture.GetData(0, 
+                 new Rectangle(FrameIndex * Animation.FrameWidth, 0, Animation.FrameWidth, Animation.FrameHeight),
+                 data, 0, Animation.FrameWidth * Animation.FrameHeight);
+
+            // Create a new texture and assign the data to it
+            Texture2D texture = new Texture2D(gd, Animation.FrameWidth, Animation.FrameHeight);
+            texture.SetData(data);
+
+            return texture;
         }
 
         /// <summary>

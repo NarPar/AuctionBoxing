@@ -44,7 +44,7 @@ namespace Auction_Boxing_2
             state = brawlgamestate.settings; // Start by settings the number of rounds
 
             // construct the boxing manager for the background
-            boxingManager = new Boxing_Manager(game.Content, bounds, inputs); 
+            boxingManager = new Boxing_Manager(game.Content, bounds, inputs, game.GraphicsDevice); 
 
             // consruct the settings popup.
             settings = new Settings_Popup(game.Content, inputs, bounds);

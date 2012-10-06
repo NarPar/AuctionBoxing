@@ -14,6 +14,7 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
         protected BoxingPlayer player;
         protected Color color;
         public bool isAttack;
+        protected bool canCombo = false;
 
         protected string key;
 
@@ -73,7 +74,7 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
         public virtual void isHit(BoxingPlayer attackingPlayer, State expectedHitState, int damage)
         {
             
-            Debug.WriteLine("isHit virtual!");
+            //Debug.WriteLine("isHit virtual!");
 
             if (attackingPlayer.state.isAttack)
                 player.CurrentHealth -= damage;
@@ -90,7 +91,7 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
         /// <param name="hitPlayer">The player hit by this player</param>
         public virtual void HitOtherPlayer(BoxingPlayer hitPlayer)
         {
-            Debug.WriteLine("Hit Player!!!");
+            //Debug.WriteLine("Hit Player!!!");
         }
 
         protected string StateName;
@@ -123,7 +124,25 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
 
         public virtual void OnCombo(int itemIndex)
         {
-
+            // canCombo is set in the child-states constructer
+            if (canCombo) // If you're a state that can combo, change the state.
+            {
+                //Debug.WriteLine("COMBO " + itemIndex + " Executed!");
+                // COMBO MOVE!
+                switch (itemIndex)
+                {
+                    case (0):
+                        ChangeState(new StateCaneBonk(itemIndex, player));
+                        break;
+                    case (1):
+                        break;
+                    case (2):
+                        ChangeState(new StateRevolverShoot(itemIndex, player));
+                        break;
+                    case (3):
+                        break;
+                }
+            }
         }
 
         public virtual void HandleMovement()

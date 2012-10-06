@@ -19,6 +19,7 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
         {
             this.key = key;
             player.currentHorizontalSpeed = player.direction * walkSpeed;
+            canCombo = true;
         }
 
 
@@ -47,26 +48,6 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
             {
                 // Block it!
                 ChangeState(new StateBlock(player));
-            }
-
-        }
-
-        public override void OnCombo(int itemIndex)
-        {
-            Debug.WriteLine("COMBO " + itemIndex + "!");
-            // COMBO MOVE!
-            switch (itemIndex)
-            {
-                case (0):
-                    ChangeState(new StateCaneBonk(itemIndex, player));
-                    break;
-                case (1):
-                    break;
-                case (2):
-                    ChangeState(new StateRevolverShoot(itemIndex, player));
-                    break;
-                case (3):
-                    break;
             }
 
         }

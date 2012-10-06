@@ -93,7 +93,7 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
                 BoxingPlayer p = player.BoxingManager.GetPlayerInFront(player, player.position.Y - 2 * player.GetHeight / 3);
                 if (p != null)
                 {
-                    p.state.isHit(p, new StateRevolverHit(p), 5);
+                    p.state.isHit(player, new StateRevolverHit(p), 5);
                     /*if(p.state is StateRevolverHit)
                     {
                         StateRevolverHit s = (StateRevolverHit)p.state

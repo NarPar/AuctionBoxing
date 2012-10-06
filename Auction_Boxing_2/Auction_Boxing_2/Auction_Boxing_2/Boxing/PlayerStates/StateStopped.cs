@@ -17,7 +17,7 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
         public StateStopped(BoxingPlayer player)
             : base(player, "Idle")
         {
-           
+            canCombo = true;
         }
 
         public override void Update(GameTime gameTime)
@@ -89,45 +89,11 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
             else if (player.IsKeyDown(KeyPressed.Down))
             {
                 ChangeState(new StateDuck(player));
-                /*
-                float l = player.BoxingManager.GetLowerPlatformLevel(player.position.Y);
-
-                // Double tapped Down? Jump down a level!
-                if (player.prevKey == KeyPressed.Down && player.dbleTapTimer > 0 && player.dbleTapCounter == 2)
-                {
-                    if (l != player.levellevel)
-                    {
-                        player.levellevel = l;
-                        ChangeState(new StateFall(player));
-                    }
-                }
-                */
                 
             }
 
             #endregion
 
         }
-
-        public override void OnCombo(int itemIndex)
-        {
-            Debug.WriteLine("COMBO " + itemIndex + " Executed!");
-            // COMBO MOVE!
-            switch (itemIndex)
-            {
-                case(0):
-                    ChangeState(new StateCaneBonk(itemIndex, player));
-                    break;
-                case(1):
-                    break;
-                case(2):
-                    ChangeState(new StateRevolverShoot(itemIndex, player));
-                    break;
-                case(3):
-                    break;
-            }
-            
-        }
-
     }
 }

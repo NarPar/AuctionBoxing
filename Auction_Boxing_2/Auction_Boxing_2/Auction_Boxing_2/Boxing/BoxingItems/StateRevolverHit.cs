@@ -61,7 +61,7 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
 
 
         /// <summary>
-        /// If we're hit twice in a row, we get knocked down!
+        /// If we're hit 5 times by the revolver, we get knocked down!
         /// </summary>
         /// <param name="attackingPlayer"></param>
         public override void isHit(BoxingPlayer attackingPlayer, State expectedHitState, int damage)
