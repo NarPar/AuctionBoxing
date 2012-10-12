@@ -19,6 +19,8 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
         float holdTimer = 0;
         float holdTime = .2f;
 
+        BoxingPlayer pulledPlayer;
+
         public StateCanePull(int itemIndex, BoxingPlayer player)
             : base(player, "CanePull")
         {
@@ -29,6 +31,7 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
         {
             if (player.sprite.FrameIndex == player.animations[key].FrameCount - 1 && dodgedWaitTimer <= 0)
             {
+                
                 ChangeState(new StateStopped(player));
             }
             
@@ -61,6 +64,10 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
                         hitPlayer.position.X = player.position.X + 30;
                 }
 
+                pulledPlayer = hitPlayer;
+                hitPlayer.state.ChangeState(new StateStopped(hitPlayer));
+                hitPlayer.isCaught = true;
+
                 // Stun player!
 
                 //hitPlayer.state.isHit(hitPlayer, new StateCaneHit(hitPlayer), 0);
@@ -76,7 +83,7 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
         {
             //player.input.OnKeyDown -= HandleKeyDownInput;
             //player.input.OnKeyRelease -= HandleKeyReleaseInput;
-
+            if (pulledPlayer != null) { pulledPlayer.isCaught = false; }
             base.ChangeState(state);
         }
     }

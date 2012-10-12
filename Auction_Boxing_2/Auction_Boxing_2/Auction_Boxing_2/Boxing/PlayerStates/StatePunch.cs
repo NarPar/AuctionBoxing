@@ -13,6 +13,7 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
 
         float dodgedWaitPenalty = 1f;
         float dodgedWaitTimer = 0;
+        float gravity = 1000f;
 
         public StatePunch(BoxingPlayer player)
             : base(player, "Punch")
@@ -24,7 +25,10 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
         {
             if (player.sprite.FrameIndex == player.animations[key].FrameCount - 1 && dodgedWaitTimer <= 0)
             {
-                ChangeState(new StateStopped(player));
+                if (player.position.Y < player.levellevel)
+                    ChangeState(new StateFall(player, false));
+                else
+                    ChangeState(new StateStopped(player));
             }
 
             if (dodgedWaitTimer > 0)
@@ -33,7 +37,34 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
             // handle any horizontal movement
             player.position.X += (float)(player.currentHorizontalSpeed * gameTime.ElapsedGameTime.TotalSeconds);
 
-            player.currentHorizontalSpeed -= (float)(player.currentHorizontalSpeed / 8);
+            if (player.position.Y < player.GetGroundLevel)
+            {
+                //player.currentHorizontalSpeed -= (float)(player.currentHorizontalSpeed / 12);
+            }
+            else 
+            {
+                player.currentHorizontalSpeed -= (float)(player.currentHorizontalSpeed / 12);
+            }
+                        // If player is falling
+            if (player.position.Y < player.GetGroundLevel)
+            {
+                player.position.Y += (float)(player.currentVerticalSpeed * gameTime.ElapsedGameTime.TotalSeconds);
+                // add acceleration
+                player.currentVerticalSpeed += (float)(gravity * gameTime.ElapsedGameTime.TotalSeconds);
+                if (player.currentVerticalSpeed > 0)
+                {
+                    player.isFalling = true;
+                    //Debug.WriteLine("Falling true = " + player.isFalling);
+                }
+                //if (player.position.Y >= player.levellevel)//startPosition)
+                //{
+                //   player.position.Y = player.levellevel;
+
+                //ChangeState(new StateLand(player));
+                //}
+            }
+            else
+                player.position.Y = player.GetGroundLevel;
         }
 
         /// <summary>
@@ -50,7 +81,7 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
                      (player.direction == 1 &&
                      player.position.X < hitPlayer.position.X))
                 {
-                    hitPlayer.state.isHit(player, new StateHit(hitPlayer), 7);
+                    hitPlayer.state.isHit(player, new StateHit(hitPlayer), 5);
                 }
             }
         }

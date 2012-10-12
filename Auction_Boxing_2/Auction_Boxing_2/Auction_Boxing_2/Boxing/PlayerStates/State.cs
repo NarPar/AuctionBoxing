@@ -15,6 +15,7 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
         protected Color color;
         public bool isAttack;
         protected bool canCombo = false;
+        protected bool canAirTime = true;
 
         protected string key;
 
@@ -135,6 +136,7 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
                         ChangeState(new StateCaneBonk(itemIndex, player));
                         break;
                     case (1):
+                        ChangeState(new StateBowlerHatThrow(itemIndex, player));
                         break;
                     case (2):
                         ChangeState(new StateRevolverShoot(itemIndex, player));
@@ -154,7 +156,13 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
 
         }
 
-        public abstract void Update(GameTime gameTime);
+        public virtual void Update(GameTime gameTime)
+        {
+            if (canAirTime)
+            {
+
+            }
+        }
 
         public virtual void HandleState()
         {

@@ -56,6 +56,11 @@ namespace Auction_Boxing_2
             this.time = 0.0f;
         }
 
+        public void Update(GameTime gameTime)
+        {
+            AdvanceTimePosition(gameTime);
+        }
+
         /// <summary>
         /// Advances the time position and draws the current frame of the animation.
         /// </summary>
@@ -64,7 +69,7 @@ namespace Auction_Boxing_2
             if (Animation == null)
                 throw new NotSupportedException("No animation is currently playing.");
 
-            AdvanceTimePosition(gameTime);
+            
 
             // Calculate the source rectangle of the current frame.
             Rectangle source = new Rectangle(FrameIndex * Animation.FrameWidth, 0, Animation.FrameWidth, Animation.Texture.Height);
@@ -83,7 +88,7 @@ namespace Auction_Boxing_2
             if (Animation == null)
                 throw new NotSupportedException("No animation is currently playing.");
 
-            AdvanceTimePosition(gameTime);
+           
 
             // Calculate the source rectangle of the current frame.
             Rectangle source = new Rectangle(FrameIndex * Animation.FrameWidth, 0, Animation.FrameWidth, Animation.Texture.Height);

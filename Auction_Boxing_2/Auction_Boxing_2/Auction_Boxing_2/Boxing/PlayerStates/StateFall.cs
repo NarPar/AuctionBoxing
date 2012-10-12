@@ -16,19 +16,32 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
 
         float gravity = 1000f;
 
+        bool drop; // drop if going between platforms, else falling after animation.
+
         public float startPosition;
 
 
-        public StateFall(BoxingPlayer player)
+        public StateFall(BoxingPlayer player, bool drop)
             : base(player, "Jump")
         {
-            player.position.Y += 5;
-            player.currentVerticalSpeed = 20;
+            if (drop)
+            {
+                player.position.Y += 5;
+                player.currentVerticalSpeed = 20;
+            }
+            else
+            {
+                
+                player.sprite.FrameIndex = 5;
+            }
         }
 
 
         public override void Update(GameTime gameTime)
         {
+            if(!drop)
+                player.sprite.FrameIndex = 5;
+
             // handle any horizontal movement
             player.position.X += (float)(player.currentHorizontalSpeed * gameTime.ElapsedGameTime.TotalSeconds);
             if (player.IsKeyDown(KeyPressed.Left))
@@ -67,7 +80,9 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
                 }
 
                 if (player.currentVerticalSpeed > 0)
+                {
                     player.isFalling = true;
+                }
             }
 
         }

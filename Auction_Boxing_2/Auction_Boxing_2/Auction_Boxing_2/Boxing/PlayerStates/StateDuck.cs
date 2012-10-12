@@ -56,7 +56,8 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
                     if (l != player.levellevel)
                     {
                         player.levellevel = l;
-                        ChangeState(new StateFall(player));
+                        player.position.Y += 2;
+                        ChangeState(new StateFall(player, true));
                     }
                 }
             }

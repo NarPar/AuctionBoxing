@@ -230,6 +230,7 @@ namespace Auction_Boxing_2
 
         public bool isFalling = false;
         public float levellevel;
+        public bool isCaught = false; // can't do anything (getting pulled by cane)
 
         #region Items
 
@@ -482,6 +483,8 @@ namespace Auction_Boxing_2
             else
                 comboKeys.Clear();
 
+            sprite.Update(gameTime);
+
             state.Update(gameTime);
 
             rHealthBar.Width = (int)(healthBarMaxWidth * (CurrentHealth / MaxHealth));
@@ -495,6 +498,8 @@ namespace Auction_Boxing_2
             }
 
             UpdateTransform();
+
+            
 
             // keep the collision rect current to the position.
             //CollisionRect.X = (int)position.X - CollisionRect.Width / 2;
@@ -677,9 +682,12 @@ namespace Auction_Boxing_2
             }
         }*/
 
-        /*public void CreateInstance(int itemindex)
+        public void CreateInstance(ItemInstance instance)
         {
-            if (equippedItems[itemindex] != null && OnUseItem != null)
+            // Trigger instance creation in boxing Manager
+
+
+            /*if (equippedItems[itemindex] != null && OnUseItem != null)
             {
                 SpriteEffects effect = SpriteEffects.None;
 
@@ -690,8 +698,10 @@ namespace Auction_Boxing_2
 
                 OnUseItem(equippedItems[itemindex].GenerateInstance(
                         new Vector3(position.X, position.Y, position.Z), playerindex, effect));
-            }
-        }*/
+            */
+            //}
+             
+        }
 
         public void UpdateTransform()
         {
@@ -719,8 +729,10 @@ namespace Auction_Boxing_2
         // Wrappa!
         public bool IntersectPixels(BoxingPlayer b)
         {
-            return IntersectPixels(Transform, sprite.Animation.FrameWidth, sprite.Animation.FrameHeight, sprite.GetData(),
-                           b.Transform, b.sprite.Animation.FrameWidth, b.sprite.Animation.FrameHeight, b.sprite.GetData());
+            return IntersectPixels(Transform, sprite.Animation.FrameWidth, sprite.Animation.FrameHeight,
+                BoxingManager.GetBitmapData(currentAnimationKey, sprite.FrameIndex, sprite.Animation.FrameWidth, sprite.Animation.FrameHeight),//sprite.GetData(),
+                           b.Transform, b.sprite.Animation.FrameWidth, b.sprite.Animation.FrameHeight, 
+                           BoxingManager.GetBitmapData(b.currentAnimationKey, b.sprite.FrameIndex, b.sprite.Animation.FrameWidth, b.sprite.Animation.FrameHeight));//b.sprite.GetData());
         }
 
         /// <summary>

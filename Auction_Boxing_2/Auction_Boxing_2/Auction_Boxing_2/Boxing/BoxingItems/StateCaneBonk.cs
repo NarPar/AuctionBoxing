@@ -63,7 +63,7 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
                      player.position.X < hitPlayer.position.X))
                 {
                     hitPlayer.state.isHit(player, new StateCaneHit(hitPlayer), 10);
-                    Debug.WriteLine("Other player hit!");
+                    //Debug.WriteLine("Other player hit!");
                 }
             }
         }

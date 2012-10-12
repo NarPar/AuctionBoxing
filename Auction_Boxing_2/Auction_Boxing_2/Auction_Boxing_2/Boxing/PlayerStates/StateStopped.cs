@@ -12,6 +12,7 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
     public class StateStopped : State
     {
         float decceleration = 500;
+        float gravity = 375f;
 
 
         public StateStopped(BoxingPlayer player)
@@ -31,65 +32,79 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
             else
                 player.currentHorizontalSpeed = 0;
 
+            // If player is falling
+            if (player.position.Y < player.GetGroundLevel)
+            {
+                player.position.Y += (float)(player.currentVerticalSpeed * gameTime.ElapsedGameTime.TotalSeconds);
+                // add acceleration
+                player.currentVerticalSpeed += (float)(gravity * gameTime.ElapsedGameTime.TotalSeconds);
+            }
+
             #region KeyPress State Changes
 
-            if (player.IsKeyDown(KeyPressed.Left))
+            if (!player.isCaught)
             {
-                // Change the direction
-                player.ChangeDirection(-1);
 
-
-                // Double tapped Left? Run mofo!
-                if (player.prevKey == KeyPressed.Left && player.dbleTapTimer > 0 && player.dbleTapCounter == 2)
+                if (player.IsKeyDown(KeyPressed.Left))
                 {
-                    // Start walking!
+                    // Change the direction
+                    player.ChangeDirection(-1);
+
+
+                    /*// Double tapped Left? Run mofo!
+                    if (player.prevKey == KeyPressed.Left && player.dbleTapTimer > 0 && player.dbleTapCounter == 2)
+                    {
+                        // Start walking!
+                        ChangeState(new StateRunning(player, KeyPressed.Left));
+                    }
+                    // or walk it off
+                    else
+                    {*/
+                        // Start walking!
+                        //ChangeState(new StateWalking(player, KeyPressed.Left));
                     ChangeState(new StateRunning(player, KeyPressed.Left));
+                    //}
                 }
-                // or walk it off
-                else
+                else if (player.IsKeyDown(KeyPressed.Right))
                 {
-                    // Start walking!
-                    ChangeState(new StateWalking(player, KeyPressed.Left));
-                }
-            }
-            else if (player.IsKeyDown(KeyPressed.Right))
-            {
-                // Change the direction
-                player.ChangeDirection(1);
+                    // Change the direction
+                    player.ChangeDirection(1);
 
-                // Double tapped Left? Run mofo!
-                if (player.prevKey == KeyPressed.Right && player.dbleTapTimer > 0 && player.dbleTapCounter == 2)
-                {
-                    // Start walking!
-                    ChangeState(new StateRunning(player, KeyPressed.Right));
+                    // Double tapped Left? Run mofo!
+                    /*if (player.prevKey == KeyPressed.Right && player.dbleTapTimer > 0 && player.dbleTapCounter == 2)
+                    {
+                        // Start walking!
+                        ChangeState(new StateRunning(player, KeyPressed.Right));
+                    }
+                    // or walk it off
+                    else
+                    {*/
+                        // Start walking!
+                        //ChangeState(new StateWalking(player, KeyPressed.Right));
+                        ChangeState(new StateRunning(player, KeyPressed.Right));
+                    //}
                 }
-                // or walk it off
-                else
+                else if (player.IsKeyDown(KeyPressed.Attack))
                 {
-                    // Start walking!
-                    ChangeState(new StateWalking(player, KeyPressed.Right));
+                    // Punch it!
+                    ChangeState(new StatePunch(player));
                 }
-            }
-            else if (player.IsKeyDown(KeyPressed.Attack))
-            {
-                // Punch it!
-                ChangeState(new StatePunch(player));
-            }
 
-            else if (player.IsKeyDown(KeyPressed.Defend))
-            {
-                // Block it!
-                ChangeState(new StateBlock(player));
-            }
-            else if (player.IsKeyDown(KeyPressed.Jump))
-            {
-                // Ollie!
-                ChangeState(new StateJump(player));
-            }
-            else if (player.IsKeyDown(KeyPressed.Down))
-            {
-                ChangeState(new StateDuck(player));
-                
+                else if (player.IsKeyDown(KeyPressed.Defend))
+                {
+                    // Block it!
+                    ChangeState(new StateBlock(player));
+                }
+                else if (player.IsKeyDown(KeyPressed.Jump))
+                {
+                    // Ollie!
+                    ChangeState(new StateJump(player));
+                }
+                else if (player.IsKeyDown(KeyPressed.Down))
+                {
+                    ChangeState(new StateDuck(player));
+
+                }
             }
 
             #endregion

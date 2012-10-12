@@ -5,7 +5,7 @@ using Microsoft.Xna.Framework.Graphics;
 namespace Auction_Boxing_2
 {
 
-    /*#region Parent Class
+    #region Parent Class
 
 
     public class ItemInstance
@@ -13,10 +13,11 @@ namespace Auction_Boxing_2
 
         #region Fields
 
-        public Item item;
-        public int playerId;
+        //public Item item;
+        //public int playerId;
+        public BoxingPlayer player;
 
-        public Vector3 position;
+        public Vector2 position;
 
         public Rectangle hitbox;
         public Rectangle sprite_position;
@@ -28,7 +29,7 @@ namespace Auction_Boxing_2
 
         public float damage;
 
-        public bool end;
+        public bool Finished;
 
         public bool isEffect;
 
@@ -37,11 +38,11 @@ namespace Auction_Boxing_2
         #region Initialize
 
 
-        public ItemInstance(bool isEffect, Item item, int playerId, SpriteEffects effect, Vector3 position)
+        public ItemInstance(BoxingPlayer player, bool isEffect, Vector2 position)// Item item, SpriteEffects effect, Vector3 position)
         {
+            this.player = player;
             this.isEffect = isEffect;
-            this.item = item;
-            this.playerId = playerId;
+            //this.item = item;
             this.effect = effect;
             this.position = position;
             this.damage = damage;
@@ -76,115 +77,88 @@ namespace Auction_Boxing_2
 
     #endregion
 
-    #region CaneInstance
-
-
-    public class CaneInstance : ItemInstance
-    {
-
-        public CaneInstance(Item item, Texture2D texture, Vector3 position, int playerId, SpriteEffects effect) :
-            base(false, item, playerId, effect, position)
-        {
-            int width = 44;
-            int height = 70;
-
-            int position_offset = -40;
-            if (effect == SpriteEffects.FlipHorizontally)
-            {
-                position_offset *= -1;
-            }
-
-            sprite_position = new Rectangle((int)position.X + position_offset, (int)position.Y, width, height);
-            hitbox = new Rectangle((int)position.X + position_offset - width/2, (int)position.Y - height, width, height);
-
-            animation = new Animation(texture, .05f, false, 44);
-            sprite.PlayAnimation(animation);
-        }
-
-        public override void Update(GameTime gameTime)
-        {
-            if (sprite.FrameIndex >= sprite.Animation.FrameCount - 1)
-                end = true;
-
-            base.Update(gameTime);
-        }
-
-        public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
-        {
-            sprite.Draw(gameTime, spriteBatch, sprite_position,
-                0, Color.White, Vector2.Zero, effect);
-            
-
-            base.Draw(gameTime, spriteBatch);
-        }
-
-    }
-
-
-    #endregion
 
     #region BowlerHatInstance
 
 
     public class BowlerHatInstance : ItemInstance
     {
-        int width;
+        int width = 6, height = 4;
+        int scale = 4;
 
         float xStart;
         float xCurrent;
         float speed = 250;
         float range = 175;
-        bool isLeft;
+        
 
-        public BowlerHatInstance(Item item, Texture2D texture, Vector3 position, int playerId, SpriteEffects effect) :
-            base(false,item, playerId, effect, position)
+        bool isReturning = false;
+
+        Texture2D texture;
+
+        public BowlerHatInstance(BoxingPlayer player, Vector2 position, int direction) ://Item item, Texture2D texture, Vector3 position, int playerId, SpriteEffects effect) :
+            base(player, false, position)
         {
-            width = 30;
-            int height = 22;
-            int vertical_offset = 30;
 
-            
-
-            sprite_position = new Rectangle((int)position.X, (int)position.Y - vertical_offset, width, height);
-            hitbox = new Rectangle((int)position.X - width / 2, (int)position.Y - vertical_offset - height, width, height);
-
-            position.Y += 10;
-
-            animation = new Animation(texture, .05f, false, 30);
-            sprite.PlayAnimation(animation);
+            hitbox = new Rectangle((int)position.X, (int)position.Y, width * 4, height * 4);
 
             xStart = position.X;
-            xCurrent = xStart;
 
-            if (effect == SpriteEffects.None)
+            //animation = new Animation(texture, .05f, false, 30);
+            //sprite.PlayAnimation(animation);
+
+            if (direction == -1)
             {
-                isLeft = true;
                 speed *= -1;
             }
         }
 
         public override void Update(GameTime gameTime)
         {
-            xCurrent += (float)(speed * gameTime.ElapsedGameTime.TotalSeconds);
-
-            if (Math.Abs(xCurrent - xStart) >= range)
+            if (!isReturning)
             {
-                speed *= -1;
+                position.X += (float)(speed * gameTime.ElapsedGameTime.TotalSeconds);
+
+                // If we've gone our range, return to sender.
+                if (Math.Abs(position.X - xStart) >= range)
+                {
+                    speed *= -1;
+                    isReturning = true;
+                }
             }
+            else
+            {
+                if ((player.position - position).Length() <= speed)
+                {
+                    Finished = true;
+                }
+                else
+                {
+                    // Move the hat towards sender
+                    Vector2 dir = (player.position - position);
+                    dir.Normalize();
 
-            if ((isLeft && xCurrent > xStart) || (!isLeft && xCurrent < xStart))
-                end = true;
+                    position += dir * speed;
+                }
 
-            hitbox.X = (int)xCurrent - width / 2;
-            sprite_position.X = (int)xCurrent;
+
+            }
+            //for vertical, change to vector2.Distance(start, position);
+
+
+
+
+            hitbox.X = (int)position.X - width / 2;
+            hitbox.Y = (int)position.Y - height;
 
             base.Update(gameTime);
         }
 
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
-            sprite.Draw(gameTime, spriteBatch, sprite_position,
-                0, Color.White, Vector2.Zero, effect);
+            spriteBatch.Draw(texture, hitbox, Color.White);
+            //sprite.Draw(gameTime, spriteBatch, sprite_position,
+               // 0, Color.White, Vector2.Zero, effect);
 
             base.Draw(gameTime, spriteBatch);
         }
@@ -193,72 +167,8 @@ namespace Auction_Boxing_2
     
     #endregion
 
-    #region RevolverInstance
-
-
-    public class RevolverInstance : ItemInstance
-    {
-
-        int width;
-
-        float xStart;
-        float xCurrent;
-        float speed = 1600;
-        float range = 800;
-        bool isLeft;
-
-        public RevolverInstance(Item item, Texture2D texture, Vector3 position, int playerId, SpriteEffects effect) :
-            base(false, item, playerId, effect, position)
-        {
-            width = 30;
-            int height = 22;
-            int vertical_offset = 30;
-
-            sprite_position = new Rectangle((int)position.X, (int)position.Y - vertical_offset, width, height);
-            hitbox = new Rectangle((int)position.X - width / 2, (int)position.Y - vertical_offset - height, width, height);
-
-            position.Y += 20;
-
-            animation = new Animation(texture, .05f, false, 7);
-            sprite.PlayAnimation(animation);
-
-            xStart = position.X;
-            xCurrent = xStart;
-
-            if (effect == SpriteEffects.None)
-            {
-                isLeft = true;
-                speed *= -1;
-            }
-        }
-
-        public override void Update(GameTime gameTime)
-        {
-            xCurrent += (float)(speed * gameTime.ElapsedGameTime.TotalSeconds);
-
-            if (Math.Abs(xCurrent - xStart) >= range)
-            {
-                end = true;
-            }
-
-            hitbox.X = (int)xCurrent - width / 2;
-            sprite_position.X = (int)xCurrent;
-
-            base.Update(gameTime);
-        }
-
-        public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
-        {
-            sprite.Draw(gameTime, spriteBatch, sprite_position,
-                0, Color.White, Vector2.Zero, effect);
-
-            base.Draw(gameTime, spriteBatch);
-        }
-
-    }
-
-    #endregion
-
+    
+    /*
     #region MonocleInstance
 
 

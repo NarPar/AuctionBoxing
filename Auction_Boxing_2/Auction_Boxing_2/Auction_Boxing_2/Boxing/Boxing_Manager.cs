@@ -297,6 +297,34 @@ namespace Auction_Boxing_2
 
             #endregion
 
+            // Initialize bitmaps
+            bitmaps.Add("Idle", new BitMap(idle)); // change these textures to the bitmaps
+            bitmaps.Add("Walk", new BitMap(walk));
+            bitmaps.Add("Run", new BitMap(run));
+            bitmaps.Add("Jump", new BitMap(jump));
+            bitmaps.Add("Land", new BitMap(land));
+            bitmaps.Add("Punch", new BitMap(punch));
+            bitmaps.Add("PunchHit", new BitMap(punchHit));
+            bitmaps.Add("Dodge", new BitMap(dodge));
+            bitmaps.Add("Block", new BitMap(block));
+            bitmaps.Add("Down", new BitMap(down));
+            bitmaps.Add("Duck", new BitMap(duck));
+
+            // item animations
+            bitmaps.Add("CaneBonk", new BitMap(caneBonk));
+            bitmaps.Add("CaneHit", new BitMap(caneHit));
+            bitmaps.Add("CanePull", new BitMap(canePull));
+            bitmaps.Add("CaneBalance", new BitMap(caneBalance));
+
+            bitmaps.Add("RevolverShoot", new BitMap(revolverShoot));
+            bitmaps.Add("RevolverHit", new BitMap(revolverHit));
+            bitmaps.Add("RevolverReload", new BitMap(revolverReload));
+
+            bitmaps.Add("bowlerThrow", new BitMap(bowlerThrow));
+            bitmaps.Add("bowlerCatch", new BitMap(bowlerCatch));
+            bitmaps.Add("bowlerReThrow", new BitMap(bowlerReThrow));
+
+
         }
 
         // Apply's settings gathered before the boxing begins.
@@ -462,8 +490,9 @@ namespace Auction_Boxing_2
                         {
                             player.Update(gameTime);
 
+                            // keep them from going off the screen
                             player.position.X = MathHelper.Clamp(player.position.X,
-                                bounds.Left + player.GetWidth / 2, bounds.Right - player.GetWidth / 2);
+                                bounds.Left + player.GetWidth / 2, bounds.Right - player.GetWidth / 2);//- (player.GetWidth / 2 - 15 * player.scale), bounds.Right - player.GetWidth / 2 - (player.GetWidth / 2 - 15 * player.scale));
 
                             
                             HandleCollisions(i);
@@ -552,29 +581,6 @@ namespace Auction_Boxing_2
                 return false;*/
         }
 
-        public void CheckForCollision()
-        {
-            /*for(int i = 0; i < 4; i++)
-            {
-                for (int j = 0; j < 4; j++)
-                {
-                    TexturesCollide(players[i].sprite.Get2DColorDataArray(), players[i].Transform,
-                        players[j].sprite.Get2DColorDataArray(), players[j].Transform);
-
-
-                    /*
-                    if (players[i] != null && players[j] != null)
-                    {
-                        if (j != i && IntersectPixels(players[i].CollisionRect, players[i].sprite.GetDataFromFrame(),
-                            players[j].CollisionRect, players[j].sprite.GetDataFromFrame()))
-                        {
-                            Debug.WriteLine("HIT!");
-                        }
-                    }*/
-                //}
-            //}
-        }
-
         public float GetLowerPlatformLevel(float platformlevel)
         {
             float l = platformlevel;
@@ -590,7 +596,7 @@ namespace Auction_Boxing_2
             return l;
         }
 
-        public bool TexturesCollide(Color[,] image1, Matrix matrix1, Color[,] image2, Matrix matrix2)
+        /*public bool TexturesCollide(Color[,] image1, Matrix matrix1, Color[,] image2, Matrix matrix2)
         {
             Matrix mat1to2 = matrix1 * Matrix.Invert(matrix2);
             int width1 = image1.GetLength(0);
@@ -625,32 +631,51 @@ namespace Auction_Boxing_2
             }
 
             return false;
-        }
+        }*/
 
 
         public void HandleCollisions(int player)
         {
             // level collision
-            if (players[player].isFalling)
+            if (players[player].currentVerticalSpeed > 0 && !(players[player].state is StateFall))
             {
                 Vector2 bottomLeft = new Vector2(players[player].position.X - players[player].GetWidth / 2,
                     players[player].position.Y);// + players[player].GetHeight - players[player].GetHeight / 2);
                 Vector2 bottomRight = new Vector2(players[player].position.X + players[player].GetWidth - players[player].GetWidth / 2,
                     players[player].position.Y);// + players[player].GetHeight - players[player].GetHeight / 2);
 
-                for (int j = 0; j < level.platforms.Length; j++)
+                for (int j = level.platforms.Length - 1; j >= 0; j--)//(int j = 0; j < level.platforms.Length; j++)
                 {
-
-                    if ((bottomLeft.X > level.platforms[j].X
-                        && bottomLeft.X < level.platforms[j].X + level.platforms[j].Width
-                        && bottomLeft.Y > level.platforms[j].Y
-                        && bottomLeft.Y < level.platforms[j].Y + level.platforms[j].Height) ||
-                        (bottomRight.X > level.platforms[j].X
-                        && bottomRight.X < level.platforms[j].X + level.platforms[j].Width
-                        && bottomRight.Y > level.platforms[j].Y
-                        && bottomRight.Y < level.platforms[j].Y + level.platforms[j].Height))
+                    if (j != 0)
                     {
-                        players[player].levellevel = level.platforms[j].Y;//position.Y = level.platforms[j].Y;
+                        if ((bottomLeft.X > level.platforms[j].X
+                            && bottomLeft.X < level.platforms[j].X + level.platforms[j].Width
+                            && bottomLeft.Y < level.platforms[j].Y
+                            && bottomLeft.Y > level.platforms[j - 1].Y + level.platforms[j - 1].Height) ||
+                            //&& bottomLeft.Y > level.platforms[j].Y
+                            //&& bottomLeft.Y < level.platforms[j].Y + level.platforms[j].Height) ||
+                            (bottomRight.X > level.platforms[j].X
+                            && bottomRight.X < level.platforms[j].X + level.platforms[j].Width
+                             && bottomLeft.Y < level.platforms[j].Y
+                             && bottomLeft.Y > level.platforms[j - 1].Y + level.platforms[j - 1].Height))
+                        //&& bottomRight.Y > level.platforms[j].Y
+                        //&& bottomRight.Y < level.platforms[j].Y + level.platforms[j].Height))
+                        {
+
+                            players[player].levellevel = level.platforms[j].Y;//position.Y = level.platforms[j].Y;
+                        }
+                    }
+                    else // top level
+                    {
+                        if ((bottomLeft.X > level.platforms[j].X
+                            && bottomLeft.X < level.platforms[j].X + level.platforms[j].Width
+                            && bottomLeft.Y < level.platforms[j].Y) ||
+                            (bottomRight.X > level.platforms[j].X
+                            && bottomRight.X < level.platforms[j].X + level.platforms[j].Width
+                             && bottomLeft.Y < level.platforms[j].Y))
+                        {
+                            players[player].levellevel = level.platforms[j].Y;
+                        }
                     }
                 }
             }
@@ -696,14 +721,15 @@ namespace Auction_Boxing_2
                         Debug.WriteLine("Pixel Collision!");
                         
                     }*/
-                    collide = thisPlayer.IntersectPixels(otherPlayer);
-                    if (collide)
+                    if (thisPlayer.BoundingRectangle.Intersects(otherPlayer.BoundingRectangle))
                     {
-                        if (thisPlayer.isAttacking)
-                            thisPlayer.HitOtherPlayer(otherPlayer);
+                        collide = thisPlayer.IntersectPixels(otherPlayer);
+                        if (collide)
+                        {
+                            if (thisPlayer.isAttacking)
+                                thisPlayer.HitOtherPlayer(otherPlayer);
+                        }
                     }
-
-                    //}
                 }
             }
             
@@ -725,6 +751,11 @@ namespace Auction_Boxing_2
                 }
             }
              * */
+        }
+
+        public Color[] GetBitmapData(string key, int index, int framew, int frameh)
+        {
+            return bitmaps[key].GetData(index, framew, frameh);
         }
 
         public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
@@ -756,7 +787,7 @@ namespace Auction_Boxing_2
                     if (!collide)
                         spriteBatch.Draw(background, bounds, Color.White);
                     else
-                        spriteBatch.Draw(background, bounds, Color.Red);
+                        spriteBatch.Draw(background, bounds, Color.White);
 
                     level.Draw(spriteBatch);
 
@@ -822,7 +853,7 @@ namespace Auction_Boxing_2
                     
             }
 
-
+            
             
 
 
@@ -851,7 +882,7 @@ namespace Auction_Boxing_2
             */
         }
 
-        #region Pixel Collision Helpers
+       /* #region Pixel Collision Helpers
 
 
 
@@ -914,6 +945,6 @@ namespace Auction_Boxing_2
         }
         
 
-        #endregion
+        #endregion*/
     }
 }

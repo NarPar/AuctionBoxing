@@ -71,6 +71,12 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
                     player.isFalling = true;
             }
 
+            if (player.IsKeyDown(KeyPressed.Attack))
+            {
+                // Punch it!
+                ChangeState(new StatePunch(player));
+            }
+
         }
 
         public override void isHit(Auction_Boxing_2.BoxingPlayer attackingPlayer, State expectedHitState, int damage)
