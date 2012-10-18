@@ -794,6 +794,16 @@ namespace Auction_Boxing_2
                             // then an intersection has been found
                             return true;
                         }
+
+                        /*
+                        // Using the bitmasks, if there is red on blue then we have
+                        // a collision
+                        if((colorA == Color.Red && colorB == Color.Blue)
+                            || (colorA == Color.Blue && colorB == Color.Blue))
+                        {
+                            return true;
+                        }
+                        */
                     }
 
                     // Move to the next pixel in the row
