@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
@@ -34,6 +35,12 @@ namespace Auction_Boxing_2
 
         Rectangle ClientBounds;
 
+        // The total selection of colors for the players to choose from
+        Color[] colors = new Color[] { Color.Navy, Color.DarkGoldenrod, Color.Sienna, Color.RoyalBlue, Color.DarkOrange, Color.YellowGreen,
+            Color.Lavender, Color.SlateGray, Color.Maroon, Color.MediumSeaGreen };
+
+        // The available textures.
+        List<Texture2D> availableTextures = new List<Texture2D>();
 
         Color[] playerColors = new Color[4];
 
@@ -48,7 +55,7 @@ namespace Auction_Boxing_2
 
         #endregion
 
-        public Player_Select_Popup(ContentManager content, Input_Handler[] inputs, Rectangle bounds)
+        public Player_Select_Popup(ContentManager content, Input_Handler[] inputs, Rectangle bounds, GraphicsDevice graphicsDevice)
             : base(content, bounds)
         {
             this.inputs = inputs;
@@ -64,10 +71,78 @@ namespace Auction_Boxing_2
                 playerMenuBounds[i] = new Rectangle(((i) * ClientBounds.Width / 4), 0, ClientBounds.Width / 4, ClientBounds.Height);
 
                 // Initialize the meus
-                menus[i] = new Player_Select_Menu(content, font, playerMenuBounds[i]);
+                menus[i] = new Player_Select_Menu(content, this, font, playerMenuBounds[i]);
 
                 
             }
+
+            populateColors(content, graphicsDevice);
+        }
+
+
+        /// <summary>
+        ///  make a new texture for each color, rewriting magenta with the color.
+        /// </summary>
+        /// <param name="content"></param>
+        /// <param name="graphicsDevice"></param>
+        void populateColors(ContentManager content, GraphicsDevice graphicsDevice)
+        {
+            // load the texture to be recolored
+            Texture2D template = content.Load<Texture2D>("Boxing/Player_Idle_Side");
+
+            // make a new texture that is a recoloring of the template.
+            for (int i = 0; i < colors.Length; i++)
+            {
+                Texture2D t = new Texture2D(graphicsDevice, template.Width, template.Height);
+                Color[] c = new Color[template.Width * template.Height];
+                template.GetData(c);
+
+                // Replace magenta pixels with the color
+                for (int j = 0; j < c.Length; j++)
+                {
+                    if (c[j] == Color.Magenta)
+                    {
+                        c[j] = colors[i];
+                    }
+
+                }
+                
+                t.SetData(c); // set the data
+                // add it to the available list
+                availableTextures.Add(t);
+            }
+            Debug.WriteLine("# of colors = " + availableTextures.Count);
+        }
+
+        /// <summary>
+        /// A player looking for a new color will call this; they'll swap
+        /// their current texture for a different available texture.
+        /// </summary>
+        /// <param name="texturetobeswitched">The texture the player currently has</param>
+        /// <returns></returns>
+        public Texture2D GetColor(Texture2D texturetobeswitched, bool l)
+        {
+            if (availableTextures.Count > 0)
+            {
+
+                int pop = 0;
+                int push = availableTextures.Count - 1;
+
+                if (l)
+                {
+                    pop = push;
+                    push = 0;
+                }
+
+                Texture2D t = availableTextures[pop];
+                availableTextures.RemoveAt(pop);
+
+                availableTextures.Insert(push, texturetobeswitched);
+
+                return t;
+            }
+            else
+                return null;
         }
 
         public void LoadContent(ContentManager Content)
@@ -135,7 +210,14 @@ namespace Auction_Boxing_2
                             // Enable input for the menu
                             inputs[i].OnKeyRelease += menus[i].ChangeIndex;
 
-                            menus[i].color = menus[i].colors[0];
+                            if (availableTextures.Count > 0)
+                            {
+                                menus[i].currentTexture = availableTextures[0];
+                                availableTextures.RemoveAt(0);
+                                Debug.WriteLine("texture set! " + menus[i].currentTexture);
+                            }
+                            else
+                                Debug.WriteLine("Queue empty!");
                         }
                         else
                         {

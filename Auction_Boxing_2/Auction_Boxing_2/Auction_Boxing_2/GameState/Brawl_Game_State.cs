@@ -51,7 +51,7 @@ namespace Auction_Boxing_2
             settings.menu.OnEntrySelect += HandleMenuSelect;
    
             // Construct the player_select_popup
-            playerSelect = new Player_Select_Popup(game.Content, inputs, bounds);
+            playerSelect = new Player_Select_Popup(game.Content, inputs, bounds, game.GraphicsDevice);
             //playerSelect.OnReady += HandlePlayersReady;
 
         }
