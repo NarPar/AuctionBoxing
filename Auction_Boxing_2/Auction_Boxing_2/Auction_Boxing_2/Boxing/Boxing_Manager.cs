@@ -13,6 +13,7 @@ namespace Auction_Boxing_2
     {
         idle,
         roundstart,
+        roundend,
         box,
         stats
     }
@@ -95,6 +96,8 @@ namespace Auction_Boxing_2
 
         Rectangle healthBarDimensions;
 
+        public int NumRounds { get; set; }
+        int currentRound = 1;
         float roundStartTimer;
         float roundStartTime = 3f;
 
@@ -102,6 +105,7 @@ namespace Auction_Boxing_2
 
         bool drawCollisionBoxes = false;
 
+        int deadCount = 0;
         int winner;
         float winTime = 2f;
         float winTimer = 0;
@@ -112,9 +116,6 @@ namespace Auction_Boxing_2
 
         int numberOfPlayers;
 
-        
-
-
         public float GetGroundLevel
         {
             get
@@ -122,7 +123,6 @@ namespace Auction_Boxing_2
                 return playerStartPositions[0].Y;
             }
         }
-
 
         public Boxing_Manager(ContentManager content, Rectangle ClientBounds, Input_Handler[] inputs,
             GraphicsDevice gd)
@@ -135,8 +135,6 @@ namespace Auction_Boxing_2
             background = content.Load<Texture2D>("Boxing/AB Background");
             font = content.Load<SpriteFont>("Menu/menufont");
             blank = content.Load<Texture2D>("White");
-
-            
 
             #region Add StateNames
             StateNames.Add(smoving);
@@ -161,6 +159,8 @@ namespace Auction_Boxing_2
 
             level = new Level(this, ClientBounds, blank, background);
             //level.platforms[level.platforms.Length - 1].Y = (int)playerStartPositions[0].Y;
+
+            NumRounds = 1;
 
             healthBarDimensions = new Rectangle(0, 0, ClientBounds.Width / 16, ClientBounds.Height / 80);
 
@@ -337,8 +337,8 @@ namespace Auction_Boxing_2
 
             Debug.WriteLine("num of players = " + numberOfPlayers);
 
+            deadCount = 0;
             isRoundOver = false;
-            
         }
 
         public void Activate(ContentManager Content)
@@ -441,7 +441,7 @@ namespace Auction_Boxing_2
             return f;
         }
 
-        public void Update(GameTime gameTime)
+        public bool Update(GameTime gameTime)
         {
             switch (state)
             {
@@ -458,9 +458,6 @@ namespace Auction_Boxing_2
                     break;
                 // Will handle all the logic for the boxing; player updates, collision, etc.
                 case(boxingstate.box):
-
-                    int deadCount = 0;
-
                     for(int i = 0; i < 4; i++)
                     {
                         BoxingPlayer player = players[i];
@@ -472,11 +469,7 @@ namespace Auction_Boxing_2
                             player.position.X = MathHelper.Clamp(player.position.X,
                                 bounds.Left + player.GetWidth / 2, bounds.Right - player.GetWidth / 2);//- (player.GetWidth / 2 - 15 * player.scale), bounds.Right - player.GetWidth / 2 - (player.GetWidth / 2 - 15 * player.scale));
 
-                            
                             HandleCollisions(i);
-
-                            if (player.isDead)
-                                deadCount++;
                         }
 
                     }
@@ -484,18 +477,12 @@ namespace Auction_Boxing_2
                     // Handle the winning
                     if (winTimer > 0)
                         winTimer -= (float)gameTime.ElapsedGameTime.TotalSeconds;
-                    if (isRoundOver && winTimer <= 0)
-                    {
-                        state = boxingstate.stats;
-                        restartTimer = restartTime;
-                    }
 
-                    if (!isRoundOver && deadCount >= numberOfPlayers - 1)
+                    if (deadCount >= numberOfPlayers - 1)
                     {
                         isRoundOver = true;
                         winTimer = winTime;
 
-                        Debug.WriteLine("GameOver!");
 
                         // Who's the winner?
                         for (int i = 0; i < 4; i++)
@@ -505,18 +492,39 @@ namespace Auction_Boxing_2
                                 winner = i+1;
                             }
                         }
+
+                        state = boxingstate.roundend;
+                        restartTimer = restartTime;
                     }
 
                     break;
-                case(boxingstate.stats):
-                    if (restartTimer > 0)
-                        restartTimer -= (float)gameTime.ElapsedGameTime.TotalSeconds;
-                    else
-                        Reset();
-
+                case (boxingstate.roundend):
+                    if (currentRound == NumRounds) // this was the last round, show stats
+                    {
+                        Debug.WriteLine("Round {0} Complete!", currentRound);
+                        state = boxingstate.stats;
+                    }
+                    else // reset for next round
+                    {
+                        if (restartTimer > 0)
+                        {
+                            restartTimer -= (float)gameTime.ElapsedGameTime.TotalSeconds;
+                        }
+                        else
+                        {
+                            Debug.WriteLine("Round {0} Complete!", currentRound);
+                            currentRound++;
+                            Reset();
+                        }
+                    }
+                    break;
+                case (boxingstate.stats):
+                    Debug.WriteLine("A winner is you!");
+                    return false;
                     break;
             }
 
+            return true;
 
             /*
             kb = Keyboard.GetState();
@@ -787,7 +795,7 @@ namespace Auction_Boxing_2
                         }
                     }
                     break;
-                case (boxingstate.stats):
+                case (boxingstate.roundend):
                     spriteBatch.Draw(background, bounds, Color.White);
                     // Draw the players
                     foreach (BoxingPlayer player in players)
@@ -808,13 +816,41 @@ namespace Auction_Boxing_2
                         }
                     }
                     // Draw the winner!
-                    string w = "Player " + winner + "Wins!";
+                    string w = "Player " + winner + " Takes the Round!";
                     spriteBatch.DrawString(font, w,
                         new Vector2(bounds.X + bounds.Width / 2 - font.MeasureString(w).X / 2,
                             bounds.Y + bounds.Height / 2 - font.MeasureString(w).Y / 2), Color.Goldenrod);
                     break;
+                case (boxingstate.stats):
+                    spriteBatch.Draw(background, bounds, Color.White);
+                    // Draw the players
+                    foreach (BoxingPlayer player in players)
+                    {
+                        if (player != null)
+                        {
+                            if (drawCollisionBoxes)
+                            {
+                                Rectangle playerRectangle = player.CalculateCollisionRectangle();
+                                //new Rectangle(0, 0, player.GetWidth / 4, player.GetHeight / 4), player.TransformMatrix);
 
+                                spriteBatch.Draw(blank, playerRectangle, Color.Blue);
+                            }
+
+                            player.Draw(gameTime, spriteBatch);
+                        }
+                    }
+                    // Draw the winner!
+                    string win = "Player " + winner + "Wins!";
+                    spriteBatch.DrawString(font, win,
+                        new Vector2(bounds.X + bounds.Width / 2 - font.MeasureString(win).X / 2,
+                            bounds.Y + bounds.Height / 2 - font.MeasureString(win).Y / 2), Color.Goldenrod);
+                    break;
             }
+        }
+
+        public void NotifyPlayerDeath(int playerIndex)
+        {
+            deadCount++;
         }
     }
 }

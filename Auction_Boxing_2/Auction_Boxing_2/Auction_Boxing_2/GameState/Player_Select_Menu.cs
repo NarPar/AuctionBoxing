@@ -30,19 +30,19 @@ namespace Auction_Boxing_2
                     bounds.Y + bounds.Height / 4);
 
             this.bounds = bounds;
-            
+
         }
 
         public void Activate()
         {
-           // color = colors[colorIndex];
+            // color = colors[colorIndex];
         }
 
         public void ChangeIndex(int playerIndex, KeyPressed key)
         {
             if (key == KeyPressed.Left)
                 currentTexture = popup.GetColor(currentTexture, true);
-            else if(key == KeyPressed.Right)
+            else if (key == KeyPressed.Right)
                 currentTexture = popup.GetColor(currentTexture, false);
         }
 
