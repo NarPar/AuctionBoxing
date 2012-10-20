@@ -93,7 +93,20 @@ namespace Auction_Boxing_2
         public float CurrentHealth
         {
             get { return currenthealth; }
-            set { currenthealth = value; }
+            set
+            {
+                currenthealth = value >= 0 ? value : 0;
+
+                // check if dead
+                if (!isDead && currenthealth <= 0)
+                {
+                    isDead = true;
+                    BoxingManager.NotifyPlayerDeath(playerIndex);
+                }
+
+                // update health bar
+                rHealthBar.Width = (int)(healthBarMaxWidth * (currenthealth / MaxHealth));
+            }
         }
 
         protected float currentstamina;
@@ -490,11 +503,6 @@ namespace Auction_Boxing_2
 
             state.Update(gameTime);
 
-            rHealthBar.Width = (int)(healthBarMaxWidth * (CurrentHealth / MaxHealth));
-
-            if (CurrentHealth <= 0)
-                isDead = true;
-
             if (!(state is StateJump ))//|| state is StateFall))
             {
                 isFalling = false;
@@ -513,8 +521,6 @@ namespace Auction_Boxing_2
 
             UpdateTransform();
 
-            
-
             // keep the collision rect current to the position.
             //CollisionRect.X = (int)position.X - CollisionRect.Width / 2;
             //CollisionRect.Y = (int)position.Y - CollisionRect.Height;
@@ -527,8 +533,6 @@ namespace Auction_Boxing_2
 
             // Collision transform is created when requested.
         }
-
-       
 
         public void ChangeAnimation(string index)
         {
@@ -555,12 +559,8 @@ namespace Auction_Boxing_2
             }
         }
 
-
-
         public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
-            
-
             //spriteBatch.Draw(blank, CollisionRect, Color.Red);
             //spriteBatch.Draw(blank, BoundingRectangle, Color.Red);
             // Draw sprite
@@ -633,7 +633,6 @@ namespace Auction_Boxing_2
                 }
             }
         }
-
 
         public void HandleState()
         {
@@ -814,7 +813,6 @@ namespace Auction_Boxing_2
                             Debug.WriteLine(colorA);
                             return true;
                         }
-
                         /*
                         // Using the bitmasks, if there is red on blue then we have
                         // a collision
@@ -825,20 +823,15 @@ namespace Auction_Boxing_2
                         }
                         */
                     }
-
                     // Move to the next pixel in the row
                     posInB += stepX;
                 }
-
                 // Move to the next row
                 yPosInB += stepY;
             }
-
             // No intersection found
             return false;
         }
-
-       
 
         /// <summary>
         /// Calculates an axis aligned rectangle which fully contains an arbitrarily
@@ -849,7 +842,6 @@ namespace Auction_Boxing_2
         /// <returns>A new rectangle which contains the trasnformed rectangle.</returns>
         public Rectangle CalculateCollisionRectangle()
         {
-
             // whoops! Just using htis for now.
             return BoundingRectangle;
 
@@ -878,6 +870,5 @@ namespace Auction_Boxing_2
             return new Rectangle((int)min.X, (int)min.Y,
                                  (int)(max.X - min.X), (int)(max.Y - min.Y));
         }
-
     }
 }

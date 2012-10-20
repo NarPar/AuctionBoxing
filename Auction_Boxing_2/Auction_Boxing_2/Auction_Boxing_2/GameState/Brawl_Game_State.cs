@@ -68,13 +68,13 @@ namespace Auction_Boxing_2
                     playerSelect.Update(gameTime);
                     break;
                 case(brawlgamestate.brawl):
-                    boxingManager.Update(gameTime);
+                    if (!boxingManager.Update(gameTime))
+                        ChangeState(new Main_Game_State(this.game, inputs, bounds));
                     break;
                 case (brawlgamestate.stats):
                     break;
 
             }
-           
 
             base.Update(gameTime);
         }
@@ -86,6 +86,7 @@ namespace Auction_Boxing_2
             {
                 // Get the number of rounds
                 rounds = settings.menu.Rounds;
+                boxingManager.NumRounds = rounds;
                 // stop listening
                 settings.menu.OnEntrySelect -= HandleMenuSelect;
 

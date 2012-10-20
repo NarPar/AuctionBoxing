@@ -52,12 +52,12 @@ namespace Auction_Boxing_2
                     if (c[j] == Color.Magenta)
                     {
                         c[j] = colors[i];
-                        Debug.WriteLine("Magenta replaced with " + colors[i]);
+                        //Debug.WriteLine("Magenta replaced with " + colors[i]);
                     }
                     //Debug.WriteLine("NOT MAGENTA");
 
                 }
-                Debug.WriteLine("Textured done " + i);
+                //Debug.WriteLine("Textured done " + i);
                 t.SetData(c);
                 coloredTextures[i] = t;
             }

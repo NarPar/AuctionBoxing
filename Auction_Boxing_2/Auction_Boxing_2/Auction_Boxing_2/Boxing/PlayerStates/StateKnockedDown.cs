@@ -27,7 +27,7 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
             : base(player, "Down")
         {
             this.dir = dir; // The direction which they are knocked down.
-            Debug.WriteLine("Fall direction = " + dir);
+            //Debug.WriteLine("Fall direction = " + dir);
         }
 
 

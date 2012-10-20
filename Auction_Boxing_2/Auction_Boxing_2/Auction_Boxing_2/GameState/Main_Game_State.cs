@@ -25,7 +25,7 @@ namespace Auction_Boxing_2
             inputs[0].OnKeyRelease += menu.ChangeIndex;
             menu.OnEntrySelect += MenuEntrySelect;
 
-            Debug.WriteLine(bounds.X + " " + bounds.Y + " " + bounds.Width + " " + bounds.Height);
+            //Debug.WriteLine(bounds.X + " " + bounds.Y + " " + bounds.Width + " " + bounds.Height);
 
             background = game.Content.Load<Texture2D>("Menu/Menu_Background");
         }
