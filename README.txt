@@ -3,6 +3,15 @@ Current features:
 -Brawl: players begin with a set of items and simply duke it out. Good for testing items!
 
 To-Do:
+
+	PRIORITY:
+		- 2D camera that follows up to 4 players around a level
+		- Finish level art
+		- level engine
+		- implement hat
+		- implement boots?
+
+
 	Programming:
 		-BitMasks for accurate pixel collision
 		-Player Colors

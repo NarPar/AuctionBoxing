@@ -132,7 +132,7 @@ namespace Auction_Boxing_2
             this.bounds = new Rectangle(0, 0, ClientBounds.Width, ClientBounds.Height);
             this.inputs = inputs;
 
-            background = content.Load<Texture2D>("Boxing/LevelBackground");
+            background = content.Load<Texture2D>("Boxing/AB Background");
             font = content.Load<SpriteFont>("Menu/menufont");
             blank = content.Load<Texture2D>("White");
 
@@ -159,7 +159,7 @@ namespace Auction_Boxing_2
             for (int i = 0; i < 4; i++)
                 playerStartPositions[i] = new Vector2(bounds.X + bounds.Width / 5 * (i + 1), 4 * bounds.Height / 5);
 
-            level = new Level(this, ClientBounds, blank);
+            level = new Level(this, ClientBounds, blank, background);
             //level.platforms[level.platforms.Length - 1].Y = (int)playerStartPositions[0].Y;
 
             healthBarDimensions = new Rectangle(0, 0, ClientBounds.Width / 16, ClientBounds.Height / 80);
@@ -298,33 +298,11 @@ namespace Auction_Boxing_2
             #endregion
 
             // Initialize bitmaps
-            bitmaps.Add("Idle", new BitMap(idle)); // change these textures to the bitmaps
-            bitmaps.Add("Walk", new BitMap(walk));
-            bitmaps.Add("Run", new BitMap(run));
-            bitmaps.Add("Jump", new BitMap(jump));
-            bitmaps.Add("Land", new BitMap(land));
-            bitmaps.Add("Punch", new BitMap(punch));
-            bitmaps.Add("PunchHit", new BitMap(punchHit));
-            bitmaps.Add("Dodge", new BitMap(dodge));
-            bitmaps.Add("Block", new BitMap(block));
-            bitmaps.Add("Down", new BitMap(down));
-            bitmaps.Add("Duck", new BitMap(duck));
-
+            bitmaps.Add("Punch", new BitMap(Content.Load<Texture2D>("Boxing/Bitmaps/Player_Punch_Bitmap")));
+            
             // item animations
-            bitmaps.Add("CaneBonk", new BitMap(caneBonk));
-            bitmaps.Add("CaneHit", new BitMap(caneHit));
-            bitmaps.Add("CanePull", new BitMap(canePull));
-            bitmaps.Add("CaneBalance", new BitMap(caneBalance));
-
-            bitmaps.Add("RevolverShoot", new BitMap(revolverShoot));
-            bitmaps.Add("RevolverHit", new BitMap(revolverHit));
-            bitmaps.Add("RevolverReload", new BitMap(revolverReload));
-
-            bitmaps.Add("bowlerThrow", new BitMap(bowlerThrow));
-            bitmaps.Add("bowlerCatch", new BitMap(bowlerCatch));
-            bitmaps.Add("bowlerReThrow", new BitMap(bowlerReThrow));
-
-
+            bitmaps.Add("CaneBonk", new BitMap(Content.Load<Texture2D>("Boxing/Bitmaps/Player_Cane_Bitmap")));
+            bitmaps.Add("CanePull", new BitMap(Content.Load<Texture2D>("Boxing/Bitmaps/Player_Cane_Pull_Bitmap")));
         }
 
         // Apply's settings gathered before the boxing begins.
@@ -334,7 +312,7 @@ namespace Auction_Boxing_2
             {
                 if(colors[i] != Color.Transparent)
                     players[i] = new BoxingPlayer(this, i, playerStartPositions[i], animations, inputs[i], colors[i], blank,
-                        healthBarDimensions); // Figure out the boxing players.
+                        healthBarDimensions, level.platforms[level.platforms.Length - 1]); // Figure out the boxing players.
             }
         }
 
@@ -596,6 +574,21 @@ namespace Auction_Boxing_2
             return l;
         }
 
+        public Rectangle GetLowerPlatform(Vector2 pos)
+        {
+            //float l = platformlevel;
+            for (int i = 0; i < level.platforms.Length; i++)
+            {
+                if (pos.X + 15 > level.platforms[i].X && pos.X - 15 < level.platforms[i].X + level.platforms[i].Width && level.platforms[i].Y > pos.Y)
+                {
+                   // l = level.platforms[i].Y;
+                    return level.platforms[i];// 
+                }
+
+            }
+            return level.platforms[level.platforms.Length - 1];
+        }
+
         /*public bool TexturesCollide(Color[,] image1, Matrix matrix1, Color[,] image2, Matrix matrix2)
         {
             Matrix mat1to2 = matrix1 * Matrix.Invert(matrix2);
@@ -662,6 +655,7 @@ namespace Auction_Boxing_2
                         //&& bottomRight.Y < level.platforms[j].Y + level.platforms[j].Height))
                         {
 
+                            players[player].platform = level.platforms[j];
                             players[player].levellevel = level.platforms[j].Y;//position.Y = level.platforms[j].Y;
                         }
                     }
@@ -680,7 +674,7 @@ namespace Auction_Boxing_2
                 }
             }
 
-
+            // For attacking player-on-player collision (Uses per pixel)
             for(int i = 0; i < 4; i++)
             {
                 // pvp
@@ -690,43 +684,12 @@ namespace Auction_Boxing_2
                     BoxingPlayer thisPlayer = players[player];
                     BoxingPlayer otherPlayer = players[i];
 
-                    //Rectangle playerRectangle = thisPlayer.CalculateCollisionRectangle();
-                        //new Rectangle(0,0, (int)(thisPlayer.GetWidth / thisPlayer.scale), 
-                            //(int)(thisPlayer.GetHeight / thisPlayer.scale)), thisPlayer.TransformMatrix);
-
-                    //Rectangle otherPlayerRectangle = otherPlayer.CalculateCollisionRectangle();
-                        //new Rectangle(0,0, (int)(otherPlayer.GetWidth / otherPlayer.scale),
-                            //(int)(otherPlayer.GetHeight / otherPlayer.scale)), otherPlayer.TransformMatrix);
-
-
-                    //if(playerRectangle.Intersects(otherPlayerRectangle))
-                    //{
-                        //Debug.WriteLine("Rectangle Collision!");
-                        /*if (thisPlayer.isAttacking)
-                            thisPlayer.HitOtherPlayer(otherPlayer);
-                        else if ((thisPlayer.isFalling || thisPlayer.state is StateFall) && otherPlayer.state is StateDuck)
-                            otherPlayer.state.isHit(thisPlayer, new StateKnockedDown(otherPlayer, 0), 10);
-                        */
-                          
-                        /*
-                         * Pixel collision currently doesn't work. For now, we'll just use Rectangle Collision.
-                         */
-                        /*if (IntersectPixels(thisPlayer.TransformMatrix, (int)(thisPlayer.GetWidth / thisPlayer.scale),
-                            (int)(thisPlayer.GetHeight / thisPlayer.scale), thisPlayer.sprite.GetData(),//thisPlayer.Get1DColorData, 
-                            otherPlayer.TransformMatrix, (int)(otherPlayer.GetWidth / otherPlayer.scale),
-                            (int)(otherPlayer.GetHeight / otherPlayer.scale), otherPlayer.sprite.GetData()))//otherPlayer.Get1DColorData))
-                        */
-                    /*if (thisPlayer.IntersectPixels(otherPlayer))
-                    {
-                        Debug.WriteLine("Pixel Collision!");
-                        
-                    }*/
                     if (thisPlayer.BoundingRectangle.Intersects(otherPlayer.BoundingRectangle))
                     {
-                        collide = thisPlayer.IntersectPixels(otherPlayer);
-                        if (collide)
+                        if (thisPlayer.isAttacking && (thisPlayer.GetGroundLevel == otherPlayer.GetGroundLevel))
                         {
-                            if (thisPlayer.isAttacking)
+                            collide = thisPlayer.IntersectPixels(otherPlayer);
+                            if (collide)
                                 thisPlayer.HitOtherPlayer(otherPlayer);
                         }
                     }
@@ -762,10 +725,10 @@ namespace Auction_Boxing_2
         {
             switch (state)
             {
-                case(boxingstate.idle):
+                case (boxingstate.idle):
                     spriteBatch.Draw(background, bounds, Color.White);
                     break;
-                case(boxingstate.roundstart):
+                case (boxingstate.roundstart):
                     spriteBatch.Draw(background, bounds, Color.White);
 
                     level.Draw(spriteBatch);
@@ -783,11 +746,11 @@ namespace Auction_Boxing_2
                     }
 
                     break;
-                case(boxingstate.box):
-                    if (!collide)
-                        spriteBatch.Draw(background, bounds, Color.White);
-                    else
-                        spriteBatch.Draw(background, bounds, Color.White);
+                case (boxingstate.box):
+                    //if (!collide)
+                    //    spriteBatch.Draw(background, bounds, Color.White);
+                    //else
+                    //    spriteBatch.Draw(background, bounds, Color.White);
 
                     level.Draw(spriteBatch);
 
@@ -800,31 +763,31 @@ namespace Auction_Boxing_2
                                 player.position.Y);// + player.GetHeight - player.GetHeight / 2);
                             Vector2 bottomRight = new Vector2(player.position.X + player.GetWidth - player.GetWidth / 2,
                                 player.position.Y);// + player.GetHeight - player.GetHeight / 2);
-            
+
                             spriteBatch.Draw(blank, new Rectangle((int)bottomLeft.X, (int)bottomLeft.Y, 3, 3), Color.Red);
                             spriteBatch.Draw(blank, new Rectangle((int)bottomRight.X, (int)bottomRight.Y, 3, 3), Color.Red);
 
                             if (drawCollisionBoxes)
                             {
                                 Rectangle playerRectangle = player.CalculateCollisionRectangle();
-                                        //new Rectangle(0, 0, player.GetWidth / 4, player.GetHeight / 4), player.TransformMatrix);
+                                //new Rectangle(0, 0, player.GetWidth / 4, player.GetHeight / 4), player.TransformMatrix);
                                 //Debug.WriteLine("DRAWING BOUND");
                                 spriteBatch.Draw(blank, playerRectangle, Color.Blue);
 
                                 // Draw the current color data in the top corner
-                       
+
                                 // Create a new texture and assign the data to it
                                 //Texture2D texture = 
 
                                 //spriteBatch.Draw(player.sprite.GetDataAsTexture(gd), 
-                                    //new Rectangle(0,0,(int)(player.GetWidth / player.scale), (int)(player.GetHeight / player.scale)), Color.White);
+                                //new Rectangle(0,0,(int)(player.GetWidth / player.scale), (int)(player.GetHeight / player.scale)), Color.White);
                             }
 
                             player.Draw(gameTime, spriteBatch);
                         }
                     }
                     break;
-                case(boxingstate.stats):
+                case (boxingstate.stats):
                     spriteBatch.Draw(background, bounds, Color.White);
                     // Draw the players
                     foreach (BoxingPlayer player in players)
@@ -834,8 +797,8 @@ namespace Auction_Boxing_2
                             if (drawCollisionBoxes)
                             {
                                 Rectangle playerRectangle = player.CalculateCollisionRectangle();
-                                        //new Rectangle(0, 0, player.GetWidth / 4, player.GetHeight / 4), player.TransformMatrix);
-                                
+                                //new Rectangle(0, 0, player.GetWidth / 4, player.GetHeight / 4), player.TransformMatrix);
+
                                 spriteBatch.Draw(blank, playerRectangle, Color.Blue);
                             }
 
@@ -850,101 +813,8 @@ namespace Auction_Boxing_2
                         new Vector2(bounds.X + bounds.Width / 2 - font.MeasureString(w).X / 2,
                             bounds.Y + bounds.Height / 2 - font.MeasureString(w).Y / 2), Color.Goldenrod);
                     break;
-                    
-            }
-
-            
-            
-
-
-
-            /*for (int i = 0; i < 4; i++)
-            {
-                displays[i].Draw(spriteBatch, font);
 
             }
-            foreach (BoxingPlayer player in Players)
-            {
-                player.Draw(gameTime, spriteBatch);
-                spriteBatch.Draw(background, player.Hurtbox, Color.White * .5f);
-            }
-
-            foreach (ItemInstance item in itemInstances)
-            {
-                item.Draw(gameTime, spriteBatch);
-                //spriteBatch.Draw(background, item.hitbox, Color.White * .5f);
-            }
-
-            string pass = "Press 'R' to skip";
-            spriteBatch.DrawString(font, pass,
-                new Vector2(bounds.Width - font.MeasureString(pass).X,
-                    bounds.Height - font.MeasureString(pass).Y), Color.Black);
-            */
         }
-
-       /* #region Pixel Collision Helpers
-
-
-
-        // Code taken from http://www.austincc.edu/cchrist1/GAME1343/TransformedCollision/TransformedCollision.htm
-        /// <summary>
-        /// Determines if there is overlap of the non-transparent pixels between two
-        /// sprites.
-        /// </summary>
-        /// <param name="transformA">World transform of the first sprite.</param>
-        /// <param name="widthA">Width of the first sprite's texture.</param>
-        /// <param name="heightA">Height of the first sprite's texture.<;/param>
-        /// <param name="dataA">Pixel color data of the first sprite.</param>
-        /// <param name="transformB">World transform of the second sprite.</param>
-        /// <param name="widthB">Width of the second sprite's texture.</param>
-        /// <param name="heightB">Height of the second sprite's texture.</param>
-        /// <param name="dataB">Pixel color data of the second sprite.</param>
-        /// <returns>True if non-transparent pixels overlap; false otherwise</returns>
-        static bool IntersectPixels(
-            Matrix transformA, int widthA, int heightA, Color[] dataA,
-            Matrix transformB, int widthB, int heightB, Color[] dataB)
-        {
-            // Calculate a matrix which transforms from A's local space into
-            // world space and then into B's local space
-            Matrix transformAToB = transformA * Matrix.Invert(transformB);
-
-            // For each row of pixels in A
-            for (int yA = 0; yA < heightA; yA++)
-            {
-                // For each pixel in this row
-                for (int xA = 0; xA < widthA; xA++)
-                {
-                    // Calculate this pixel's location in B
-                    Vector2 positionInB =
-                        Vector2.Transform(new Vector2(xA, yA), transformAToB);
-
-                    // Round to the nearest pixel
-                    int xB = (int)Math.Round(positionInB.X);
-                    int yB = (int)Math.Round(positionInB.Y);
-
-                    // If the pixel lies within the bounds of B
-                    if (0 <= xB && xB < widthB &&
-                        0 <= yB && yB < heightB)
-                    {
-                        // Get the colors of the overlapping pixels
-                        Color colorA = dataA[xA + yA * widthA];
-                        Color colorB = dataB[xB + yB * widthB];
-
-                        // If both pixels are not completely transparent,
-                        if (colorA.A != 0 && colorB.A != 0)
-                        {
-                            // then an intersection has been found
-                            return true;
-                        }
-                    }
-                }
-            }
-
-            // No intersection found
-            return false;
-        }
-        
-
-        #endregion*/
     }
 }

@@ -220,6 +220,7 @@ namespace Auction_Boxing_2
         {
             get { return levellevel; }
         }
+        public Rectangle platform;
 
         public float currentVerticalSpeed = 0;
         public float currentHorizontalSpeed = 0;
@@ -287,8 +288,8 @@ namespace Auction_Boxing_2
             get { return state.isAttack; }//return (state is StatePunch || state is StateCaneBonk); }
         }
 
-        public float scale = 4;
-        Vector3 scales = new Vector3(4, 4, 1); // maybe z should be 0?
+        public float scale = 2;
+        Vector3 scales = new Vector3(2, 2, 1); // maybe z should be 0?
         float rotation = 0;
         private Matrix transform;
 
@@ -368,7 +369,7 @@ namespace Auction_Boxing_2
         public bool isDead;
 
         public BoxingPlayer(Boxing_Manager bm, int playerIndex, Vector2 startPosition, Dictionary<string, Animation> animations, Input_Handler input, Color color,
-            Texture2D blank, Rectangle healthBar)//items)
+            Texture2D blank, Rectangle healthBar, Rectangle platform)//items)
         {
             this.BoxingManager = bm;
 
@@ -385,6 +386,8 @@ namespace Auction_Boxing_2
 
             this.startPosition = startPosition;
             levellevel = startPosition.Y; // start on ground
+            this.platform = platform;
+            levellevel = platform.Y;
 
             this.rHealthBar = healthBar;
             healthBarMaxWidth = healthBar.Width;
@@ -495,6 +498,17 @@ namespace Auction_Boxing_2
             if (!(state is StateJump ))//|| state is StateFall))
             {
                 isFalling = false;
+            }
+
+            if (!(state is StateJump))
+            {
+                if (((position.X + (15 * scale) / 2) < platform.X) || ((position.X - (15 * scale) / 2) > platform.X + platform.Width))
+                {
+                    platform = BoxingManager.GetLowerPlatform(position);
+                    levellevel = platform.Y;
+                    position.Y += 2;
+                    state.ChangeState(new StateFall(this, true));
+                }
             }
 
             UpdateTransform();
@@ -732,7 +746,7 @@ namespace Auction_Boxing_2
             return IntersectPixels(Transform, sprite.Animation.FrameWidth, sprite.Animation.FrameHeight,
                 BoxingManager.GetBitmapData(currentAnimationKey, sprite.FrameIndex, sprite.Animation.FrameWidth, sprite.Animation.FrameHeight),//sprite.GetData(),
                            b.Transform, b.sprite.Animation.FrameWidth, b.sprite.Animation.FrameHeight, 
-                           BoxingManager.GetBitmapData(b.currentAnimationKey, b.sprite.FrameIndex, b.sprite.Animation.FrameWidth, b.sprite.Animation.FrameHeight));//b.sprite.GetData());
+                          b.sprite.GetData());//b.sprite.GetData());
         }
 
         /// <summary>
@@ -789,9 +803,15 @@ namespace Auction_Boxing_2
                         Color colorB = dataB[xB + yB * widthB];
 
                         // If both pixels are not completely transparent,
-                        if (colorA.A != 0 && colorB.A != 0)
+                        /*if (colorA.A != 0 && colorB.A != 0)
                         {
                             // then an intersection has been found
+                            return true;
+                        }*/
+                        //Debug.WriteLine(colorA);
+                        if (colorA == Color.Red && colorB.A != 0)
+                        {
+                            Debug.WriteLine(colorA);
                             return true;
                         }
 

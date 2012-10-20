@@ -60,13 +60,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Boxing\Boxing_Background_0.png">
-      <Name>Boxing_Background_0</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="Auction\Podium.png">
       <Name>Podium</Name>
       <Importer>TextureImporter</Importer>
@@ -339,6 +332,30 @@
   <ItemGroup>
     <Compile Include="BoxingItems\BowlerHat_Instance.png">
       <Name>BowlerHat_Instance</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Boxing\Bitmaps\Player_Cane_Bitmap.png">
+      <Name>Player_Cane_Bitmap</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Boxing\Bitmaps\Player_Cane_Pull_Bitmap.png">
+      <Name>Player_Cane_Pull_Bitmap</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+    <Compile Include="Boxing\Bitmaps\Player_Punch_Bitmap.png">
+      <Name>Player_Punch_Bitmap</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Boxing\AB Background.png">
+      <Name>AB Background</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>

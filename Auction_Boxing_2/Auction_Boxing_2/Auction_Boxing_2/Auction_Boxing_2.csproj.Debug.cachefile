@@ -5,7 +5,6 @@ Content\LoadOutDisplayFont.xnb
 Content\LoadOutFont.xnb
 Content\White.xnb
 Content\Auction\Stage_Background.xnb
-Content\Boxing\Boxing_Background_0.xnb
 Content\Auction\Podium.xnb
 Content\Auction\Auctioneer.xnb
 Content\Auction\Item_Stand.xnb
@@ -48,3 +47,7 @@ Content\BoxingItems\Player_Revolver_Hit.xnb
 Content\Boxing\Player_Duck.xnb
 Content\BoxingItems\Player_Revolver_Reload.xnb
 Content\BoxingItems\BowlerHat_Instance.xnb
+Content\Boxing\Bitmaps\Player_Cane_Bitmap.xnb
+Content\Boxing\Bitmaps\Player_Cane_Pull_Bitmap.xnb
+Content\Boxing\Bitmaps\Player_Punch_Bitmap.xnb
+Content\Boxing\AB Background.xnb
