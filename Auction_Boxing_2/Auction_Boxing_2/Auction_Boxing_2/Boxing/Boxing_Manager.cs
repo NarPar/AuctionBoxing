@@ -61,6 +61,11 @@ namespace Auction_Boxing_2
         Dictionary<string, Animation> playerAnims = new Dictionary<string, Animation>();
         Dictionary<string, Animation> itemAnims = new Dictionary<string, Animation>();
         Dictionary<string, BitMap> bitmaps = new Dictionary<string, BitMap>();
+        string[] animKeys;
+        Texture2D[] animTextureTemplates;
+        float[] animFrameTimes;
+        int[] animFrameWidths;
+        bool[] animLooping;
 
         SpriteFont font;
 
@@ -182,36 +187,66 @@ namespace Auction_Boxing_2
 
         public void LoadContent(ContentManager Content)
         {
+            //Change to using a text file!!
+
             // Create animation library to pass to players.
+
+            animKeys = new string[] {
+                "Idle",
+                "Walk",
+                "Run",
+                "Jump",
+                "Land",
+                "Punch",
+                "PunchHit",
+                "Dodge",
+                "Block",
+                "Down",
+                "Duck",
+                "CaneBonk",
+                "CaneHit",
+                "CanePull",
+                "CaneBalance",
+                "RevolverShoot",
+                "RevolverHit",
+                "RevolverReload",
+                "BowlerThrow",
+                "BowlerCatch",
+                "BowlerRethrow" };
+                
 
             #region set frame width
 
+            animFrameWidths = new int[] {
+                15,
+                12,
+                27,
+                20,
+                18,
+                37,
+                34,
+                17,
+                15,
+                43,
+                16,
+
+                54,
+                19,
+                76,
+                28,
+            
+                56,
+                15,
+                56,
+            
+                34,
+                37,
+                34
+                };
+
+            
+
             // frame widths
-            int wIdle = 15;
-            int wWalk = 12;
-            int wRun = 27;
-            int wJump = 20;
-            int wLand = 18;
-            int wPunch = 37;
-            int wPunchHit = 34;
-            int wDodge = 17;
-            int wBlock = 15;
-            int wDown = 43;
-            int wDuck = 16;
-
-            // item frame widths
-            int wCaneBonk = 54;
-            int wCaneHit = 19;
-            int wCanePull = 76;
-            int wCaneBalance = 28;
-
-            int wRevolverShoot = 56;
-            int wRevolverHit = 15;
-            int wRevolverReload = 56;
-
-            int wBowlerThrow = 34;
-            int wBowlerCatch = 37;
-            int wBowlerReThrow = 34;
 
             int wBowlerHat = 6;
             
@@ -219,38 +254,39 @@ namespace Auction_Boxing_2
 
             #region set frame times
 
-            // frame times
-            float fIdle = 0.1f;
-            float fWalk = 0.1f;
-            float fRun = 0.05f;
-            float fJump = 0.1f;
-            float fLand = 0.1f;
-            float fPunch = 0.09f;
-            float fPunchHit = 0.1f;
-            float fDodge = 0.05f;
-            float fBlock = 0.1f;
-            float fDown = 0.08f;
-            float fDuck = 0.08f;
+            animFrameTimes = new float[] { 
 
-            // item frame times
-            float fCaneBonk = 0.1f;
-            float fCaneHit = 0.1f;
-            float fCanePull = 0.1f;
-            float fCaneBalance = 0.1f;
+                0.1f,
+                0.1f,
+                0.05f,
+                0.1f,
+                0.1f,
+                0.09f,
+                0.1f,
+                0.05f,
+                0.1f,
+                0.08f,
+                0.08f,
 
-            float fRevolverShoot = 0.1f;
-            float fRevolverHit = 0.05f;
-            float fRevolverReload = 0.1f;
+                0.1f,
+                0.1f,
+                0.1f,
+                0.1f,
 
-            float fBowlerThrow = 0.1f;
-            float fBowlerCatch = 0.1f;
-            float fBowlerReThrow = 0.1f;
+                0.1f,
+                0.05f,
+                0.1f,
+
+                0.1f,
+                0.1f,
+                0.1f
+                };
 
             #endregion
 
             #region load textures
 
-            // Load textures
+            /*// Load textures
             Texture2D idle = Content.Load<Texture2D>("Boxing/Player_Idle_Side");
             Texture2D walk = Content.Load<Texture2D>("Boxing/Player_Walking_Side");
             Texture2D run = Content.Load<Texture2D>("Boxing/Player_Running_Side");
@@ -277,44 +313,88 @@ namespace Auction_Boxing_2
             Texture2D bowlerCatch = Content.Load<Texture2D>("BoxingItems/Player_BowlerHat_Catch");
             Texture2D bowlerReThrow = Content.Load<Texture2D>("BoxingItems/Player_BowlerHat_ReThrow");
 
-            // item textures
-            
-            Texture2D bowlerHat = Content.Load<Texture2D>("BoxingItems/BowlerHat_Instance");
-
+        */
             #endregion
 
             #region initialize animations
 
+            animLooping = new bool[] {
+                true,
+                true,
+                true,
+                false,
+                true,
+                false,
+                true,
+                true,
+                true,
+                false,
+                false,
+
+                false,
+                false,
+                false,
+                false,
+
+                false,
+                false,
+                false,
+
+                false,
+                false,
+                false
+                };
+
             // Initialize animations;
-            playerAnims.Add("Idle", new Animation(idle, fIdle, true, wIdle));
-            playerAnims.Add("Walk", new Animation(walk, fWalk, true, wWalk));
-            playerAnims.Add("Run", new Animation(run, fRun, true, wRun));
-            playerAnims.Add("Jump", new Animation(jump, fJump, false, wJump));
-            playerAnims.Add("Land", new Animation(land, fLand, true, wLand));
-            playerAnims.Add("Punch", new Animation(punch, fPunch, false, wPunch));
-            playerAnims.Add("PunchHit", new Animation(punchHit, fPunchHit, true, wPunchHit));
-            playerAnims.Add("Dodge", new Animation(dodge, fDodge, true, wDodge));
-            playerAnims.Add("Block", new Animation(block, fBlock, true, wBlock));
-            playerAnims.Add("Down", new Animation(down, fDown, false, wDown));
-            playerAnims.Add("Duck", new Animation(duck, fDuck, false, wDuck));
+            /*animations.Add("Idle", new Animation(idle, fIdle, true, wIdle));
+            animations.Add("Walk", new Animation(walk, fWalk, true, wWalk));
+            animations.Add("Run", new Animation(run, fRun, true, wRun));
+            animations.Add("Jump", new Animation(jump, fJump, false, wJump));
+            animations.Add("Land", new Animation(land, fLand, true, wLand));
+            animations.Add("Punch", new Animation(punch, fPunch, false, wPunch));
+            animations.Add("PunchHit", new Animation(punchHit, fPunchHit, true, wPunchHit));
+            animations.Add("Dodge", new Animation(dodge, fDodge, true, wDodge));
+            animations.Add("Block", new Animation(block, fBlock, true, wBlock));
+            animations.Add("Down", new Animation(down, fDown, false, wDown));
+            animations.Add("Duck", new Animation(duck, fDuck, false, wDuck));
+			
+            animations.Add("RevolverShoot", new Animation(revolverShoot, fRevolverShoot, false, wRevolverShoot));
+            animations.Add("RevolverHit", new Animation(revolverHit, fRevolverHit, false, wRevolverHit));
+            animations.Add("RevolverReload", new Animation(revolverReload, fRevolverReload, false, wRevolverReload));
 
-            // player item use animations
-            playerAnims.Add("CaneBonk", new Animation(caneBonk, fCaneBonk, false, wCaneBonk));
-            playerAnims.Add("CaneHit", new Animation(caneHit, fCaneHit, false, wCaneHit));
-            playerAnims.Add("CanePull", new Animation(canePull, fCanePull, false, wCanePull));
-            playerAnims.Add("CaneBalance", new Animation(caneBalance, fCaneBalance, false, wCaneBalance));
-
-            playerAnims.Add("RevolverShoot", new Animation(revolverShoot, fRevolverShoot, false, wRevolverShoot));
-            playerAnims.Add("RevolverHit", new Animation(revolverHit, fRevolverHit, false, wRevolverHit));
-            playerAnims.Add("RevolverReload", new Animation(revolverReload, fRevolverReload, false, wRevolverReload));
-
-            playerAnims.Add("bowlerThrow", new Animation(bowlerThrow, fBowlerThrow, false, wBowlerThrow));
-            playerAnims.Add("bowlerCatch", new Animation(bowlerCatch, fBowlerCatch, false, wBowlerCatch));
-            playerAnims.Add("bowlerReThrow", new Animation(bowlerReThrow, fBowlerReThrow, false, wBowlerReThrow));
+            animations.Add("bowlerThrow", new Animation(bowlerThrow, fBowlerThrow, false, wBowlerThrow));
+            animations.Add("bowlerCatch", new Animation(bowlerCatch, fBowlerCatch, false, wBowlerCatch));
+            animations.Add("bowlerReThrow", new Animation(bowlerReThrow, fBowlerReThrow, false, wBowlerReThrow));
+            */
 
             // item animations
 
             itemAnims.Add("bowlerHat", new Animation(bowlerHat, 1f, true, wBowlerHat));
+			
+            // Template textures to be used when re-coloring them
+            animTextureTemplates = new Texture2D[] {
+                Content.Load<Texture2D>("Boxing/Player_Idle_Side"),
+                Content.Load<Texture2D>("Boxing/Player_Walking_Side"),
+                Content.Load<Texture2D>("Boxing/Player_Running_Side"),
+                Content.Load<Texture2D>("Boxing/Player_Jump"),
+                Content.Load<Texture2D>("Boxing/Player_Land"),
+                Content.Load<Texture2D>("Boxing/Player_Punch"),
+                Content.Load<Texture2D>("Boxing/Player_Punch_Hit"),
+                Content.Load<Texture2D>("Boxing/Player_Dodge"),
+                Content.Load<Texture2D>("Boxing/Player_Block"),
+                Content.Load<Texture2D>("Boxing/Player_Knocked_Down"),
+                Content.Load<Texture2D>("Boxing/Player_Duck"),
+                Content.Load<Texture2D>("BoxingItems/Player_Cane"),
+                Content.Load<Texture2D>("BoxingItems/Player_Cane_Hit"),
+                Content.Load<Texture2D>("BoxingItems/Player_Cane_Pull"),
+                Content.Load<Texture2D>("BoxingItems/Player_Cane_Balance"),
+                Content.Load<Texture2D>("BoxingItems/Player_Revolver"),
+                Content.Load<Texture2D>("BoxingItems/Player_Revolver_Hit"),
+                Content.Load<Texture2D>("BoxingItems/Player_Revolver_Reload"),
+                Content.Load<Texture2D>("BoxingItems/Player_BowlerHat"),
+                Content.Load<Texture2D>("BoxingItems/Player_BowlerHat_Catch"),
+                Content.Load<Texture2D>("BoxingItems/Player_BowlerHat_ReThrow")
+                };
 
             #endregion
 
@@ -327,13 +407,55 @@ namespace Auction_Boxing_2
         }
 
         // Apply's settings gathered before the boxing begins.
-        public void ApplySettings(Color[] colors)
+        public void ApplySettings(Color[] colors, GraphicsDevice graphicsDevice)
         {
+            //Need to make copies of the textures recolored with the players selected color
             for(int i = 0; i < 4; i++)
             {
-                if(colors[i] != Color.Transparent)
-                    players[i] = new BoxingPlayer(this, i, playerStartPositions[i], playerAnims, inputs[i], colors[i], blank,
+                // If the color is transparent, the player isn't playing.
+                if (colors[i] != Color.Transparent)
+                {
+                    // The players dictionary of animations
+                    Dictionary<string, Animation> coloredAnims = new Dictionary<string, Animation>();
+
+                    Debug.WriteLine("Number of textures to recolor: " + animTextureTemplates.Length);
+                    // loop through each template texture and recolor it
+                    for(int j = 0; j < animTextureTemplates.Length; j++)
+                    {
+                        Debug.WriteLine("index = " + j);
+                        Texture2D template = animTextureTemplates[j];// template
+                        Texture2D t = new Texture2D(graphicsDevice, template.Width, template.Height); //colored
+                        Color[] c = new Color[template.Width * template.Height];
+                        template.GetData(c);
+
+                        int count = 0;
+
+                        // Replace magenta pixels with the color
+                        for (int k = 0; k < c.Length; k++)
+                        {
+                            // This is awesome!
+                            if (c[k] == Color.Magenta || (c[k].R == 254 && c[k].G == 0 && c[k].B == 254)
+                                || (c[k].R == 253 && c[k].G == 0 && c[k].B == 253)
+                                || (c[k].R == 252 && c[k].G == 0 && c[k].B == 252)
+                                || (c[k].R == 251 && c[k].G == 0 && c[k].B == 251))
+                            {
+                                count++;
+                                c[k] = colors[i];
+                            }
+
+                        }
+
+                        Debug.WriteLine("# of magenta pixels in animation = " + count);
+
+                        t.SetData(c); // set the data
+
+                        // add it to the available list
+                        coloredAnims.Add(animKeys[j], new Animation(t,animFrameTimes[j],animLooping[j],animFrameWidths[j]));
+                    }
+
+                    players[i] = new BoxingPlayer(this, i, playerStartPositions[i], coloredAnims, inputs[i], colors[i], blank,
                         healthBarDimensions, level.platforms[level.platforms.Length - 1]); // Figure out the boxing players.
+                }
             }
         }
 

@@ -111,7 +111,7 @@ namespace Auction_Boxing_2
         // Handles the transition from player select to the brawl
         public void HandlePlayersReady(Color[] colors)
         {
-            boxingManager.ApplySettings(colors);
+            boxingManager.ApplySettings(colors,game.GraphicsDevice);
             state = brawlgamestate.brawl;
             playerSelect.OnReady -= HandlePlayersReady;
 

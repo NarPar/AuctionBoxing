@@ -566,7 +566,7 @@ namespace Auction_Boxing_2
             rHealthBar.Y = (int)position.Y;// +GetHeight;
             spriteBatch.Draw(blank, rHealthBar, Color.Red);
             //sprite.Draw(gameTime, spriteBatch, BoundingRectangle, 0, color, spriteEffect);
-            sprite.Draw(gameTime, spriteBatch, color, position, rotation, Origin, scale, spriteEffect);
+            sprite.Draw(gameTime, spriteBatch, Color.White, position, rotation, Origin, scale, spriteEffect);
         }
 
         // Add a key to the list

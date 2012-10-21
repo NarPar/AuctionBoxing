@@ -16,7 +16,7 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
         State originalState;
 
         public StateBowlerHatCatch(BoxingPlayer player, BowlerHatInstance hat, State originalState)
-            : base(player, "bowlerCatch")
+            : base(player, "BowlerCatch")
         {
             this.hat = hat;
             this.originalState = originalState;

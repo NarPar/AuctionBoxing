@@ -21,7 +21,7 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
         int itemIndex;
 
         public StateBowlerHatThrow(int itemIndex, BoxingPlayer player)
-            : base(player, "bowlerThrow")
+            : base(player, "BowlerThrow")
         {
             holdTimer = MAX_HOLD_TIME;
         }

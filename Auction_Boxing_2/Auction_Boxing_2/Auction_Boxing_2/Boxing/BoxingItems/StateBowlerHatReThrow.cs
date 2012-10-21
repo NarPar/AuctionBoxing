@@ -11,7 +11,7 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
     class StateBowlerHatReThrow : State
     {
         public StateBowlerHatReThrow(int itemIndex, BoxingPlayer player)
-            : base(player, "bowlerReThrow")
+            : base(player, "BowlerRethrow")
         {
 
         }
