@@ -9,6 +9,21 @@ using System.Diagnostics;
 
 namespace Auction_Boxing_2
 {
+    /// <summary>
+    /// Holds a color and a texture with that color.
+    /// </summary>
+    class SelectionContent
+    {
+        public Color color;
+        public Texture2D texture;
+        public SelectionContent(Color color, Texture2D texture)
+        {
+            this.color = color;
+            this.texture = texture;
+        }
+    }
+
+
     /* Initializes players then
      * waits for players to join, configure their control settings, and ready 
      * 
@@ -40,7 +55,8 @@ namespace Auction_Boxing_2
             Color.Lavender, Color.SlateGray, Color.Maroon, Color.MediumSeaGreen };
 
         // The available textures.
-        List<Texture2D> availableTextures = new List<Texture2D>();
+        List<SelectionContent> availableSelections = new List<SelectionContent>();
+
 
         Color[] playerColors = new Color[4];
 
@@ -109,9 +125,8 @@ namespace Auction_Boxing_2
                 
                 t.SetData(c); // set the data
                 // add it to the available list
-                availableTextures.Add(t);
+                availableSelections.Add(new SelectionContent(colors[i], t));
             }
-            Debug.WriteLine("# of colors = " + availableTextures.Count);
         }
 
         /// <summary>
@@ -120,13 +135,13 @@ namespace Auction_Boxing_2
         /// </summary>
         /// <param name="texturetobeswitched">The texture the player currently has</param>
         /// <returns></returns>
-        public Texture2D GetColor(Texture2D texturetobeswitched, bool l)
+        public SelectionContent GetColor(SelectionContent texturetobeswitched, bool l)
         {
-            if (availableTextures.Count > 0)
+            if (availableSelections.Count > 0)
             {
 
                 int pop = 0;
-                int push = availableTextures.Count - 1;
+                int push = availableSelections.Count - 1;
 
                 if (l)
                 {
@@ -134,10 +149,10 @@ namespace Auction_Boxing_2
                     push = 0;
                 }
 
-                Texture2D t = availableTextures[pop];
-                availableTextures.RemoveAt(pop);
+                SelectionContent t = availableSelections[pop];
+                availableSelections.RemoveAt(pop);
 
-                availableTextures.Insert(push, texturetobeswitched);
+                availableSelections.Insert(push, texturetobeswitched);
 
                 return t;
             }
@@ -176,7 +191,7 @@ namespace Auction_Boxing_2
                 for (int i = 0; i < 4; i++)
                 {
                     if (playerAdded[i])
-                        playerColors[i] = menus[i].color;
+                        playerColors[i] = menus[i].selection.color;
                     else
                         playerColors[i] = Color.Transparent;
                 }
@@ -210,14 +225,11 @@ namespace Auction_Boxing_2
                             // Enable input for the menu
                             inputs[i].OnKeyRelease += menus[i].ChangeIndex;
 
-                            if (availableTextures.Count > 0)
+                            if (availableSelections.Count > 0)
                             {
-                                menus[i].currentTexture = availableTextures[0];
-                                availableTextures.RemoveAt(0);
-                                Debug.WriteLine("texture set! " + menus[i].currentTexture);
+                                menus[i].selection = availableSelections[0];
+                                availableSelections.RemoveAt(0);
                             }
-                            else
-                                Debug.WriteLine("Queue empty!");
                         }
                         else
                         {

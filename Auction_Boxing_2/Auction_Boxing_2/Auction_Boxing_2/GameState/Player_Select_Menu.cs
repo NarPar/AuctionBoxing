@@ -10,11 +10,7 @@ namespace Auction_Boxing_2
 {
     class Player_Select_Menu
     {
-        Texture2D player;
-        public Color color;
-
-        public Texture2D currentTexture;
-
+        public SelectionContent selection; // contains the color and texture being displayed
         Rectangle bounds;
 
         Vector2 vTitle;
@@ -33,25 +29,20 @@ namespace Auction_Boxing_2
 
         }
 
-        public void Activate()
-        {
-            // color = colors[colorIndex];
-        }
-
         public void ChangeIndex(int playerIndex, KeyPressed key)
         {
             if (key == KeyPressed.Left)
-                currentTexture = popup.GetColor(currentTexture, true);
+                selection = popup.GetColor(selection, true);
             else if (key == KeyPressed.Right)
-                currentTexture = popup.GetColor(currentTexture, false);
+                selection = popup.GetColor(selection, false);
         }
 
         public void Draw(SpriteBatch spriteBatch, SpriteFont font)
         {
             spriteBatch.DrawString(font, "Color Select", vTitle, Color.White);
 
-            spriteBatch.Draw(currentTexture, new Rectangle(bounds.X + bounds.Width / 2 - (currentTexture.Width / 2) * 4,
-                bounds.Y + bounds.Height / 2 - (currentTexture.Height / 2) * 4, 4 * currentTexture.Width, 4 * currentTexture.Height), Color.White);
+            spriteBatch.Draw(selection.texture, new Rectangle(bounds.X + bounds.Width / 2 - (selection.texture.Width / 2) * 4,
+                bounds.Y + bounds.Height / 2 - (selection.texture.Height / 2) * 4, 4 * selection.texture.Width, 4 * selection.texture.Height), Color.White);
         }
     }
 }

@@ -19,7 +19,7 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
         int itemIndex;
 
         public StateBowlerHatThrow(int itemIndex, BoxingPlayer player)
-            : base(player, "bowlerThrow")
+            : base(player, "BowlerThrow")
         {
             this.itemIndex = itemIndex;
             holdTimer = holdTime;

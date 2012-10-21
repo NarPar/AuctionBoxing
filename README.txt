@@ -41,3 +41,59 @@ Items:
 -monacle laser (focussing lenseflare effect)
 -boot charge (combo to run, button to tackle, button again to recover)
 
+animation info:
+
+Widths:
+
+idle = 15
+wWalk = 12;
+wRun = 27;
+wJump = 20;
+wLand = 18;
+wPunch = 37;
+wPunchHit = 34;
+wDodge = 17;
+wBlock = 15;
+wDown = 43;
+wDuck = 16;
+
+wCaneBonk = 54;
+wCaneHit = 19;
+wCanePull = 76;
+wCaneBalance = 28;
+
+wRevolverShoot = 56;
+wRevolverHit = 15;
+wRevolverReload = 56;
+
+wBowlerThrow = 34;
+wBowlerCatch = 37;
+wBowlerReThrow = 34;
+
+frame times:
+
+                0.1f,
+                0.1f,
+                0.05f,
+                0.1f,
+                0.1f,
+                0.09f,
+                0.1f;
+                0.05f;
+                0.1f;
+                0.08f;
+                0.08f;
+
+            // item frame times
+                0.1f;
+                0.1f;
+                0.1f;
+                0.1f;
+
+                0.1f;
+                0.05f;
+                0.1f;
+
+                0.1f;
+                0.1f;
+                0.1f;
