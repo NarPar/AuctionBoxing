@@ -104,12 +104,22 @@ namespace Auction_Boxing_2
             xinflation = (desiredwidth - width) / 2;
             raw.Inflate(xinflation, yinflation);
 
+
+            if (raw.Width <= width)
+            {
+                var widthdiff = width - raw.Width;
+                var heightdiff = widthdiff / aspectration;
+                raw.Inflate((int)widthdiff, (int)heightdiff);
+            }
+
             //special cases for when the calculated rectangle is too large or goes over the
             // edge of the screen
             if (raw.X <= 0) raw.X = 0;
             if (raw.Y <= 0) raw.Y = 0;
             if (raw.X + raw.Width >= screenbounds.Width) raw.X = screenbounds.Width - raw.Width;
             if (raw.Y + raw.Height >= screenbounds.Height) raw.Y = screenbounds.Height - raw.Height;
+
+        
 
             if (raw.X <= 0 && raw.Width >= screenbounds.Width)
             {
