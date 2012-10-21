@@ -278,7 +278,7 @@ namespace Auction_Boxing_2
                 0.1f,
 
                 0.1f,
-                0.1f,
+                0.05f,
                 0.1f
                 };
 
@@ -344,6 +344,8 @@ namespace Auction_Boxing_2
                 false,
                 false
                 };
+
+            Texture2D bowlerHat = Content.Load<Texture2D>("BoxingItems/BowlerHat_Instance");
 
             // Initialize animations;
             /*animations.Add("Idle", new Animation(idle, fIdle, true, wIdle));
