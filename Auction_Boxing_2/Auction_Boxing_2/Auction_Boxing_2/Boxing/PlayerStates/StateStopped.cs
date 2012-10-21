@@ -11,14 +11,14 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
 {
     public class StateStopped : State
     {
-        float decceleration = 500;
+        float deceleration = 500;
         float gravity = 375f;
-
 
         public StateStopped(BoxingPlayer player)
             : base(player, "Idle")
         {
             canCombo = true;
+            canCatch = true;
         }
 
         public override void Update(GameTime gameTime)

@@ -13,7 +13,7 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
         public StateLand(BoxingPlayer player)
             : base(player, "Land")
         {
-
+            canCatch = true;
         }
 
         public override void Update(GameTime gameTime)

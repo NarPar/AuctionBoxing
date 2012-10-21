@@ -67,7 +67,8 @@ namespace Auction_Boxing_2
 
         List<string> StateNames = new List<string>();
 
-        Dictionary<string, Animation> animations = new Dictionary<string, Animation>();
+        Dictionary<string, Animation> playerAnims = new Dictionary<string, Animation>();
+        Dictionary<string, Animation> itemAnims = new Dictionary<string, Animation>();
         Dictionary<string, BitMap> bitmaps = new Dictionary<string, BitMap>();
         string[] animKeys;
         Texture2D[] animTextureTemplates;
@@ -79,8 +80,19 @@ namespace Auction_Boxing_2
 
         Texture2D blank;
 
-        //When players use items, the item attacks manifest as objects.
-        //List<ItemInstance> itemInstances = new List<ItemInstance>();
+        // When players use items, the item attacks manifest as objects.
+        public List<ItemInstance> itemInstances;
+        int instanceID = 0;
+
+        public void addBowlerHat(BoxingPlayer p)
+        {
+            itemInstances.Add(new BowlerHatInstance(p, itemAnims, instanceID++));
+        }
+
+        public void removeBowlerHat(BowlerHatInstance hat)
+        {
+            itemInstances.Remove(hat);
+        }
 
         Vector2[] playerStartPositions = new Vector2[4];
 
@@ -176,6 +188,7 @@ namespace Auction_Boxing_2
             //level.platforms[level.platforms.Length - 1].Y = (int)playerStartPositions[0].Y;
 
             NumRounds = 1;
+            itemInstances = new List<ItemInstance>();
 
             healthBarDimensions = new Rectangle(0, 0, ClientBounds.Width / 16, ClientBounds.Height / 80);
 
@@ -246,8 +259,9 @@ namespace Auction_Boxing_2
             
 
             // frame widths
-            
 
+            int wBowlerHat = 6;
+            
             #endregion
 
             #region set frame times
@@ -297,7 +311,7 @@ namespace Auction_Boxing_2
             Texture2D down = Content.Load<Texture2D>("Boxing/Player_Knocked_Down");
             Texture2D duck = Content.Load<Texture2D>("Boxing/Player_Duck");
 
-            // item textures
+            // player item use textures
             Texture2D caneBonk = Content.Load<Texture2D>("BoxingItems/Player_Cane");
             Texture2D caneHit = Content.Load<Texture2D>("BoxingItems/Player_Cane_Hit");
             Texture2D canePull = Content.Load<Texture2D>("BoxingItems/Player_Cane_Pull");
@@ -310,6 +324,7 @@ namespace Auction_Boxing_2
             Texture2D bowlerThrow = Content.Load<Texture2D>("BoxingItems/Player_BowlerHat");
             Texture2D bowlerCatch = Content.Load<Texture2D>("BoxingItems/Player_BowlerHat_Catch");
             Texture2D bowlerReThrow = Content.Load<Texture2D>("BoxingItems/Player_BowlerHat_ReThrow");
+
         */
             #endregion
 
@@ -354,13 +369,7 @@ namespace Auction_Boxing_2
             animations.Add("Block", new Animation(block, fBlock, true, wBlock));
             animations.Add("Down", new Animation(down, fDown, false, wDown));
             animations.Add("Duck", new Animation(duck, fDuck, false, wDuck));
-
-            // item animations
-            animations.Add("CaneBonk", new Animation(caneBonk, fCaneBonk, false, wCaneBonk));
-            animations.Add("CaneHit", new Animation(caneHit, fCaneHit, false, wCaneHit));
-            animations.Add("CanePull", new Animation(canePull, fCanePull, false, wCanePull));
-            animations.Add("CaneBalance", new Animation(caneBalance, fCaneBalance, false, wCaneBalance));
-
+			
             animations.Add("RevolverShoot", new Animation(revolverShoot, fRevolverShoot, false, wRevolverShoot));
             animations.Add("RevolverHit", new Animation(revolverHit, fRevolverHit, false, wRevolverHit));
             animations.Add("RevolverReload", new Animation(revolverReload, fRevolverReload, false, wRevolverReload));
@@ -370,6 +379,10 @@ namespace Auction_Boxing_2
             animations.Add("bowlerReThrow", new Animation(bowlerReThrow, fBowlerReThrow, false, wBowlerReThrow));
             */
 
+            // item animations
+
+            itemAnims.Add("bowlerHat", new Animation(bowlerHat, 1f, true, wBowlerHat));
+			
             // Template textures to be used when re-coloring them
             animTextureTemplates = new Texture2D[] {
                 Content.Load<Texture2D>("Boxing/Player_Idle_Side"),
@@ -475,6 +488,9 @@ namespace Auction_Boxing_2
 
             Debug.WriteLine("num of players = " + numberOfPlayers);
 
+            // reset item instances
+            itemInstances.Clear();
+
             deadCount = 0;
             isRoundOver = false;
         }
@@ -539,6 +555,11 @@ namespace Auction_Boxing_2
                     break;
                 // Will handle all the logic for the boxing; player updates, collision, etc.
                 case(boxingstate.box):
+                    foreach (ItemInstance item in itemInstances)
+                    {
+                        item.Update(gameTime);
+                        HandleCollisions(item);
+                    }
                     for(int i = 0; i < 4; i++)
                     {
                         BoxingPlayer player = players[i];
@@ -719,6 +740,20 @@ namespace Auction_Boxing_2
             return false;
         }*/
 
+        public void HandleCollisions(ItemInstance item)
+        {
+            // For attacking player-on-player collision (Uses per pixel)
+            for (int i = 0; i < 4; i++)
+            {
+                if (players[i] != null && !players[i].isDead)
+                {
+                    if (players[i] != item.player) // collision with unfriendly player
+                    {
+                        // TODO : check for collision with player
+                    }
+                }
+            }
+        }
 
         public void HandleCollisions(int player)
         {
@@ -849,6 +884,11 @@ namespace Auction_Boxing_2
                     //    spriteBatch.Draw(background, bounds, Color.White);
 
                     level.Draw(spriteBatch);
+
+                    foreach (ItemInstance item in itemInstances)
+                    {
+                        item.Draw(gameTime, spriteBatch);
+                    }
 
                     // Draw the players
                     foreach (BoxingPlayer player in players)

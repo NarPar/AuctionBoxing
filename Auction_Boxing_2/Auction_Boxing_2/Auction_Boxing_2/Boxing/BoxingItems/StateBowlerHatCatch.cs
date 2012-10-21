@@ -5,22 +5,33 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System.Diagnostics;
+using Auction_Boxing_2.Boxing.PlayerStates;
 
 namespace Auction_Boxing_2.Boxing.PlayerStates
 {
     class StateBowlerHatCatch : State
     {
-        public StateBowlerHatCatch(int itemIndex, BoxingPlayer player)
+        BowlerHatInstance hat;
+        bool hatRemoved = false;
+        State originalState;
+
+        public StateBowlerHatCatch(BoxingPlayer player, BowlerHatInstance hat, State originalState)
             : base(player, "BowlerCatch")
         {
-
+            this.hat = hat;
+            this.originalState = originalState;
         }
 
         public override void Update(GameTime gameTime)
         {
+            if (!hatRemoved)
+            {
+                player.BoxingManager.removeBowlerHat(hat);
+                hatRemoved = true;
+            }
             if (player.sprite.FrameIndex == player.animations[key].FrameCount - 1)
             {
-                    ChangeState(new StateStopped(player));
+                    ChangeState(originalState);
             }
         }
     }

@@ -432,8 +432,6 @@ namespace Auction_Boxing_2
             combinations[3, 1] = KeyPressed.Left;
             combinations[3, 2] = KeyPressed.Attack;
 
-            
-
             // Set players for first round.
             Reset(startPosition);
         }
@@ -458,7 +456,6 @@ namespace Auction_Boxing_2
             // initial state
             this.state = new StateStopped(this);
             
-
             // Set the direction of the player based on which player they are.
             switch (playerIndex)
             {

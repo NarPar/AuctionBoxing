@@ -21,6 +21,7 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
             this.key = key;
             player.currentHorizontalSpeed = player.direction* runSpeed;
             canCombo = true;
+            canCatch = true;
         }
 
         public override void Update(GameTime gameTime)

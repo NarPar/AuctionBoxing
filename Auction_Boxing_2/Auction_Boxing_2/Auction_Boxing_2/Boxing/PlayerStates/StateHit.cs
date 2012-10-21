@@ -8,11 +8,8 @@ using System.Diagnostics;
 
 namespace Auction_Boxing_2.Boxing.PlayerStates
 {
-
     public class StateHit : State
-
     {
-
         //Item item;
         int hitCounter = 0;
         float timer = .3f;
@@ -77,7 +74,6 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
                 }
                 else
                     hitCounter++;
-
             }
 
             if (hitCounter >= 1)
@@ -86,7 +82,6 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
                 player.CurrentHealth -= 20;
             }
         }
-
 
         public override void ChangeState(State state)
         {

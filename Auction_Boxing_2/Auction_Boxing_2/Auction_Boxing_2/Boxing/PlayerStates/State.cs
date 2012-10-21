@@ -14,6 +14,7 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
         protected BoxingPlayer player;
         protected Color color;
         public bool isAttack;
+        public bool canCatch = false;
         protected bool canCombo = false;
         protected bool canAirTime = true;
 
