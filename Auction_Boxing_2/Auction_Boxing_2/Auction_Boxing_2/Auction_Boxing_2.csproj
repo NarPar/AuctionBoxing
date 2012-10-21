@@ -90,6 +90,8 @@
     <Compile Include="Boxing\BoxingItems\ItemInstance.cs" />
     <Compile Include="Boxing\BoxingItems\StateCaneHit.cs" />
     <Compile Include="Boxing\BoxingItems\StateCanePull.cs" />
+    <Compile Include="Boxing\BoxingItems\StateCape.cs" />
+    <Compile Include="Boxing\BoxingItems\StateCapeStuck.cs" />
     <Compile Include="Boxing\BoxingItems\StateCharging.cs" />
     <Compile Include="Boxing\BoxingItems\StateItemBasic.cs" />
     <Compile Include="Boxing\BoxingItems\StateRevolverHit.cs" />

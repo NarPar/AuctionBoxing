@@ -10,18 +10,72 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
 {
     class StateBowlerHatReThrow : State
     {
+        int THROWN_INDEX = 6;
+        bool thrownAgain = false;
+        public bool caught = false;
+        bool hatRemoved = false;
+        BowlerHatInstance hat;
+        float rethrowIncreaseFactor = .2f;
+
         public StateBowlerHatReThrow(int itemIndex, BoxingPlayer player)
             : base(player, "BowlerRethrow")
         {
-
+            canCatch = true;
         }
 
         public override void Update(GameTime gameTime)
         {
-            if (player.sprite.FrameIndex == player.animations[key].FrameCount - 1)
+            // Got the hat? Get rid of it and make a new one
+            // when we're at the throw frame
+            if (hat != null && !hatRemoved)
             {
+                player.BoxingManager.removeBowlerHat(hat);
+                hatRemoved = true;
+
+                player.hasThrownBowlerHat = false;
+                caught = true;
+
+                player.numBowlerReThrows += rethrowIncreaseFactor;
+            }
+
+            // Waiting for the hat to return?
+            if (!thrownAgain && !caught)
+            {
+                // Hold your hand out!
+                if (player.IsKeyDown(KeyPressed.Attack))
+                {
+                    Debug.WriteLine("WAITING TO RETHROW! " + caught);
+                    player.sprite.FrameIndex = 0;
+                }
+                else
+                    // Or stop waiting.
                     ChangeState(new StateStopped(player));
             }
+            else if (!thrownAgain)
+            {
+                if (player.sprite.FrameIndex == THROWN_INDEX) // !hasThrown
+                {
+                    // create hat projectile
+                    player.BoxingManager.addBowlerHat(player, player.numBowlerReThrows);
+                    player.hasThrownBowlerHat = true;
+                    thrownAgain = true;
+                }
+            }
+            else
+            {
+                if (player.sprite.FrameIndex == player.animations[key].FrameCount - 1)
+                {
+                    ChangeState(new StateStopped(player));
+                }
+            }
+
         }
+
+        public void CatchHat(BowlerHatInstance hat)
+        {
+            this.hat = hat;
+        }
+
+        
     }
 }

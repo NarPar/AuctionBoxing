@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Auction_Boxing_2.Boxing.PlayerStates;
+using System.Diagnostics;
 
 namespace Auction_Boxing_2
 {
@@ -18,14 +19,32 @@ namespace Auction_Boxing_2
         public BoxingPlayer player;
 
         public Vector2 position;
+        public int direction;
 
         public Rectangle hitbox;
         public Rectangle sprite_position;
 
-        protected AnimationPlayer sprite;
+        // Pixel collision fields
+        float rotation = 0;
+
+        private Matrix transform;
+        public Matrix Transform
+        {
+            get { return transform; }
+        }
+        public Vector2 Origin
+        {
+            get { return sprite.Origin; } // i believe the origin is at the bottom center.
+        }
+
+
+
+        public AnimationPlayer sprite;
         protected Animation animation;
 
         protected SpriteEffects effect;
+
+
 
         public float damage;
 
@@ -51,7 +70,22 @@ namespace Auction_Boxing_2
 
         public virtual void Update(GameTime gameTime)
         {
-            
+            // Update the matrix transform for pixel collision
+            if (direction == 1)
+            {
+                transform = Matrix.CreateTranslation(new Vector3(-Origin, 0.0f)) *
+                            Matrix.CreateScale(player.scales) *
+                            Matrix.CreateRotationZ(rotation) *
+                            Matrix.CreateTranslation(new Vector3(position, 0.0f));
+            }
+            else
+            {
+                transform = Matrix.CreateTranslation(new Vector3(-Origin, 0.0f)) *
+                            Matrix.CreateScale(player.scales) *
+                            Matrix.CreateRotationZ(rotation) *
+                            Matrix.CreateTranslation(new Vector3(position, 0.0f));
+            }
+        
         }
 
 
@@ -76,7 +110,6 @@ namespace Auction_Boxing_2
     public class BowlerHatInstance : ItemInstance
     {
         int width = 6, height = 4;
-        int direction;
 
         float speed = 300;
         double speedFactor = 1;
@@ -89,12 +122,16 @@ namespace Auction_Boxing_2
 
         Animation anim;
 
-        public BowlerHatInstance(BoxingPlayer player, Dictionary<string, Animation> animations, int id) :
+        public BowlerHatInstance(BoxingPlayer player, Dictionary<string, Animation> animations, int id, float speedFactor) :
             base(player, false, id)
         {
             direction = player.direction;
+            damage = 1;
 
-            scale = player.scale;
+            speed *= speedFactor;
+            Debug.WriteLine("Speed = " + speed);
+
+            scale = BoxingPlayer.Scale;
             hatOffset *= scale;
             leftHatOffset *= scale;
             if (direction == -1)
@@ -162,8 +199,18 @@ namespace Auction_Boxing_2
             {
                 if (player.state.canCatch)
                 {
-                    Finished = true;
-                    player.state.ChangeState(new StateBowlerHatCatch(player, this, player.state));
+                    // Is the player waiting to rethrow?
+                    if (player.state is StateBowlerHatReThrow)
+                    {
+                        StateBowlerHatReThrow s = player.state as StateBowlerHatReThrow;
+                        s.CatchHat(this);
+                        Finished = true;
+                    }
+                    else
+                    {
+                        Finished = true;
+                        player.state.ChangeState(new StateBowlerHatCatch(player, this, player.state));
+                    }
                 }
             }
             //for vertical, change to vector2.Distance(start, position);

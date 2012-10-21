@@ -9,17 +9,36 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 namespace Auction_Boxing_2
 {
-    class Camera
+    public class Camera
     {
-        Rectangle drawToRectangle;
+        Rectangle stage; // rectnagle to focus on stage
+        Rectangle fullScreen; // the full screen rectangle
+
+        Rectangle drawToRectangle; // the current focus rectangle
         public Rectangle DrawToRectangle { get { return drawToRectangle; } }
 
         public Camera(Rectangle screenBounds)
         {
+            fullScreen = screenBounds;
+
+            stage = new Rectangle(
+                screenBounds.Width / 4,
+                3 * screenBounds.Height / 7,
+                screenBounds.Width / 2,
+                screenBounds.Height  / 2);
+
             this.drawToRectangle = screenBounds;
         }
 
+        public void FocusStage()
+        {
+            drawToRectangle = stage;
+        }
 
+        public void FocusWholeScreen()
+        {
+            drawToRectangle = fullScreen;
+        }
 
         public void UpdateCamera(List<BoxingPlayer> players, GraphicsDevice graphicsDevice)
         {

@@ -22,12 +22,12 @@ namespace Auction_Boxing_2
 
         public int GetWidth
         {
-            get { return (int)(15 * scale); }
+            get { return (int)(15 * Scale); }
         }
 
         public int GetHeight
         {
-            get { return (int)(38 * scale); }
+            get { return (int)(38 * Scale); }
         }
 
         #region stats
@@ -188,17 +188,6 @@ namespace Auction_Boxing_2
             }
         }
 
-
-
-
-        
-
-        
-
-
-
-        
-
         // for flipping the player 
         SpriteEffects spriteEffect;
 
@@ -246,11 +235,15 @@ namespace Auction_Boxing_2
         public bool isFalling = false;
         public float levellevel;
         public bool isCaught = false; // can't do anything (getting pulled by cane)
+        public float numBowlerReThrows = 1;
+        public bool isFreeingCape = false;
+
 
         #region Items
 
         //public Item[] items = new Item[4];
         public bool isReloadingRevolver = false;
+        public bool hasThrownBowlerHat = false;
 
         bool[] items = new bool[4];
 
@@ -302,8 +295,7 @@ namespace Auction_Boxing_2
             get { return state.isAttack; }//return (state is StatePunch || state is StateCaneBonk); }
         }
 
-        public float scale = 2;
-        Vector3 scales = new Vector3(2, 2, 1); // maybe z should be 0?
+        public Vector3 scales = new Vector3(Scale, Scale, 1); // maybe z should be 0?
         float rotation = 0;
         private Matrix transform;
 
@@ -340,8 +332,8 @@ namespace Auction_Boxing_2
         {
             get
             {
-                int width = (int)(animations[currentAnimationKey].FrameWidth * scale);
-                int height = (int)(animations[currentAnimationKey].FrameHeight * scale);
+                int width = (int)(animations[currentAnimationKey].FrameWidth * Scale);
+                int height = (int)(animations[currentAnimationKey].FrameHeight *Scale);
 
                 return new Rectangle((int)position.X - width / 2, (int)position.Y - height,
                     width, height);
@@ -508,7 +500,7 @@ namespace Auction_Boxing_2
             // If the player walks off a platform, they fall!
             if (!(state is StateJump))
             {
-                if (((position.X + (15 * scale) / 2) < platform.X) || ((position.X - (15 * scale) / 2) > platform.X + platform.Width))
+                if (((position.X + (15 * Scale) / 2) < platform.X) || ((position.X - (15 * Scale) / 2) > platform.X + platform.Width))
                 {
                     platform = BoxingManager.GetLowerPlatform(position);
                     levellevel = platform.Y;
@@ -547,12 +539,12 @@ namespace Auction_Boxing_2
             if (i == -1)
             {
                 spriteEffect = SpriteEffects.FlipHorizontally;
-                scales.X = -1 * scale;
+                scales.X = -1 * Scale;
             }
             else if (i == 1)
             {
                 spriteEffect = SpriteEffects.None;
-                scales.X = scale;
+                scales.X = Scale;
             }
         }
 
@@ -566,7 +558,7 @@ namespace Auction_Boxing_2
             rHealthBar.Y = (int)position.Y;// +GetHeight;
             spriteBatch.Draw(blank, rHealthBar, Color.Red);
             //sprite.Draw(gameTime, spriteBatch, BoundingRectangle, 0, color, spriteEffect);
-            sprite.Draw(gameTime, spriteBatch, Color.White, position, rotation, Origin, scale, spriteEffect);
+            sprite.Draw(gameTime, spriteBatch, Color.White, position, rotation, Origin, Scale, spriteEffect);
         }
 
         // Add a key to the list
@@ -694,7 +686,15 @@ namespace Auction_Boxing_2
             return IntersectPixels(Transform, sprite.Animation.FrameWidth, sprite.Animation.FrameHeight,
                 BoxingManager.GetBitmapData(currentAnimationKey, sprite.FrameIndex, sprite.Animation.FrameWidth, sprite.Animation.FrameHeight),//sprite.GetData(),
                            b.Transform, b.sprite.Animation.FrameWidth, b.sprite.Animation.FrameHeight, 
-                          b.sprite.GetData());//b.sprite.GetData());
+                          b.sprite.GetData(), true);//b.sprite.GetData());
+        }
+
+        // Item wrappa!
+        public bool IntersectPixels(ItemInstance item)
+        {
+            return IntersectPixels(Transform, sprite.Animation.FrameWidth, sprite.Animation.FrameHeight, sprite.GetData(),
+                           item.Transform, item.sprite.Animation.FrameWidth, item.sprite.Animation.FrameHeight,
+                          item.sprite.GetData(), false);//b.sprite.GetData());
         }
 
         /// <summary>
@@ -712,7 +712,8 @@ namespace Auction_Boxing_2
         /// <returns>True if non-transparent pixels overlap; false otherwise</returns>
         public static bool IntersectPixels(
             Matrix transformA, int widthA, int heightA, Color[] dataA,
-            Matrix transformB, int widthB, int heightB, Color[] dataB)
+            Matrix transformB, int widthB, int heightB, Color[] dataB,
+            bool attack)
         {
             // Calculate a matrix which transforms from A's local space into
             // world space and then into B's local space
@@ -750,16 +751,20 @@ namespace Auction_Boxing_2
                         Color colorA = dataA[xA + yA * widthA];
                         Color colorB = dataB[xB + yB * widthB];
 
-                        // If both pixels are not completely transparent,
-                        /*if (colorA.A != 0 && colorB.A != 0)
+                        // if attack is false, we're looking at item vs. player.
+                        // so we don't need to check red, any pixel collision will do.
+                        if (!attack)
                         {
-                            // then an intersection has been found
-                            return true;
-                        }*/
-                        //Debug.WriteLine(colorA);
-                        if (colorA == Color.Red && colorB.A != 0)
+                            // If both pixels are not completely transparent,
+                            if (colorA.A != 0 && colorB.A != 0)
+                            {
+                                // then an intersection has been found
+                                return true;
+                            }
+                            //Debug.WriteLine(colorA);
+                        }else if (colorA == Color.Red && colorB.A != 0)
                         {
-                            Debug.WriteLine(colorA);
+                            //Debug.WriteLine(colorA);
                             return true;
                         }
                         /*

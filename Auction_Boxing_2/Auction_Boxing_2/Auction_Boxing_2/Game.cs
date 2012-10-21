@@ -15,7 +15,7 @@ namespace Auction_Boxing_2
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
-        Camera camera;
+        public Camera camera;
         RenderTarget2D renderTarget;
         public Game_State currentState;
         public Input_Handler[] inputs;
@@ -104,9 +104,11 @@ namespace Auction_Boxing_2
             if (currentState is Brawl_Game_State)
             {
                 Brawl_Game_State b = currentState as Brawl_Game_State;
-                if(b.State == brawlgamestate.brawl)
+                if (b.State == brawlgamestate.brawl)
                     camera.UpdateCamera(b.boxingManager.Players, GraphicsDevice);
             }
+            else
+                camera.FocusWholeScreen();
 
             base.Update(gameTime);
         }

@@ -73,7 +73,7 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
             if (shootCounter == 0 && (player.sprite.FrameIndex == 4 || player.sprite.FrameIndex == 5))
             {
                 shootCounter++;
-                BoxingPlayer p = player.BoxingManager.GetPlayerInFront(player, player.position.Y - 7 * player.GetHeight / 9);
+                BoxingPlayer p = player.BoxingManager.GetPlayerInFront(player, player.position.Y - 7 * player.GetHeight / 9, player.direction);
                 if (p != null)
                 {
                     p.state.isHit(p, new StateRevolverHit(p), 5);
@@ -90,7 +90,7 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
 
                 shootCounter++;
 
-                BoxingPlayer p = player.BoxingManager.GetPlayerInFront(player, player.position.Y - 2 * player.GetHeight / 3);
+                BoxingPlayer p = player.BoxingManager.GetPlayerInFront(player, player.position.Y - 2 * player.GetHeight / 3, player.direction);
                 if (p != null)
                 {
                     p.state.isHit(player, new StateRevolverHit(p), 5);

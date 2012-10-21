@@ -20,6 +20,7 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
         {
             this.hat = hat;
             this.originalState = originalState;
+            player.hasThrownBowlerHat = false;
         }
 
         public override void Update(GameTime gameTime)
@@ -28,6 +29,7 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
             {
                 player.BoxingManager.removeBowlerHat(hat);
                 hatRemoved = true;
+                player.numBowlerReThrows = 1;
             }
             if (player.sprite.FrameIndex == player.animations[key].FrameCount - 1)
             {

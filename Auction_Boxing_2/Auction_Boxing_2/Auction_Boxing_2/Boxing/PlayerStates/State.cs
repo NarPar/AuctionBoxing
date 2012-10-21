@@ -87,6 +87,16 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
                 player.state.ChangeState(expectedHitState);
         }
 
+        public virtual void isHitByItem(ItemInstance item, State expectedHitState)
+        {
+            player.CurrentHealth -= item.damage;
+
+            if(player.CurrentHealth <= 0)
+                player.state.ChangeState(new StateKnockedDown(player, item.direction));
+            else
+                player.state.ChangeState(expectedHitState);
+        }
+
         /// <summary>
         /// Handles any effects and damage to the hit player
         /// </summary>
@@ -143,6 +153,7 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
                         ChangeState(new StateRevolverShoot(itemIndex, player));
                         break;
                     case (3):
+                        ChangeState(new StateCape(itemIndex, player));
                         break;
                 }
             }

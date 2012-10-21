@@ -84,9 +84,9 @@ namespace Auction_Boxing_2
         public List<ItemInstance> itemInstances;
         int instanceID = 0;
 
-        public void addBowlerHat(BoxingPlayer p)
+        public void addBowlerHat(BoxingPlayer p, float multiplier)
         {
-            itemInstances.Add(new BowlerHatInstance(p, itemAnims, instanceID++));
+            itemInstances.Add(new BowlerHatInstance(p, itemAnims, instanceID++, multiplier));
         }
 
         public void removeBowlerHat(BowlerHatInstance hat)
@@ -150,11 +150,12 @@ namespace Auction_Boxing_2
         }
 
         public Boxing_Manager(ContentManager content, Rectangle ClientBounds, Input_Handler[] inputs,
-            GraphicsDevice gd)
+            GraphicsDevice gd, Camera camera)
         {
             this.graphicsDevice = gd;
+            this.camera = camera;
 
-            camera = new Camera(ClientBounds);
+            //camera = new Camera(ClientBounds);
 
             this.bounds = new Rectangle(0, 0, ClientBounds.Width, ClientBounds.Height);
             this.inputs = inputs;
@@ -226,7 +227,9 @@ namespace Auction_Boxing_2
                 "RevolverReload",
                 "BowlerThrow",
                 "BowlerCatch",
-                "BowlerRethrow" };
+                "BowlerRethrow",
+                "Cape",
+                "CapeStuck"};
                 
 
             #region set frame width
@@ -255,7 +258,10 @@ namespace Auction_Boxing_2
             
                 34,
                 37,
-                34
+                34,
+
+                54,
+                54
                 };
 
             
@@ -293,6 +299,9 @@ namespace Auction_Boxing_2
 
                 0.1f,
                 0.05f,
+                0.1f,
+
+                0.1f,
                 0.1f
                 };
 
@@ -356,6 +365,9 @@ namespace Auction_Boxing_2
 
                 false,
                 false,
+                false,
+
+                false,
                 false
                 };
 
@@ -409,7 +421,9 @@ namespace Auction_Boxing_2
                 Content.Load<Texture2D>("BoxingItems/Player_Revolver_Reload"),
                 Content.Load<Texture2D>("BoxingItems/Player_BowlerHat"),
                 Content.Load<Texture2D>("BoxingItems/Player_BowlerHat_Catch"),
-                Content.Load<Texture2D>("BoxingItems/Player_BowlerHat_ReThrow")
+                Content.Load<Texture2D>("BoxingItems/Player_BowlerHat_ReThrow"),
+                Content.Load<Texture2D>("BoxingItems/Player_Cape"),
+                Content.Load<Texture2D>("BoxingItems/Player_Cape_Stuck")
                 };
 
             #endregion
@@ -501,7 +515,7 @@ namespace Auction_Boxing_2
         }
 
         // Find the first player in front of player
-        public BoxingPlayer GetPlayerInFront(BoxingPlayer p, float y)
+        public BoxingPlayer GetPlayerInFront(BoxingPlayer p, float y, int direction)
         {
             BoxingPlayer f = null;
 
@@ -511,7 +525,7 @@ namespace Auction_Boxing_2
             {
                 if (players[i] != null && players[i].playerIndex != p.playerIndex && !players[i].isDead)
                 {
-                    if (p.direction == 1
+                    if (direction == 1
                         && players[i].position.X > p.position.X 
                         && y > players[i].position.Y - players[i].GetHeight
                         && y < players[i].position.Y)
@@ -523,7 +537,7 @@ namespace Auction_Boxing_2
                             f = players[i];
                         }
                     }
-                    else if (p.direction == -1
+                    else if (direction == -1
                         && players[i].position.X < p.position.X
                         && y > players[i].position.Y - players[i].GetHeight
                         && y < players[i].position.Y)
@@ -709,6 +723,10 @@ namespace Auction_Boxing_2
             return level.platforms[level.platforms.Length - 1];
         }
 
+        /// <summary>
+        /// Collision of item instances against players!
+        /// </summary>
+        /// <param name="item">The item checking collision</param>
         public void HandleCollisions(ItemInstance item)
         {
             // For attacking player-on-player collision (Uses per pixel)
@@ -718,7 +736,9 @@ namespace Auction_Boxing_2
                 {
                     if (players[i] != item.player) // collision with unfriendly player
                     {
-                        // TODO : check for collision with player
+                        // Check for a collision!
+                        if(players[i].IntersectPixels(item))
+                            players[i].state.isHitByItem(item, new StateHit(players[i]));// TODO : check for collision with player
                     }
                 }
             }
@@ -834,10 +854,12 @@ namespace Auction_Boxing_2
 
                     level.Draw(spriteBatch);
 
+                    Rectangle cameraBounds = camera.DrawToRectangle;
+
                     // Draw the round start count down
                     string s = "Round Starting in\n" + (int)roundStartTimer;
-                    spriteBatch.DrawString(font, s, new Vector2(bounds.Width / 2 - font.MeasureString(s).X,
-                        bounds.Height / 2 - font.MeasureString(s).Y), Color.Yellow);
+                    spriteBatch.DrawString(font, s, new Vector2(cameraBounds.X + cameraBounds.Width / 2 - font.MeasureString(s).X,
+                        cameraBounds.Height + cameraBounds.Height / 2 - font.MeasureString(s).Y), Color.Yellow);
 
                     // Draw the players
                     foreach (BoxingPlayer player in players)
@@ -913,11 +935,13 @@ namespace Auction_Boxing_2
 
                         }
                     }
+                    Rectangle cameraBounds2 = camera.DrawToRectangle;
+
                     // Draw the winner!
                     string w = "Player " + winner + " Takes the Round!";
                     spriteBatch.DrawString(font, w,
-                        new Vector2(bounds.X + bounds.Width / 2 - font.MeasureString(w).X / 2,
-                            bounds.Y + bounds.Height / 2 - font.MeasureString(w).Y / 2), Color.Goldenrod);
+                        new Vector2(cameraBounds2.X + cameraBounds2.Width / 2 - font.MeasureString(w).X / 2,
+                            cameraBounds2.Y + cameraBounds2.Height / 2 - font.MeasureString(w).Y / 2), Color.Goldenrod);
                     break;
                 case (boxingstate.stats):
                     spriteBatch.Draw(background, bounds, Color.White);

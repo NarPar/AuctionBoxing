@@ -5,10 +5,8 @@ Current features:
 To-Do:
 
 	PRIORITY:
-		- level engine is messed (platforms)
-		- Hat collisions
-		- hat rethrowing
-		- cape
+		- proper gui drawing (the "Round start in x" 
+		  isn't in the center of the camera).
 
 
 	Programming:

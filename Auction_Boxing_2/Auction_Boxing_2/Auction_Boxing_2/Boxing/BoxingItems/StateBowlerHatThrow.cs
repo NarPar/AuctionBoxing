@@ -11,33 +11,39 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
     class StateBowlerHatThrow : State
     {
         float holdTimer = 0;
-        float MAX_HOLD_TIME = .2f;
+        float MAX_HOLD_TIME = .16f;
 
         bool buttonHeld = true;
         int THROWN_INDEX = 9;
 
-        bool hatThrown = false;
+        //bool hatThrown = false;
+        bool noHat = false;
 
         int itemIndex;
 
         public StateBowlerHatThrow(int itemIndex, BoxingPlayer player)
             : base(player, "BowlerThrow")
         {
+            if (player.hasThrownBowlerHat)
+                noHat = true;
+                //ChangeState(new StateBowlerHatReThrow(itemIndex, player)); // Wait to recieve!
             holdTimer = MAX_HOLD_TIME;
         }
 
         public override void Update(GameTime gameTime)
         {
-            if (!hatThrown && player.sprite.FrameIndex == THROWN_INDEX)
+            if (!player.hasThrownBowlerHat && player.sprite.FrameIndex == THROWN_INDEX) // !hasThrown
             {
                 // create hat projectile
-                player.BoxingManager.addBowlerHat(player);
-                hatThrown = true;
+                player.BoxingManager.addBowlerHat(player, player.numBowlerReThrows);
+                player.hasThrownBowlerHat = true;
             }
             else if (player.sprite.FrameIndex == player.animations[key].FrameCount - 1)
             {
                 ChangeState(new StateStopped(player));
             }
+
+            
 
             if (holdTimer > 0)
                 holdTimer -= (float)gameTime.ElapsedGameTime.TotalSeconds;
@@ -47,6 +53,8 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
 
             if (buttonHeld && holdTimer <= 0)
                 ChangeState(new StateBowlerHatReThrow(itemIndex, player));
+            else if (!buttonHeld && holdTimer <=0 && noHat)
+                ChangeState(new StateStopped(player));
         }
     }
 }
