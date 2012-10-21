@@ -399,7 +399,6 @@ namespace Auction_Boxing_2
             this.color = color; 
 
             this.startPosition = startPosition;
-            levellevel = startPosition.Y; // start on ground
             this.platform = platform;
             levellevel = platform.Y;
 
@@ -515,22 +514,21 @@ namespace Auction_Boxing_2
                     levellevel = platform.Y;
                     position.Y += 2;
                     state.ChangeState(new StateFall(this, true));
+                    Debug.WriteLine("Falling after off ledge!");
                 }
             }
+            // else, if your falling after jumping
+            else if (currentVerticalSpeed > 0 && position.Y < platform.Y)
+            {
+                
+                // see if you jumped onto another platform
+                platform = BoxingManager.GetLowerPlatform(position);
+                levellevel = platform.Y;
+            }
+
+
 
             UpdateTransform();
-
-            // keep the collision rect current to the position.
-            //CollisionRect.X = (int)position.X - CollisionRect.Width / 2;
-            //CollisionRect.Y = (int)position.Y - CollisionRect.Height;
-
-            //HandleState();
-
-            //handleMovement();
-
-            //handleDirection();
-
-            // Collision transform is created when requested.
         }
 
         public void ChangeAnimation(string index)
@@ -641,10 +639,6 @@ namespace Auction_Boxing_2
         public void handleDirection()
         {
             state.HandleDirection();
-            /*foreach (BoxingItem item in Items)
-            {
-                item.HandleDirection(PlayerEffect);
-            }*/
         }
 
         public void handleMovement()
@@ -657,11 +651,6 @@ namespace Auction_Boxing_2
             state.HandleCollision(Players);
         }
 
-        //public void isHit(BoxingPlayer player)
-        //{
-            //state.
-        //}
-
         /// <summary>
         /// Calls the state to handle any effects to a hit player and this player
         /// </summary>
@@ -671,48 +660,9 @@ namespace Auction_Boxing_2
             state.HitOtherPlayer(hitPlayer);
         }
 
-        /*public void Hit(Item item)
-        {
-            State state = InternalState;
-            InternalState = new StateHit(state, item);
-            currenthealth -= item.attack;
-        }*/
-
         public bool IsKeyDown(KeyPressed key)
         {
             return this.KeysDown.Contains(key);
-        }
-
-        /*public void UseItemEvent(int itemindex)
-        {
-            if (equippedItems[itemindex] != null && OnUseItem != null)
-            {
-
-                State state = InternalState;
-                InternalState = equippedItems[itemindex].GenerateState(itemindex, direction, state);
-
-            }
-        }*/
-
-        public void CreateInstance(ItemInstance instance)
-        {
-            // Trigger instance creation in boxing Manager
-
-
-            /*if (equippedItems[itemindex] != null && OnUseItem != null)
-            {
-                SpriteEffects effect = SpriteEffects.None;
-
-                if (direction == DirectionType.Right)
-                {
-                    effect = SpriteEffects.FlipHorizontally;
-                }
-
-                OnUseItem(equippedItems[itemindex].GenerateInstance(
-                        new Vector3(position.X, position.Y, position.Z), playerindex, effect));
-            */
-            //}
-             
         }
 
         public void UpdateTransform()

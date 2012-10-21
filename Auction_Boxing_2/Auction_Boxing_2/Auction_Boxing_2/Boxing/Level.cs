@@ -28,9 +28,9 @@ namespace Auction_Boxing_2
 
             LevelSize = new Rectangle(0, 0, clientBounds.Width, clientBounds.Height);//300 * 1, 255 * 1);
 
-            platforms[0] = new Rectangle(18 * clientBounds.Width / 25, 5 * clientBounds.Height / 20, clientBounds.Width, 10);
+            platforms[0] = new Rectangle(18 * clientBounds.Width / 25, 8 * clientBounds.Height / 30, 7 * clientBounds.Width / 25, 10);
 
-            platforms[1] = new Rectangle(0, 15 * clientBounds.Height / 32, 10 * clientBounds.Width/ 12, 10);
+            platforms[1] = new Rectangle(0, 16 * clientBounds.Height / 36, 10 * clientBounds.Width/ 12, 10);
 
             platforms[2] = new Rectangle(3 * clientBounds.Width / 27, 10 * clientBounds.Height / 16, 3* clientBounds.Width / 18, 10);
 
@@ -45,10 +45,10 @@ namespace Auction_Boxing_2
             spriteBatch.Draw(Background, LevelSize, Color.White);
 
             // Draw the level
-            for (int i = 0; i < platforms.Length; i++)
+            /*for (int i = 0; i < platforms.Length; i++)
             {
                 spriteBatch.Draw(tPlatform, platforms[i], Color.Brown);
-            }
+            }*/
         }
     }
 }

@@ -59,13 +59,13 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
                 if (player.IsKeyDown(KeyPressed.Jump) && player.currentVerticalSpeed < 0)
                 {
                     player.currentVerticalSpeed += (float)((gravity * gameTime.ElapsedGameTime.TotalSeconds) / 2);
-                    Debug.WriteLine("Resisting");
                 }
                 else
                     player.currentVerticalSpeed += (float)(gravity * gameTime.ElapsedGameTime.TotalSeconds);
 
-                if (player.position.Y >= player.levellevel)//startPosition)
+                if (player.position.Y >= player.levellevel)
                 {
+                    player.currentVerticalSpeed = 0;
                     player.position.Y = player.levellevel;
                     player.isFalling = false;
                     ChangeState(new StateLand(player));
@@ -75,6 +75,7 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
                 if (player.currentVerticalSpeed > 0)
                 {
                     player.platform = player.BoxingManager.GetLowerPlatform(player.position);
+                    player.levellevel = player.platform.Y;
                     player.isFalling = true;
                 }
             }

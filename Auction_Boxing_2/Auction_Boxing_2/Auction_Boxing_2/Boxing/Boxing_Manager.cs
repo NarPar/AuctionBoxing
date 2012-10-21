@@ -181,10 +181,12 @@ namespace Auction_Boxing_2
 
             state = boxingstate.idle;
 
-            for (int i = 0; i < 4; i++)
-                playerStartPositions[i] = new Vector2(bounds.X + bounds.Width / 5 * (i + 1), 4 * bounds.Height / 5);
-
             level = new Level(this, ClientBounds, blank, background);
+
+            for (int i = 0; i < 4; i++)
+                playerStartPositions[i] = new Vector2(bounds.X + bounds.Width / 5 * (i + 1), level.platforms[level.platforms.Length - 1].Y);
+
+           
             //level.platforms[level.platforms.Length - 1].Y = (int)playerStartPositions[0].Y;
 
             NumRounds = 1;
@@ -699,49 +701,13 @@ namespace Auction_Boxing_2
                 if (right > level.platforms[i].X && left < level.platforms[i].X + level.platforms[i].Width && level.platforms[i].Y > pos.Y)
                 {
                    // l = level.platforms[i].Y;
+                    //Debug.WriteLine("Found new platform!");
                     return level.platforms[i];// 
                 }
 
             }
             return level.platforms[level.platforms.Length - 1];
         }
-
-        /*public bool TexturesCollide(Color[,] image1, Matrix matrix1, Color[,] image2, Matrix matrix2)
-        {
-            Matrix mat1to2 = matrix1 * Matrix.Invert(matrix2);
-            int width1 = image1.GetLength(0);
-            int height1 = image1.GetLength(1);
-            int width2 = image2.GetLength(0);
-            int height2 = image2.GetLength(1);
-
-            for (int x1 = 0; x1 < width1; x1++)
-            {
-                for (int y1 = 0; y1 < height1; y1++)
-                {
-                    Vector2 pos1 = new Vector2(x1, y1);
-                    Vector2 pos2 = Vector2.Transform(pos1, mat1to2);
-
-                    int x2 = (int)pos2.X;
-                    int y2 = (int)pos2.Y;
-                    if ((x2 >= 0) && (x2 < width2))
-                    {
-                        if ((y2 >= 0) && (y2 < height2))
-                        {
-                            if (image1[x1, y1].A != 0)
-                            {
-                                if (image2[x2, y2].A != 0)
-                                {
-                                    
-                                    return true;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            return false;
-        }*/
 
         public void HandleCollisions(ItemInstance item)
         {
@@ -760,9 +726,9 @@ namespace Auction_Boxing_2
 
         public void HandleCollisions(int player)
         {
-            /*
+            
             // level collision
-            if (players[player].currentVerticalSpeed > 0 && !(players[player].state is StateFall))
+            if (players[player].currentVerticalSpeed > 0)// && players[player].state is StateFall))
             {
                 Vector2 bottomLeft = new Vector2(players[player].position.X - players[player].GetWidth / 2,
                     players[player].position.Y);// + players[player].GetHeight - players[player].GetHeight / 2);
@@ -800,11 +766,12 @@ namespace Auction_Boxing_2
                             && bottomRight.X < level.platforms[j].X + level.platforms[j].Width
                              && bottomLeft.Y < level.platforms[j].Y))
                         {
+                            players[player].platform = level.platforms[j];
                             players[player].levellevel = level.platforms[j].Y;
                         }
                     }
                 }
-            }*/
+            }
 
             // For attacking player-on-player collision (Uses per pixel)
             for(int i = 0; i < 4; i++)

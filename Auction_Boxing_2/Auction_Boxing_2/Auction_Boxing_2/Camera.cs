@@ -78,10 +78,10 @@ namespace Auction_Boxing_2
 
             //width and height of the screen
             var width = Math.Abs(xleft - xright);
-            if (width < players[0].GetWidth) width = players[0].GetWidth;
+            //if (width < players[0].GetWidth) width = players[0].GetWidth;
 
             var height = Math.Abs(ytop - ybottom);
-            if (height < players[0].GetHeight) height = players[0].GetHeight;
+            //if (height < players[0].GetHeight) height = players[0].GetHeight;
 
             //screen dimensions and aspect ratio
             Rectangle screenbounds = graphicsDevice.PresentationParameters.Bounds;

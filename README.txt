@@ -5,12 +5,10 @@ Current features:
 To-Do:
 
 	PRIORITY:
-		- Tweak the 2d camera; players occasionally go outside the screen
 		- level engine is messed (platforms)
 		- Hat collisions
 		- hat rethrowing
 		- cape
-		- too fast, too slippery, jump too high, weird falling gravity defying
 
 
 	Programming:
