@@ -15,8 +15,8 @@ namespace Auction_Boxing_2
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
-        //State_Manager sm;
-
+        Camera camera;
+        RenderTarget2D renderTarget;
         public Game_State currentState;
         public Input_Handler[] inputs;
 
@@ -29,6 +29,8 @@ namespace Auction_Boxing_2
             this.graphics.PreferredBackBufferHeight = 600;
 
             this.graphics.IsFullScreen = false;
+
+            camera = new Camera(new Rectangle(0,0, 800, 600));
         }
 
         /// <summary>
@@ -68,6 +70,7 @@ namespace Auction_Boxing_2
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             //sm.LoadContent();
+            renderTarget = new RenderTarget2D(GraphicsDevice, 800, 600, false, SurfaceFormat.Color, DepthFormat.None);
         }
 
         /// <summary>
@@ -98,6 +101,13 @@ namespace Auction_Boxing_2
 
             currentState.Update(gameTime);
 
+            if (currentState is Brawl_Game_State)
+            {
+                Brawl_Game_State b = currentState as Brawl_Game_State;
+                if(b.State == brawlgamestate.brawl)
+                    camera.UpdateCamera(b.boxingManager.Players, GraphicsDevice);
+            }
+
             base.Update(gameTime);
         }
 
@@ -107,6 +117,8 @@ namespace Auction_Boxing_2
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
+            GraphicsDevice.SetRenderTarget(renderTarget);
+
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
             spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.Default, RasterizerState.CullCounterClockwise);
@@ -114,6 +126,15 @@ namespace Auction_Boxing_2
             //sm.Draw(gameTime, spriteBatch);
 
             currentState.Draw(gameTime, spriteBatch);
+
+            spriteBatch.End();
+
+            GraphicsDevice.SetRenderTarget(null);
+
+            spriteBatch.Begin();
+
+            spriteBatch.Draw(renderTarget, new Rectangle(0, 0, Window.ClientBounds.Width, Window.ClientBounds.Height),
+                camera.DrawToRectangle, Color.White);
 
             spriteBatch.End();
 

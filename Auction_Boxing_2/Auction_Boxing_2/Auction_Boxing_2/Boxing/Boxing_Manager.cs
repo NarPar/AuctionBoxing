@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Input;
@@ -32,8 +33,16 @@ namespace Auction_Boxing_2
         Input_Handler[] inputs = new Input_Handler[4];
 
         BoxingPlayer[] players = new BoxingPlayer[4];
+        public List<BoxingPlayer> Players
+        {
+            get { return players.ToList<BoxingPlayer>(); }
+        }
 
         bool collide = false;
+
+        Camera camera;
+        RenderTarget2D renderTarget;
+        GraphicsDevice graphicsDevice;
 
         //List<BoxingPlayer> Players = new List<BoxingPlayer>();
 
@@ -75,7 +84,6 @@ namespace Auction_Boxing_2
 
         Vector2[] playerStartPositions = new Vector2[4];
 
-        GraphicsDevice gd;
 
         #endregion
 
@@ -132,7 +140,9 @@ namespace Auction_Boxing_2
         public Boxing_Manager(ContentManager content, Rectangle ClientBounds, Input_Handler[] inputs,
             GraphicsDevice gd)
         {
-            this.gd = gd;
+            this.graphicsDevice = gd;
+
+            camera = new Camera(ClientBounds);
 
             this.bounds = new Rectangle(0, 0, ClientBounds.Width, ClientBounds.Height);
             this.inputs = inputs;
@@ -174,6 +184,8 @@ namespace Auction_Boxing_2
 
         public void LoadContent(ContentManager Content)
         {
+            
+
             //Change to using a text file!!
 
             // Create animation library to pass to players.
@@ -394,8 +406,9 @@ namespace Auction_Boxing_2
         }
 
         // Apply's settings gathered before the boxing begins.
-        public void ApplySettings(Color[] colors, GraphicsDevice graphicsDevice)
+        public void ApplySettings(Color[] colors)
         {
+            
             //Need to make copies of the textures recolored with the players selected color
             for(int i = 0; i < 4; i++)
             {
@@ -429,13 +442,8 @@ namespace Auction_Boxing_2
                                 count++;
                                 c[k] = colors[i];
                             }
-
                         }
-
-                        Debug.WriteLine("# of magenta pixels in animation = " + count);
-
                         t.SetData(c); // set the data
-
                         // add it to the available list
                         coloredAnims.Add(animKeys[j], new Animation(t,animFrameTimes[j],animLooping[j],animFrameWidths[j]));
                     }
@@ -470,66 +478,6 @@ namespace Auction_Boxing_2
             deadCount = 0;
             isRoundOver = false;
         }
-
-        public void Activate(ContentManager Content)
-        {
-            /*List<Item>[] equippedItems = { new List<Item>(), new List<Item>(), new List<Item>(), new List<Item>() };
-            for (int i = 0; i < 4; i++)
-            {
-                for (int j = 0; j < 4; j++)
-                {
-                    equippedItems[i].Add(new Cane(Content.Load<Texture2D>("BoxingItems/cane"),
-                    Content.Load<Texture2D>("BoxingItems/Cane_Attack"),
-                    Content.Load<Texture2D>("LoadOut/cane_icon")));
-                    equippedItems[i].Add(new Bowler_Hat(Content.Load<Texture2D>("Items/bowlerhat_image"),
-                        Content.Load<Texture2D>("BoxingItems/Bowler_Attack"),
-                        Content.Load<Texture2D>("LoadOut/bowlerhat_icon")));
-                    equippedItems[i].Add(new Revolver(Content.Load<Texture2D>("Items/revolver_image"),
-                        Content.Load<Texture2D>("BoxingItems/Revolver_Attack"),
-                        Content.Load<Texture2D>("LoadOut/revolver_icon")));
-                    equippedItems[i].Add(new Boots(Content.Load<Texture2D>("Items/Boots_Image"),
-                        Content.Load<Texture2D>("BoxingItems/gust_attack"),
-                        Content.Load<Texture2D>("LoadOut/boots_icon"),
-                        Content.Load<Texture2D>("Boxing/ffsp1charge"),
-                        Content.Load<Texture2D>("Boxing/ffsp1jumping")));
-                }
-
-            }
-            this.Items = equippedItems;
-
-            Battlefield = new Rectangle(0, 140, bounds.Width, 55);
-
-            List<BoxingPlayer> activePlayers = new List<BoxingPlayer>();
-
-            for (int i = 0; i < 4; i++)
-            {
-                activePlayers.Add(new BoxingPlayer(bounds.Width * (1 - .9f), bounds.Height * (1 - i * .1f) - 100, "player" + i, i, Tools.WIDTH, Tools.HEIGHT, inputs[i]));
-                activePlayers[i].OnUseItem += CreateInstance;
-            }
-
-            Players = activePlayers;
-            Item[] equipment = new Item[4];
-            for (int i = 0; i < 4; i++)
-            {
-                for(int j = 0; j < 4; j++)
-                     equipment[j] = state_manager.equipment[i,j];
-                
-                Players[i].LoadContent(Content, ATextures, equipment);
-            }
-
-            for (int i = 0; i < 4; i++)
-            {
-
-                displays[i] = new PlayerStatDisplay(font, i + 1, Players[i], inputs[i], new Rectangle((i * bounds.Width / 4) + 1, 1, (bounds.Width / 4) - 2, bounds.Height / 4),
-                    Content.Load<Texture2D>("White"), Content.Load<Texture2D>("White"));
-            }*/
-        }
-
-        /*public void CreateInstance(ItemInstance instance)
-        {
-            /*itemInstances.Add(instance);
-            Debug.WriteLine("Item instance = " + (instance is BowlerHatInstance).ToString());
-        }*/
 
         // Find the first player in front of player
         public BoxingPlayer GetPlayerInFront(BoxingPlayer p, float y)
@@ -573,6 +521,9 @@ namespace Auction_Boxing_2
 
         public bool Update(GameTime gameTime)
         {
+
+            camera.UpdateCamera(players.ToList<BoxingPlayer>(), graphicsDevice);
+
             switch (state)
             {
                 // The idle state is just to display the background while the settings are configured.
@@ -697,7 +648,7 @@ namespace Auction_Boxing_2
                 return false;*/
         }
 
-        public float GetLowerPlatformLevel(float platformlevel)
+        /*public float GetLowerPlatformLevel(float platformlevel)
         {
             float l = platformlevel;
             for (int i = 0; i < level.platforms.Length; i++)
@@ -710,14 +661,18 @@ namespace Auction_Boxing_2
 
             }
             return l;
-        }
+        }*/
 
         public Rectangle GetLowerPlatform(Vector2 pos)
         {
             //float l = platformlevel;
-            for (int i = 0; i < level.platforms.Length; i++)
+            for (int i = level.platforms.Length - 1; i > 0; i--)
             {
-                if (pos.X + 15 > level.platforms[i].X && pos.X - 15 < level.platforms[i].X + level.platforms[i].Width && level.platforms[i].Y > pos.Y)
+                // the left and right of the player corners
+                int left = (int)(pos.X - (15 * BoxingPlayer.Scale) / 2);
+                int right = (int)(pos.X + (15 * BoxingPlayer.Scale) / 2);
+
+                if (right > level.platforms[i].X && left < level.platforms[i].X + level.platforms[i].Width && level.platforms[i].Y > pos.Y)
                 {
                    // l = level.platforms[i].Y;
                     return level.platforms[i];// 
@@ -767,6 +722,7 @@ namespace Auction_Boxing_2
 
         public void HandleCollisions(int player)
         {
+            /*
             // level collision
             if (players[player].currentVerticalSpeed > 0 && !(players[player].state is StateFall))
             {
@@ -810,7 +766,7 @@ namespace Auction_Boxing_2
                         }
                     }
                 }
-            }
+            }*/
 
             // For attacking player-on-player collision (Uses per pixel)
             for(int i = 0; i < 4; i++)
@@ -861,6 +817,8 @@ namespace Auction_Boxing_2
 
         public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
+            
+
             switch (state)
             {
                 case (boxingstate.idle):

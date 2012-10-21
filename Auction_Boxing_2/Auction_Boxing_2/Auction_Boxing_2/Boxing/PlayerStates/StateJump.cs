@@ -67,8 +67,13 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
                     ChangeState(new StateLand(player));
                 }
 
+                // You're falling!
                 if (player.currentVerticalSpeed > 0)
+                {
+                    Debug.WriteLine("You're falling!");
+                    player.platform = player.BoxingManager.GetLowerPlatform(player.position);
                     player.isFalling = true;
+                }
             }
 
             if (player.IsKeyDown(KeyPressed.Attack))

@@ -17,16 +17,17 @@ namespace Auction_Boxing_2
 
     public class BoxingPlayer : IComparable<BoxingPlayer>
     {
+        public static int Scale = 2;
         
 
         public int GetWidth
         {
-            get { return (int)(sprite.Animation.FrameWidth * scale); }
+            get { return (int)(15 * scale); }
         }
 
         public int GetHeight
         {
-            get { return (int)(sprite.Animation.FrameHeight * scale); }
+            get { return (int)(38 * scale); }
         }
 
         #region stats
@@ -503,11 +504,12 @@ namespace Auction_Boxing_2
 
             state.Update(gameTime);
 
-            if (!(state is StateJump ))//|| state is StateFall))
+            /*if (!(state is StateJump ))//|| state is StateFall))
             {
                 isFalling = false;
-            }
+            }*/
 
+            // If the player walks off a platform, they fall!
             if (!(state is StateJump))
             {
                 if (((position.X + (15 * scale) / 2) < platform.X) || ((position.X - (15 * scale) / 2) > platform.X + platform.Width))
