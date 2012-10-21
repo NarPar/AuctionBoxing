@@ -10,26 +10,33 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
 {
     class StateBowlerHatThrow : State
     {
-
         float holdTimer = 0;
-        float holdTime = .2f;
+        float MAX_HOLD_TIME = .2f;
 
         bool buttonHeld = true;
+        int THROWN_INDEX = 9;
+
+        bool hatThrown = false;
 
         int itemIndex;
 
         public StateBowlerHatThrow(int itemIndex, BoxingPlayer player)
             : base(player, "bowlerThrow")
         {
-            this.itemIndex = itemIndex;
-            holdTimer = holdTime;
+            holdTimer = MAX_HOLD_TIME;
         }
 
         public override void Update(GameTime gameTime)
         {
-            if (player.sprite.FrameIndex == player.animations[key].FrameCount - 1)
+            if (!hatThrown && player.sprite.FrameIndex == THROWN_INDEX)
             {
-                    ChangeState(new StateStopped(player));
+                // create hat projectile
+                player.BoxingManager.addBowlerHat(player);
+                hatThrown = true;
+            }
+            else if (player.sprite.FrameIndex == player.animations[key].FrameCount - 1)
+            {
+                ChangeState(new StateStopped(player));
             }
 
             if (holdTimer > 0)

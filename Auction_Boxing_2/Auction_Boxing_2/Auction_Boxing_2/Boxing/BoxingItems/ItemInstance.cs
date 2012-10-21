@@ -1,20 +1,20 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Auction_Boxing_2.Boxing.PlayerStates;
 
 namespace Auction_Boxing_2
 {
-
     #region Parent Class
 
-
-    public class ItemInstance
+    abstract public class ItemInstance
     {
-
         #region Fields
 
         //public Item item;
         //public int playerId;
+        public int id;
         public BoxingPlayer player;
 
         public Vector2 position;
@@ -30,24 +30,19 @@ namespace Auction_Boxing_2
         public float damage;
 
         public bool Finished;
-
+        public int noCatch = 0;
         public bool isEffect;
 
         #endregion
 
         #region Initialize
 
-
-        public ItemInstance(BoxingPlayer player, bool isEffect, Vector2 position)// Item item, SpriteEffects effect, Vector3 position)
+        public ItemInstance(BoxingPlayer player, bool isEffect, int id)
         {
             this.player = player;
             this.isEffect = isEffect;
-            //this.item = item;
-            this.effect = effect;
-            this.position = position;
-            this.damage = damage;
+            this.id = id;
         }
-
 
         #endregion
 
@@ -73,80 +68,105 @@ namespace Auction_Boxing_2
 
         #endregion 
     }
-
-
+    
     #endregion
-
-
+    
     #region BowlerHatInstance
-
-
+    
     public class BowlerHatInstance : ItemInstance
     {
         int width = 6, height = 4;
-        int scale = 4;
+        int direction;
 
-        float xStart;
-        float xCurrent;
-        float speed = 250;
-        float range = 175;
-        
+        float speed = 300;
+        double speedFactor = 1;
+        float scale;
+
+        Vector2 hatOffset = new Vector2(16f, -30.5f);
+        Vector2 leftHatOffset = new Vector2(-16f, -30.5f);
 
         bool isReturning = false;
 
-        Texture2D texture;
+        Animation anim;
 
-        public BowlerHatInstance(BoxingPlayer player, Vector2 position, int direction) ://Item item, Texture2D texture, Vector3 position, int playerId, SpriteEffects effect) :
-            base(player, false, position)
+        public BowlerHatInstance(BoxingPlayer player, Dictionary<string, Animation> animations, int id) :
+            base(player, false, id)
         {
+            direction = player.direction;
 
-            hitbox = new Rectangle((int)position.X, (int)position.Y, width * 4, height * 4);
-
-            xStart = position.X;
-
-            //animation = new Animation(texture, .05f, false, 30);
-            //sprite.PlayAnimation(animation);
-
+            scale = player.scale;
+            hatOffset *= scale;
+            leftHatOffset *= scale;
             if (direction == -1)
             {
                 speed *= -1;
+                position = Vector2.Add(player.position, leftHatOffset);
             }
+            else
+            {
+                position = Vector2.Add(player.position, hatOffset);
+            }
+
+            hitbox = new Rectangle((int)position.X, (int)position.Y, (int) (width * scale), (int) (height * scale));
+
+            anim = animations["bowlerHat"];
+            sprite.PlayAnimation(anim);
         }
 
         public override void Update(GameTime gameTime)
         {
-            if (!isReturning)
+            Vector2 playerpos = player.position;
+            Vector2 hatpos = position;
+            if (player.direction == -1)
             {
-                position.X += (float)(speed * gameTime.ElapsedGameTime.TotalSeconds);
-
-                // If we've gone our range, return to sender.
-                if (Math.Abs(position.X - xStart) >= range)
-                {
-                    speed *= -1;
-                    isReturning = true;
-                }
+                hatpos -= leftHatOffset;
             }
             else
             {
-                if ((player.position - position).Length() <= speed)
+                hatpos -= hatOffset;
+            }
+            Vector2 diff;
+            if (direction == 1)
+            {
+                diff = playerpos - hatpos;
+            }
+            else
+            {
+                diff = hatpos - playerpos;
+            }
+            float distance = diff.Length();
+            if (distance > 4 || noCatch++ < 2)
+            {
+                if (!isReturning)
+                { // go go go
+                    position.X += (float)(speed * speedFactor * gameTime.ElapsedGameTime.TotalSeconds);
+                    speedFactor -= gameTime.ElapsedGameTime.TotalSeconds;
+                    if (speedFactor < 0)
+                    {
+                        speedFactor = 0;
+                        isReturning = true;
+                    }
+                }
+                else // return to sender
+                {
+                    speedFactor += gameTime.ElapsedGameTime.TotalSeconds;
+                    if (speedFactor > 1)
+                    {
+                        speedFactor = 1;
+                    }
+                    diff.Normalize();
+                    position += diff * (float)(speed * speedFactor * gameTime.ElapsedGameTime.TotalSeconds);
+                }
+            }
+            else // catch dat hat
+            {
+                if (player.state.canCatch)
                 {
                     Finished = true;
+                    player.state.ChangeState(new StateBowlerHatCatch(player, this, player.state));
                 }
-                else
-                {
-                    // Move the hat towards sender
-                    Vector2 dir = (player.position - position);
-                    dir.Normalize();
-
-                    position += dir * speed;
-                }
-
-
             }
             //for vertical, change to vector2.Distance(start, position);
-
-
-
 
             hitbox.X = (int)position.X - width / 2;
             hitbox.Y = (int)position.Y - height;
@@ -156,7 +176,7 @@ namespace Auction_Boxing_2
 
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(texture, hitbox, Color.White);
+            spriteBatch.Draw(anim.Texture, hitbox, Color.White);
             //sprite.Draw(gameTime, spriteBatch, sprite_position,
                // 0, Color.White, Vector2.Zero, effect);
 
@@ -166,12 +186,10 @@ namespace Auction_Boxing_2
     }
     
     #endregion
-
-    
+        
     /*
     #region MonocleInstance
-
-
+    
     public class MonocleInstance : ItemInstance
     {
 
@@ -204,8 +222,7 @@ namespace Auction_Boxing_2
     #endregion
 
     #region BootsInstance
-
-
+    
     public class BootsInstance : ItemInstance
     {
 

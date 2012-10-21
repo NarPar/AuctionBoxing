@@ -18,6 +18,7 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
             : base(player, "Block")
         {
             canCombo = true;
+            canCatch = true;
         }
 
         public override void Update(Microsoft.Xna.Framework.GameTime gameTime)

@@ -10,16 +10,13 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
 {
     class StateFall : State
     {
-        float virticalSpeed = -3500;
+        float verticalSpeed = -3500;
         float horizontalAcceleration = 200;
         float maxHorizontalSpeed = 12000;
 
         float gravity = 1000f;
-
         bool drop; // drop if going between platforms, else falling after animation.
-
         public float startPosition;
-
 
         public StateFall(BoxingPlayer player, bool drop)
             : base(player, "Jump")
@@ -34,6 +31,7 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
                 
                 player.sprite.FrameIndex = 5;
             }
+            canCatch = true;
         }
 
 

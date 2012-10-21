@@ -25,6 +25,7 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
             startPosition = player.levellevel;
 
             player.currentVerticalSpeed = -400;
+            canCatch = true;
         }
 
 

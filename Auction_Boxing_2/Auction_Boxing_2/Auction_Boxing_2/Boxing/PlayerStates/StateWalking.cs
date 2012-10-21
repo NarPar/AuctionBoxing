@@ -20,6 +20,7 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
             this.key = key;
             player.currentHorizontalSpeed = player.direction * walkSpeed;
             canCombo = true;
+            canCatch = true;
         }
 
 

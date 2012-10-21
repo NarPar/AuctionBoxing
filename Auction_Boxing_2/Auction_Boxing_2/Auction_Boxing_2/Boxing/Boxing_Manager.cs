@@ -58,15 +58,27 @@ namespace Auction_Boxing_2
 
         List<string> StateNames = new List<string>();
 
-        Dictionary<string, Animation> animations = new Dictionary<string, Animation>();
+        Dictionary<string, Animation> playerAnims = new Dictionary<string, Animation>();
+        Dictionary<string, Animation> itemAnims = new Dictionary<string, Animation>();
         Dictionary<string, BitMap> bitmaps = new Dictionary<string, BitMap>();
 
         SpriteFont font;
 
         Texture2D blank;
 
-        //When players use items, the item attacks manifest as objects.
-        //List<ItemInstance> itemInstances = new List<ItemInstance>();
+        // When players use items, the item attacks manifest as objects.
+        public List<ItemInstance> itemInstances;
+        int instanceID = 0;
+
+        public void addBowlerHat(BoxingPlayer p)
+        {
+            itemInstances.Add(new BowlerHatInstance(p, itemAnims, instanceID++));
+        }
+
+        public void removeBowlerHat(BowlerHatInstance hat)
+        {
+            itemInstances.Remove(hat);
+        }
 
         Vector2[] playerStartPositions = new Vector2[4];
 
@@ -161,6 +173,7 @@ namespace Auction_Boxing_2
             //level.platforms[level.platforms.Length - 1].Y = (int)playerStartPositions[0].Y;
 
             NumRounds = 1;
+            itemInstances = new List<ItemInstance>();
 
             healthBarDimensions = new Rectangle(0, 0, ClientBounds.Width / 16, ClientBounds.Height / 80);
 
@@ -192,8 +205,6 @@ namespace Auction_Boxing_2
             int wCanePull = 76;
             int wCaneBalance = 28;
 
-           
-
             int wRevolverShoot = 56;
             int wRevolverHit = 15;
             int wRevolverReload = 56;
@@ -202,6 +213,8 @@ namespace Auction_Boxing_2
             int wBowlerCatch = 37;
             int wBowlerReThrow = 34;
 
+            int wBowlerHat = 6;
+            
             #endregion
 
             #region set frame times
@@ -250,7 +263,7 @@ namespace Auction_Boxing_2
             Texture2D down = Content.Load<Texture2D>("Boxing/Player_Knocked_Down");
             Texture2D duck = Content.Load<Texture2D>("Boxing/Player_Duck");
 
-            // item textures
+            // player item use textures
             Texture2D caneBonk = Content.Load<Texture2D>("BoxingItems/Player_Cane");
             Texture2D caneHit = Content.Load<Texture2D>("BoxingItems/Player_Cane_Hit");
             Texture2D canePull = Content.Load<Texture2D>("BoxingItems/Player_Cane_Pull");
@@ -264,36 +277,44 @@ namespace Auction_Boxing_2
             Texture2D bowlerCatch = Content.Load<Texture2D>("BoxingItems/Player_BowlerHat_Catch");
             Texture2D bowlerReThrow = Content.Load<Texture2D>("BoxingItems/Player_BowlerHat_ReThrow");
 
+            // item textures
+            
+            Texture2D bowlerHat = Content.Load<Texture2D>("BoxingItems/BowlerHat_Instance");
+
             #endregion
 
             #region initialize animations
 
             // Initialize animations;
-            animations.Add("Idle", new Animation(idle, fIdle, true, wIdle));
-            animations.Add("Walk", new Animation(walk, fWalk, true, wWalk));
-            animations.Add("Run", new Animation(run, fRun, true, wRun));
-            animations.Add("Jump", new Animation(jump, fJump, false, wJump));
-            animations.Add("Land", new Animation(land, fLand, true, wLand));
-            animations.Add("Punch", new Animation(punch, fPunch, false, wPunch));
-            animations.Add("PunchHit", new Animation(punchHit, fPunchHit, true, wPunchHit));
-            animations.Add("Dodge", new Animation(dodge, fDodge, true, wDodge));
-            animations.Add("Block", new Animation(block, fBlock, true, wBlock));
-            animations.Add("Down", new Animation(down, fDown, false, wDown));
-            animations.Add("Duck", new Animation(duck, fDuck, false, wDuck));
+            playerAnims.Add("Idle", new Animation(idle, fIdle, true, wIdle));
+            playerAnims.Add("Walk", new Animation(walk, fWalk, true, wWalk));
+            playerAnims.Add("Run", new Animation(run, fRun, true, wRun));
+            playerAnims.Add("Jump", new Animation(jump, fJump, false, wJump));
+            playerAnims.Add("Land", new Animation(land, fLand, true, wLand));
+            playerAnims.Add("Punch", new Animation(punch, fPunch, false, wPunch));
+            playerAnims.Add("PunchHit", new Animation(punchHit, fPunchHit, true, wPunchHit));
+            playerAnims.Add("Dodge", new Animation(dodge, fDodge, true, wDodge));
+            playerAnims.Add("Block", new Animation(block, fBlock, true, wBlock));
+            playerAnims.Add("Down", new Animation(down, fDown, false, wDown));
+            playerAnims.Add("Duck", new Animation(duck, fDuck, false, wDuck));
+
+            // player item use animations
+            playerAnims.Add("CaneBonk", new Animation(caneBonk, fCaneBonk, false, wCaneBonk));
+            playerAnims.Add("CaneHit", new Animation(caneHit, fCaneHit, false, wCaneHit));
+            playerAnims.Add("CanePull", new Animation(canePull, fCanePull, false, wCanePull));
+            playerAnims.Add("CaneBalance", new Animation(caneBalance, fCaneBalance, false, wCaneBalance));
+
+            playerAnims.Add("RevolverShoot", new Animation(revolverShoot, fRevolverShoot, false, wRevolverShoot));
+            playerAnims.Add("RevolverHit", new Animation(revolverHit, fRevolverHit, false, wRevolverHit));
+            playerAnims.Add("RevolverReload", new Animation(revolverReload, fRevolverReload, false, wRevolverReload));
+
+            playerAnims.Add("bowlerThrow", new Animation(bowlerThrow, fBowlerThrow, false, wBowlerThrow));
+            playerAnims.Add("bowlerCatch", new Animation(bowlerCatch, fBowlerCatch, false, wBowlerCatch));
+            playerAnims.Add("bowlerReThrow", new Animation(bowlerReThrow, fBowlerReThrow, false, wBowlerReThrow));
 
             // item animations
-            animations.Add("CaneBonk", new Animation(caneBonk, fCaneBonk, false, wCaneBonk));
-            animations.Add("CaneHit", new Animation(caneHit, fCaneHit, false, wCaneHit));
-            animations.Add("CanePull", new Animation(canePull, fCanePull, false, wCanePull));
-            animations.Add("CaneBalance", new Animation(caneBalance, fCaneBalance, false, wCaneBalance));
 
-            animations.Add("RevolverShoot", new Animation(revolverShoot, fRevolverShoot, false, wRevolverShoot));
-            animations.Add("RevolverHit", new Animation(revolverHit, fRevolverHit, false, wRevolverHit));
-            animations.Add("RevolverReload", new Animation(revolverReload, fRevolverReload, false, wRevolverReload));
-
-            animations.Add("bowlerThrow", new Animation(bowlerThrow, fBowlerThrow, false, wBowlerThrow));
-            animations.Add("bowlerCatch", new Animation(bowlerCatch, fBowlerCatch, false, wBowlerCatch));
-            animations.Add("bowlerReThrow", new Animation(bowlerReThrow, fBowlerReThrow, false, wBowlerReThrow));
+            itemAnims.Add("bowlerHat", new Animation(bowlerHat, 1f, true, wBowlerHat));
 
             #endregion
 
@@ -311,7 +332,7 @@ namespace Auction_Boxing_2
             for(int i = 0; i < 4; i++)
             {
                 if(colors[i] != Color.Transparent)
-                    players[i] = new BoxingPlayer(this, i, playerStartPositions[i], animations, inputs[i], colors[i], blank,
+                    players[i] = new BoxingPlayer(this, i, playerStartPositions[i], playerAnims, inputs[i], colors[i], blank,
                         healthBarDimensions, level.platforms[level.platforms.Length - 1]); // Figure out the boxing players.
             }
         }
@@ -336,6 +357,9 @@ namespace Auction_Boxing_2
             }
 
             Debug.WriteLine("num of players = " + numberOfPlayers);
+
+            // reset item instances
+            itemInstances.Clear();
 
             deadCount = 0;
             isRoundOver = false;
@@ -458,6 +482,11 @@ namespace Auction_Boxing_2
                     break;
                 // Will handle all the logic for the boxing; player updates, collision, etc.
                 case(boxingstate.box):
+                    foreach (ItemInstance item in itemInstances)
+                    {
+                        item.Update(gameTime);
+                        HandleCollisions(item);
+                    }
                     for(int i = 0; i < 4; i++)
                     {
                         BoxingPlayer player = players[i];
@@ -634,6 +663,20 @@ namespace Auction_Boxing_2
             return false;
         }*/
 
+        public void HandleCollisions(ItemInstance item)
+        {
+            // For attacking player-on-player collision (Uses per pixel)
+            for (int i = 0; i < 4; i++)
+            {
+                if (players[i] != null && !players[i].isDead)
+                {
+                    if (players[i] != item.player) // collision with unfriendly player
+                    {
+                        // TODO : check for collision with player
+                    }
+                }
+            }
+        }
 
         public void HandleCollisions(int player)
         {
@@ -761,6 +804,11 @@ namespace Auction_Boxing_2
                     //    spriteBatch.Draw(background, bounds, Color.White);
 
                     level.Draw(spriteBatch);
+
+                    foreach (ItemInstance item in itemInstances)
+                    {
+                        item.Draw(gameTime, spriteBatch);
+                    }
 
                     // Draw the players
                     foreach (BoxingPlayer player in players)

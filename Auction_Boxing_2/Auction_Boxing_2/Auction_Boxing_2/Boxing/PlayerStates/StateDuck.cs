@@ -17,7 +17,7 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
         public StateDuck(BoxingPlayer player)
             : base(player, "Duck")
         {
-
+            canCatch = true;
         }
 
         public override void Update(Microsoft.Xna.Framework.GameTime gameTime)
