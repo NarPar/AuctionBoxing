@@ -6,7 +6,6 @@ To-Do:
 
 	PRIORITY:
 		- Tweak the 2d camera; players occasionally go outside the screen
-		- Cane hat wrong color
 		- level engine is messed (platforms)
 		- Hat collisions
 		- hat rethrowing

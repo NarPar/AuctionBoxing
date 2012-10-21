@@ -452,7 +452,8 @@ namespace Auction_Boxing_2
                             if (c[k] == Color.Magenta || (c[k].R == 254 && c[k].G == 0 && c[k].B == 254)
                                 || (c[k].R == 253 && c[k].G == 0 && c[k].B == 253)
                                 || (c[k].R == 252 && c[k].G == 0 && c[k].B == 252)
-                                || (c[k].R == 251 && c[k].G == 0 && c[k].B == 251))
+                                || (c[k].R == 251 && c[k].G == 0 && c[k].B == 251)
+                                || (c[k].R == 250 && c[k].G == 0 && c[k].B == 250))
                             {
                                 count++;
                                 c[k] = colors[i];

@@ -21,6 +21,15 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
             // check for state change
             if (player.sprite.FrameIndex == player.animations[key].FrameCount - 1)
                 ChangeState(new StateStopped(player));
+
+            if (player.currentHorizontalSpeed > 1 || player.currentHorizontalSpeed < -1)
+            {
+                player.position.X += (float)(player.currentHorizontalSpeed * gameTime.ElapsedGameTime.TotalSeconds);
+
+                player.currentHorizontalSpeed -= (float)(player.currentHorizontalSpeed / 4);
+            }
+            else
+                player.currentHorizontalSpeed = 0;
         }
     }
 }

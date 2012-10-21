@@ -43,7 +43,7 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
             }
             else 
             {
-                player.currentHorizontalSpeed -= (float)(player.currentHorizontalSpeed / 12);
+                player.currentHorizontalSpeed -= (float)(player.currentHorizontalSpeed / 10);
             }
                         // If player is falling
             if (player.position.Y < player.GetGroundLevel)

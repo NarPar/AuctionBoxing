@@ -11,7 +11,7 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
     class StateRunning : State
 
     {
-        float runSpeed = 260;
+        float runSpeed = 170;
 
         KeyPressed key;
 
@@ -22,6 +22,7 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
             player.currentHorizontalSpeed = player.direction* runSpeed;
             canCombo = true;
             canCatch = true;
+            runSpeed *= BoxingPlayer.Scale;
         }
 
         public override void Update(GameTime gameTime)

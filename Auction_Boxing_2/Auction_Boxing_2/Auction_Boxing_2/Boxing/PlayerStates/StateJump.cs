@@ -11,10 +11,10 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
     class StateJump : State
     {
         float virticalSpeed = -3500;
-        float horizontalAcceleration = 200;
+        float horizontalAcceleration = 400;
         float maxHorizontalSpeed = 12000;
 
-        float gravity = 1000f;
+        float gravity = 1200f;
 
         public float startPosition;
 
@@ -56,22 +56,24 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
                 player.position.Y += (float)(player.currentVerticalSpeed * gameTime.ElapsedGameTime.TotalSeconds);
                 
                 // if the player is holding jump, reduce the pull of gravity
-                if (player.IsKeyDown(KeyPressed.Jump))
+                if (player.IsKeyDown(KeyPressed.Jump) && player.currentVerticalSpeed < 0)
+                {
                     player.currentVerticalSpeed += (float)((gravity * gameTime.ElapsedGameTime.TotalSeconds) / 2);
+                    Debug.WriteLine("Resisting");
+                }
                 else
                     player.currentVerticalSpeed += (float)(gravity * gameTime.ElapsedGameTime.TotalSeconds);
 
                 if (player.position.Y >= player.levellevel)//startPosition)
                 {
                     player.position.Y = player.levellevel;
-
+                    player.isFalling = false;
                     ChangeState(new StateLand(player));
                 }
 
                 // You're falling!
                 if (player.currentVerticalSpeed > 0)
                 {
-                    Debug.WriteLine("You're falling!");
                     player.platform = player.BoxingManager.GetLowerPlatform(player.position);
                     player.isFalling = true;
                 }
