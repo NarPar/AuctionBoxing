@@ -23,8 +23,8 @@ namespace Auction_Boxing_2
         SpriteFont font;
 
         brawlgamestate state;
-
-        Boxing_Manager boxingManager;
+        public brawlgamestate State { get { return state; } }
+        public Boxing_Manager boxingManager;
 
         Settings_Popup settings;
 
@@ -35,6 +35,8 @@ namespace Auction_Boxing_2
 
 
         #endregion
+
+       
 
         public Brawl_Game_State(Game game, Input_Handler[] inputs, Rectangle bounds)
             : base(game, inputs, bounds)
@@ -111,7 +113,7 @@ namespace Auction_Boxing_2
         // Handles the transition from player select to the brawl
         public void HandlePlayersReady(Color[] colors)
         {
-            boxingManager.ApplySettings(colors,game.GraphicsDevice);
+            boxingManager.ApplySettings(colors);
             state = brawlgamestate.brawl;
             playerSelect.OnReady -= HandlePlayersReady;
 

@@ -112,6 +112,7 @@
     <Compile Include="Boxing\PlayerStates\StatePunch.cs" />
     <Compile Include="Boxing\PlayerStates\StateRunning.cs" />
     <Compile Include="Boxing\PlayerStates\StateWalking.cs" />
+    <Compile Include="Camera.cs" />
     <Compile Include="Display\Display.cs" />
     <Compile Include="Display\Entry.cs" />
     <Compile Include="GameState\Brawl_Game_State.cs" />

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Microsoft.Xna.Framework;
 
 namespace Auction_Boxing_2.Boxing.PlayerStates
 {
@@ -48,8 +49,9 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
 
             if (player.IsKeyDown(KeyPressed.Down))
             {
-                float l = player.BoxingManager.GetLowerPlatformLevel(player.position.Y);
+                Rectangle lp = player.BoxingManager.GetLowerPlatform(player.position);
 
+                float l = lp.Y;
                 // Double tapped Down? Jump down a level!
                 if (player.prevKey == KeyPressed.Down && player.dbleTapTimer > 0 && player.dbleTapCounter == 2)
                 {

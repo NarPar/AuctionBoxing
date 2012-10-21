@@ -5,11 +5,13 @@ Current features:
 To-Do:
 
 	PRIORITY:
-		- 2D camera that follows up to 4 players around a level
-		- Finish level art
-		- level engine
-		- implement hat
-		- implement boots?
+		- Tweak the 2d camera; players occasionally go outside the screen
+		- Cane hat wrong color
+		- level engine is messed (platforms)
+		- Hat collisions
+		- hat rethrowing
+		- cape
+		- too fast, too slippery, jump too high, weird falling gravity defying
 
 
 	Programming:
