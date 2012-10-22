@@ -42,7 +42,7 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
             if (!thrownAgain && !caught)
             {
                 // Hold your hand out!
-                if (player.IsKeyDown(KeyPressed.Attack))
+                if (player.IsKeyDown(KeyPressed.Kick))
                 {
                     Debug.WriteLine("WAITING TO RETHROW! " + caught);
                     player.sprite.FrameIndex = 0;

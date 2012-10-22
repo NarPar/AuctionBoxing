@@ -153,7 +153,9 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
                         ChangeState(new StateRevolverShoot(itemIndex, player));
                         break;
                     case (3):
+                        Debug.WriteLine("In cape!");
                         ChangeState(new StateCape(itemIndex, player));
+                        
                         break;
                 }
             }

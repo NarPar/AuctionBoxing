@@ -37,8 +37,8 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
                     break;
                 case (CapeStuckState.stuck):
                     // Hold to continue hiding
-                    if (player.IsKeyDown(KeyPressed.Attack))
-                    {
+                    //if (player.IsKeyDown(KeyPressed.Attack))
+                    //{
                         if (player.sprite.FrameIndex == 8)
                         {
                             player.sprite.FrameIndex = 6;
@@ -53,7 +53,7 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
                         }
 
                         
-                    }
+                    //}
 
                     break;
                 case (CapeStuckState.free):
