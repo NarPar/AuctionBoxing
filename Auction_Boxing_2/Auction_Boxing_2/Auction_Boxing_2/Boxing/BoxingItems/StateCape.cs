@@ -60,6 +60,7 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
                             if(player.direction == 1)
                                 dir = -1;
                             targetPlayer = player.BoxingManager.GetPlayerInFront(player, player.position.Y - 2 * player.GetHeight / 3, dir);
+                            // TODO : handle NullReferenceException in line below
                             target = targetPlayer.position.X - 18 * BoxingPlayer.Scale;
 
                             direction = dir;
