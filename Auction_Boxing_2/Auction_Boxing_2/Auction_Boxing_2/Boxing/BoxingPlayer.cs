@@ -374,6 +374,8 @@ namespace Auction_Boxing_2
 
         public bool isDead;
 
+        public bool isBumping = false;
+
         public BoxingPlayer(Boxing_Manager bm, int playerIndex, Vector2 startPosition, Dictionary<string, Animation> animations, Input_Handler input, Color color,
             Texture2D blank, Rectangle healthBar, Rectangle platform)//items)
         {
@@ -412,16 +414,16 @@ namespace Auction_Boxing_2
             combinations[0, 2] = KeyPressed.Attack;
 
             combinations[1, 0] = KeyPressed.Defend;
-            combinations[1, 1] = KeyPressed.Right;
-            combinations[1, 2] = KeyPressed.Attack;
+            combinations[1, 1] = KeyPressed.Up;
+            combinations[1, 2] = KeyPressed.Kick;
 
             combinations[2, 0] = KeyPressed.Defend;
             combinations[2, 1] = KeyPressed.Down;
             combinations[2, 2] = KeyPressed.Attack;
 
             combinations[3, 0] = KeyPressed.Defend;
-            combinations[3, 1] = KeyPressed.Left;
-            combinations[3, 2] = KeyPressed.Attack;
+            combinations[3, 1] = KeyPressed.Down;
+            combinations[3, 2] = KeyPressed.Kick;
 
             // Set players for first round.
             Reset(startPosition);
@@ -564,6 +566,7 @@ namespace Auction_Boxing_2
         // Add a key to the list
         public void HandleKeyDown(int player_index, KeyPressed key)
         {
+            //Debug.WriteLine("KeyPressed = " + key);
             if (!KeysDown.Contains(key))
                 KeysDown.Add(key);
 
@@ -618,7 +621,7 @@ namespace Auction_Boxing_2
                 {//C:\Users\Nicholas\Documents\GitHub\AuctionBoxing\Auction_Boxing_2\Auction_Boxing_2\Auction_Boxing_2\Boxing\BoxingPlayer.cs
                     if (items[i] && comboKeys[j] == combinations[i, j]) { c++; }  
                     // We have a combo if all keys match!
-                    if (c == 3) { state.OnCombo(i); }
+                    if (c == 3) { state.OnCombo(i); Debug.WriteLine("Combo request! " + i);  }
                 }
             }
         }
@@ -681,11 +684,18 @@ namespace Auction_Boxing_2
         }
 
         // Wrappa!
-        public bool IntersectPixels(BoxingPlayer b)
+        public bool IntersectAttackPixels(BoxingPlayer b)
         {
             return IntersectPixels(Transform, sprite.Animation.FrameWidth, sprite.Animation.FrameHeight,
                 BoxingManager.GetBitmapData(currentAnimationKey, sprite.FrameIndex, sprite.Animation.FrameWidth, sprite.Animation.FrameHeight),//sprite.GetData(),
                            b.Transform, b.sprite.Animation.FrameWidth, b.sprite.Animation.FrameHeight, 
+                          b.sprite.GetData(), true);//b.sprite.GetData());
+        }
+
+        public bool IntersectPixels(BoxingPlayer b)
+        {
+            return IntersectPixels(Transform, sprite.Animation.FrameWidth, sprite.Animation.FrameHeight, sprite.GetData(),
+                           b.Transform, b.sprite.Animation.FrameWidth, b.sprite.Animation.FrameHeight,
                           b.sprite.GetData(), true);//b.sprite.GetData());
         }
 

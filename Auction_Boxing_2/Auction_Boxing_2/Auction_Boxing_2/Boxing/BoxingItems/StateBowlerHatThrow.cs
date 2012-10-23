@@ -48,8 +48,11 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
             if (holdTimer > 0)
                 holdTimer -= (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-            if (!player.IsKeyDown(KeyPressed.Attack))
+            if (!player.IsKeyDown(KeyPressed.Kick))
+            {
                 buttonHeld = false;
+                Debug.WriteLine("Button OFf!");
+            }
 
             if (buttonHeld && holdTimer <= 0)
                 ChangeState(new StateBowlerHatReThrow(itemIndex, player));

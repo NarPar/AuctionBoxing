@@ -19,6 +19,7 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
             : base(player, "Duck")
         {
             canCatch = true;
+            canCombo = true;
         }
 
         public override void Update(Microsoft.Xna.Framework.GameTime gameTime)
@@ -75,23 +76,5 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
             
         }
 
-        public override void OnCombo(int itemIndex)
-        {
-            // COMBO MOVE!
-            switch (itemIndex)
-            {
-                case (0):
-                    ChangeState(new StateCaneBonk(itemIndex, player));
-                    break;
-                case (1):
-                    break;
-                case (2):
-                    ChangeState(new StateRevolverShoot(itemIndex, player));
-                    break;
-                case (3):
-                    break;
-            }
-
-        }
     }
 }

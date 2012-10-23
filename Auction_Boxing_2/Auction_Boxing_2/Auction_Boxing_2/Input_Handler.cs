@@ -23,6 +23,7 @@ namespace Auction_Boxing_2
         Defend,
         Jump,
         Attack,
+        Kick
     }
 
     public class Input_Handler
@@ -201,6 +202,13 @@ namespace Auction_Boxing_2
                     OnKeyDown(player_index, KeyPressed.Attack);
             }
 
+            if (
+               (gpPrevious.IsButtonUp(Buttons.Y) && gpCurrent.IsButtonDown(Buttons.Y)))
+            {
+                if (OnKeyDown != null)
+                    OnKeyDown(player_index, KeyPressed.Kick);
+            }
+
             // Keys held?
 
             //Up Key held down?
@@ -244,6 +252,11 @@ namespace Auction_Boxing_2
             {
                 if (OnKeyHold != null)
                     OnKeyHold(player_index, KeyPressed.Attack);
+            }
+            if (gpCurrent.IsButtonDown(Buttons.Y))
+            {
+                if (OnKeyHold != null)
+                    OnKeyHold(player_index, KeyPressed.Kick);
             }
 
 
@@ -299,6 +312,12 @@ namespace Auction_Boxing_2
             {
                 if (OnKeyRelease != null)
                     OnKeyRelease(player_index, KeyPressed.Attack);
+            }
+            if (//(kbPrevious.IsKeyDown(kbAttack) && kbCurrent.IsKeyUp(kbAttack)) ||
+               (gpPrevious.IsButtonDown(Buttons.Y) && gpCurrent.IsButtonUp(Buttons.Y)))
+            {
+                if (OnKeyRelease != null)
+                    OnKeyRelease(player_index, KeyPressed.Kick);
             }
         }
 

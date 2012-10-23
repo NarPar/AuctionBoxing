@@ -46,7 +46,7 @@ namespace Auction_Boxing_2
 
         //List<BoxingPlayer> Players = new List<BoxingPlayer>();
 
-        Rectangle bounds;
+        public Rectangle bounds;
 
         public static Rectangle Battlefield;
 
@@ -590,7 +590,7 @@ namespace Auction_Boxing_2
                             player.position.X = MathHelper.Clamp(player.position.X,
                                 bounds.Left + player.GetWidth / 2, bounds.Right - player.GetWidth / 2);//- (player.GetWidth / 2 - 15 * player.scale), bounds.Right - player.GetWidth / 2 - (player.GetWidth / 2 - 15 * player.scale));
 
-                            HandleCollisions(i);
+                            HandleCollisions(i, gameTime);
                         }
 
                     }
@@ -744,7 +744,7 @@ namespace Auction_Boxing_2
             }
         }
 
-        public void HandleCollisions(int player)
+        public void HandleCollisions(int player, GameTime gameTime)
         {
             
             // level collision
@@ -807,10 +807,18 @@ namespace Auction_Boxing_2
                     {
                         if (thisPlayer.isAttacking && (thisPlayer.GetGroundLevel == otherPlayer.GetGroundLevel))
                         {
-                            collide = thisPlayer.IntersectPixels(otherPlayer);
+                            collide = thisPlayer.IntersectAttackPixels(otherPlayer);
                             if (collide)
                                 thisPlayer.HitOtherPlayer(otherPlayer);
                         }
+
+                        /*//If they're bumping into each other
+                        if (Math.Abs(thisPlayer.currentHorizontalSpeed) > 0 && thisPlayer.IntersectPixels(otherPlayer))
+                        {
+                            thisPlayer.position.X += //isBumping = true;
+                            otherPlayer.position.X += (float)(thisPlayer.direction * -1 * thisPlayer.currentHorizontalSpeed / 2); 
+                        }*/
+
                     }
                 }
             }

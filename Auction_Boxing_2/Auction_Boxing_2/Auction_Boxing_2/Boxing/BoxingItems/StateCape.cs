@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
@@ -32,6 +32,7 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
         {
             this.itemIndex = itemIndex;
             state = CapeState.draw;
+            Debug.WriteLine("In cape!");
             
         }
 
@@ -48,7 +49,7 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
                     break;
                 case(CapeState.hide):
                      // Hold to continue hiding
-                    if (player.IsKeyDown(KeyPressed.Attack))
+                    if (player.IsKeyDown(KeyPressed.Kick))
                     {
                         player.sprite.FrameIndex = 9;
 
@@ -60,8 +61,8 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
                             if(player.direction == 1)
                                 dir = -1;
                             targetPlayer = player.BoxingManager.GetPlayerInFront(player, player.position.Y - 2 * player.GetHeight / 3, dir);
-                            // TODO : handle NullReferenceException in line below
-                            target = targetPlayer.position.X - 18 * BoxingPlayer.Scale;
+                            if(targetPlayer != null)
+                                target = targetPlayer.position.X - 18 * BoxingPlayer.Scale;
 
                             direction = dir;
                         }
@@ -71,7 +72,8 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
                             if(player.direction == -1)
                                 dir = 1;
                             targetPlayer = player.BoxingManager.GetPlayerInFront(player, player.position.Y - 2 * player.GetHeight / 3, dir);
-                            target = targetPlayer.position.X + 18 * BoxingPlayer.Scale;
+                            if (targetPlayer != null)
+                                target = targetPlayer.position.X + 18 * BoxingPlayer.Scale;
 
                             direction = dir;
                         }
@@ -103,7 +105,10 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
                     player.position.X += (float)(direction * speed * gameTime.ElapsedGameTime.TotalSeconds);
                     float dif = Math.Abs(player.position.X - target);
                     // You're behind'm!
-                    if (dif < 5 && dif > 0)
+                    if (dif < 5 && dif > 0 
+                        || player.position.X - player.GetWidth / 2 <= player.BoxingManager.bounds.X
+                        || player.position.X + player.GetWidth / 2 >= player.BoxingManager.bounds.X + player.BoxingManager.bounds.Width 
+                        )
                         state = CapeState.reveal;
 
                     break;
