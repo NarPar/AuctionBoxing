@@ -20,14 +20,17 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
         bool noHat = false;
 
         int itemIndex;
+        KeyPressed itemButton;
 
-        public StateBowlerHatThrow(int itemIndex, BoxingPlayer player)
+        public StateBowlerHatThrow(int itemIndex, BoxingPlayer player, KeyPressed key)
             : base(player, "BowlerThrow")
         {
             if (player.hasThrownBowlerHat)
                 noHat = true;
                 //ChangeState(new StateBowlerHatReThrow(itemIndex, player)); // Wait to recieve!
             holdTimer = MAX_HOLD_TIME;
+
+            this.itemButton = key;
         }
 
         public override void Update(GameTime gameTime)
@@ -48,14 +51,14 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
             if (holdTimer > 0)
                 holdTimer -= (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-            if (!player.IsKeyDown(KeyPressed.Kick))
+            if (!player.IsKeyDown(itemButton))
             {
                 buttonHeld = false;
-                Debug.WriteLine("Button OFf!");
+                //Debug.WriteLine("Button OFf!");
             }
 
             if (buttonHeld && holdTimer <= 0)
-                ChangeState(new StateBowlerHatReThrow(itemIndex, player));
+                ChangeState(new StateBowlerHatReThrow(itemIndex, player, itemButton));
             else if (!buttonHeld && holdTimer <=0 && noHat)
                 ChangeState(new StateStopped(player));
         }

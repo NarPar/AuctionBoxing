@@ -15,15 +15,15 @@ namespace Auction_Boxing_2
     public abstract class Item
     {
         public float health, stamina, movement, attack, defense, cooldown, stun, casttime;
-        public bool active = false;
-        public Rectangle hitbox;
+        //public bool active = false;
+        //public Rectangle hitbox;
 
         public string name;
         public string ability_description;
 
         public Texture2D display_texture;
-        public Texture2D instanceTexture;
-        public Animation animation; // the texture for the players animation.
+        //public Texture2D instanceTexture;
+        //public Animation animation; // the texture for the players animation.
 
         public Texture2D icon;
 
@@ -33,16 +33,16 @@ namespace Auction_Boxing_2
         //public Animation itemAnimation;
 
         // DOn't we already know what each items stats are going to be? So can't we make them defaults in the classes?
-        public Item(Texture2D display_texture, Texture2D instance_texture, Texture2D icon)//float health, float stamina, float movement, float attack, float defense, float cooldown, 
+        public Item(Texture2D icon)//Texture2D Displaytexture, Texture2D instance_texture, Texture2D icon)//float health, float stamina, float movement, float attack, float defense, float cooldown, 
             //string name, string ability_description)
         {
             this.display_texture = display_texture;
-            this.instanceTexture = instance_texture;
+            //this.instanceTexture = instance_texture;
             this.icon = icon;
         }
         //public abstract ItemInstance GenerateInstance(Vector3 position, int id, SpriteEffects effect);
-        public abstract State GenerateState(int itemindex);
-        public virtual void updatePosition(Vector3 newposition) { }
+        public abstract State GetState(int itemIndex, BoxingPlayer player, KeyPressed key);//int itemindex);
+        //public virtual void updatePosition(Vector3 newposition) { }
     }
 
     /*public class Cape : Item
@@ -90,8 +90,8 @@ else
     {
 
 
-        public Cane(Texture2D displayTexture, Texture2D instanceTexture, Texture2D icon) :
-            base(displayTexture, instanceTexture, icon)
+        public Cane(Texture2D icon) :
+            base(icon)
         {
             health = 20;
             stamina = 30;
@@ -116,9 +116,9 @@ else
         //    return new CaneInstance(this, instanceTexture, position, id, effect);
         //}
 
-        public override State GenerateState(int itemindex)
+        public override State GetState(int itemIndex, BoxingPlayer player, KeyPressed key)
         {
-            return null;// new StateItemBasic(state, itemindex, this);
+            return new StateCaneBonk(itemIndex, player, key);
         }
     }
 
@@ -128,8 +128,8 @@ else
 
     public class Bowler_Hat : Item
     {
-        public Bowler_Hat(Texture2D displayTexture, Texture2D instanceTexture, Texture2D icon) :
-            base(displayTexture, instanceTexture, icon)
+        public Bowler_Hat(Texture2D icon) :
+            base(icon)
         {
             health = 30;
             stamina = 20;
@@ -153,9 +153,9 @@ else
         //    return new BowlerHatInstance(this, instanceTexture, position, id, effect);
         //}
 
-        public override State GenerateState(int itemindex)
+        public override State GetState(int itemIndex, BoxingPlayer player, KeyPressed key)
         {
-            return null;// new StateItemBasic(state, itemindex, this);
+            return new StateBowlerHatThrow(itemIndex, player, key);
         }
     }
 
@@ -165,8 +165,8 @@ else
 
     public class Revolver : Item
     {
-        public Revolver(Texture2D displayTexture, Texture2D instanceTexture, Texture2D icon) :
-            base(displayTexture, instanceTexture, icon)
+        public Revolver(Texture2D icon) :
+            base(icon)
         {
             health = 5;
             stamina = 20;
@@ -187,9 +187,48 @@ else
         //    return new RevolverInstance(this, instanceTexture, position, id, effect);
         //}
 
-        public override State GenerateState(int itemindex)
+        public override State GetState(int itemIndex, BoxingPlayer player, KeyPressed key)
         {
-            return null;// new StateItemBasic(state, itemindex, this);
+            return new StateRevolverShoot(itemIndex, player, key);
+        }
+    }
+
+    #endregion
+
+    #region Cape
+
+    public class Cape : Item
+    {
+
+        public Cape(Texture2D icon) :
+            base(icon)
+        {
+            health = 20;
+            stamina = 30;
+            movement = 80;
+            attack = 5;
+            defense = 10;
+            cooldown = 500;
+            stun = 900;
+            casttime = 100;
+
+            name = "Cane";
+            ability_description = "Clobber - bonks the ruffian on the head!";
+
+
+            //itemAnimation = new Animation(blah, blah);
+            //hitbox = Animation.bounds;
+
+        }
+
+        //public override ItemInstance GenerateInstance(Vector3 position, int id, SpriteEffects effect)
+        //{
+        //    return new CaneInstance(this, instanceTexture, position, id, effect);
+        //}
+
+        public override State GetState(int itemIndex, BoxingPlayer player, KeyPressed key)
+        {
+            return new StateCape(itemIndex, player, key);
         }
     }
 

@@ -17,10 +17,14 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
         BowlerHatInstance hat;
         float rethrowIncreaseFactor = .2f;
 
-        public StateBowlerHatReThrow(int itemIndex, BoxingPlayer player)
+        KeyPressed itemButton;
+
+        public StateBowlerHatReThrow(int itemIndex, BoxingPlayer player, KeyPressed key)
             : base(player, "BowlerRethrow")
         {
             canCatch = true;
+
+            itemButton = key;
         }
 
         public override void Update(GameTime gameTime)
@@ -42,7 +46,7 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
             if (!thrownAgain && !caught)
             {
                 // Hold your hand out!
-                if (player.IsKeyDown(KeyPressed.Kick))
+                if (player.IsKeyDown(itemButton))
                 {
                     Debug.WriteLine("WAITING TO RETHROW! " + caught);
                     player.sprite.FrameIndex = 0;

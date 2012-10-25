@@ -80,11 +80,11 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
                 }
             }
 
-            if (player.IsKeyDown(KeyPressed.Attack))
+            /*if (player.IsKeyDown(KeyPressed.Attack))
             {
                 // Punch it!
                 ChangeState(new StatePunch(player));
-            }
+            }*/
 
         }
 

@@ -16,6 +16,7 @@ namespace Auction_Boxing_2
         Vector2 vTitle;
 
         Player_Select_Popup popup;
+        public bool ready = false;
 
 
         public Player_Select_Menu(ContentManager content, Player_Select_Popup popup, SpriteFont font, Rectangle bounds)
@@ -31,10 +32,13 @@ namespace Auction_Boxing_2
 
         public void ChangeIndex(int playerIndex, KeyPressed key)
         {
-            if (key == KeyPressed.Left)
-                selection = popup.GetColor(selection, true);
-            else if (key == KeyPressed.Right)
-                selection = popup.GetColor(selection, false);
+            if (!ready)
+            {
+                if (key == KeyPressed.Left)
+                    selection = popup.GetColor(selection, true);
+                else if (key == KeyPressed.Right)
+                    selection = popup.GetColor(selection, false);
+            }
         }
 
         public void Draw(SpriteBatch spriteBatch, SpriteFont font)

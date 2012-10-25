@@ -22,8 +22,10 @@ namespace Auction_Boxing_2
         Right,
         Defend,
         Jump,
-        Attack,
-        Kick
+        Attack1,
+        Attack2,
+        Attack3,
+        Attack4
     }
 
     public class Input_Handler
@@ -44,6 +46,7 @@ namespace Auction_Boxing_2
         public Keys kbJump;
         public Keys kbAttack;
 
+
         //-----Gamepad-----//
 
         GamePadState gpPrevious;
@@ -53,6 +56,8 @@ namespace Auction_Boxing_2
         PlayerIndex gamePadPlayerIndex;
 
         bool isGamePad;
+
+        float gamepadTriggerThreshold = 0.5f;
 
 
         //-----Events & Delegates-----//
@@ -80,6 +85,17 @@ namespace Auction_Boxing_2
         {
             this.player_index = playerNumber;
 
+            // Gamepad:
+            /*
+             * up = jump
+             * trigger = block
+             * a = attack 1
+             * b = attack 2
+             * x = attack 3
+             * y = attack 4
+            */
+
+            // KEyboard sucks mind you!
             // Init keyboard controls
             switch (playerNumber)
             {
@@ -180,36 +196,52 @@ namespace Auction_Boxing_2
                 if (OnKeyDown != null)
                     OnKeyDown(player_index, KeyPressed.Right);
             }
-            //Defend Key Pressed?
+            //Defend Key Pressed? LEft or right triggers past a certain threshold (currently .5)
             if ((kbPrevious.IsKeyUp(kbDefend) && kbCurrent.IsKeyDown(kbDefend)) ||
-                (gpPrevious.IsButtonUp(Buttons.X) && gpCurrent.IsButtonDown(Buttons.X)))
+                (gpPrevious.Triggers.Left < gamepadTriggerThreshold && gpCurrent.Triggers.Left >= gamepadTriggerThreshold)  ||
+                (gpPrevious.Triggers.Right < gamepadTriggerThreshold && gpCurrent.Triggers.Right >= gamepadTriggerThreshold))
             {
+                
                 if (OnKeyDown != null)
                     OnKeyDown(player_index, KeyPressed.Defend);
             }
             //Jump Key Pressed?
             if ((kbPrevious.IsKeyUp(kbJump) && kbCurrent.IsKeyDown(kbJump)) ||
-                (gpPrevious.IsButtonUp(Buttons.A) && gpCurrent.IsButtonDown(Buttons.A)))
+                (gpPrevious.IsButtonUp(Buttons.DPadUp) && gpCurrent.IsButtonDown(Buttons.DPadUp)))
             {
                 if (OnKeyDown != null)
                     OnKeyDown(player_index, KeyPressed.Jump);
             }
-            //Attack Key Pressed?
+            //Attack 1
             if ((kbPrevious.IsKeyUp(kbAttack) && kbCurrent.IsKeyDown(kbAttack)) ||
-                (gpPrevious.IsButtonUp(Buttons.B) && gpCurrent.IsButtonDown(Buttons.B)))
+                (gpPrevious.IsButtonUp(Buttons.A) && gpCurrent.IsButtonDown(Buttons.A)))
             {
                 if (OnKeyDown != null)
-                    OnKeyDown(player_index, KeyPressed.Attack);
+                    OnKeyDown(player_index, KeyPressed.Attack1);
             }
 
-            if (
-               (gpPrevious.IsButtonUp(Buttons.Y) && gpCurrent.IsButtonDown(Buttons.Y)))
+            // Attack 2
+            if ((gpPrevious.IsButtonUp(Buttons.B) && gpCurrent.IsButtonDown(Buttons.B)))
             {
                 if (OnKeyDown != null)
-                    OnKeyDown(player_index, KeyPressed.Kick);
+                    OnKeyDown(player_index, KeyPressed.Attack2);
+            }
+             
+            // Attack 3
+            if (gpPrevious.IsButtonUp(Buttons.X) && gpCurrent.IsButtonDown(Buttons.X))
+            {
+                if (OnKeyDown != null)
+                    OnKeyDown(player_index, KeyPressed.Attack3);
             }
 
-            // Keys held?
+            // Attack 4
+            if (gpPrevious.IsButtonUp(Buttons.Y) && gpCurrent.IsButtonDown(Buttons.Y))
+            {
+                if (OnKeyDown != null)
+                    OnKeyDown(player_index, KeyPressed.Attack4);
+            }
+
+            // ================= Keys held? ==========================
 
             //Up Key held down?
             if (kbCurrent.IsKeyDown(kbUp) || gpCurrent.IsButtonDown(Buttons.DPadUp))
@@ -238,26 +270,45 @@ namespace Auction_Boxing_2
                     OnKeyHold(player_index, KeyPressed.Right);
             }
 
-            if (kbCurrent.IsKeyDown(kbDefend) || gpCurrent.IsButtonDown(Buttons.X))
+            // Defend if left or right trigger past trigger threshold (currently .5)
+            if (kbCurrent.IsKeyDown(kbDefend) || 
+                (gpCurrent.Triggers.Left >= gamepadTriggerThreshold) || // left trigger
+                (gpCurrent.Triggers.Right >= gamepadTriggerThreshold)) // right trigger
             {
                 if (OnKeyHold != null)
                     OnKeyHold(player_index, KeyPressed.Defend);
             }
-            if (kbCurrent.IsKeyDown(kbJump) || gpCurrent.IsButtonDown(Buttons.A))
+            // Up is jump
+            if (kbCurrent.IsKeyDown(kbJump) || gpCurrent.IsButtonDown(Buttons.DPadUp))
             {
                 if (OnKeyHold != null)
                     OnKeyHold(player_index, KeyPressed.Jump);
             }
-            if (kbCurrent.IsKeyDown(kbAttack) || gpCurrent.IsButtonDown(Buttons.B))
+            // attack 1 = A
+            if (kbCurrent.IsKeyDown(kbAttack) || gpCurrent.IsButtonDown(Buttons.A))
             {
                 if (OnKeyHold != null)
-                    OnKeyHold(player_index, KeyPressed.Attack);
+                    OnKeyHold(player_index, KeyPressed.Attack1);
             }
+            // Attack 2 = B
+            if (gpCurrent.IsButtonDown(Buttons.B))
+            {
+                if (OnKeyHold != null)
+                    OnKeyHold(player_index, KeyPressed.Attack2);
+            }
+            // Attack 3 = X
+            if (gpCurrent.IsButtonDown(Buttons.X))
+            {
+                if (OnKeyHold != null)
+                    OnKeyHold(player_index, KeyPressed.Attack3);
+            }
+            // Attack 4 = Y
             if (gpCurrent.IsButtonDown(Buttons.Y))
             {
                 if (OnKeyHold != null)
-                    OnKeyHold(player_index, KeyPressed.Kick);
+                    OnKeyHold(player_index, KeyPressed.Attack4);
             }
+
 
 
             //------RELEASE-------//
@@ -293,31 +344,49 @@ namespace Auction_Boxing_2
                 if (OnKeyRelease != null)
                     OnKeyRelease(player_index, KeyPressed.Right);
             }
-            //Defend Key Released?
+            //Defend Key Released? Either left or right trigger past threshold (currently .5)
             if ((kbPrevious.IsKeyDown(kbDefend) && kbCurrent.IsKeyUp(kbDefend)) || 
-                (gpPrevious.IsButtonDown(Buttons.X) && gpCurrent.IsButtonUp(Buttons.X)))
+                ((gpPrevious.Triggers.Left >= gamepadTriggerThreshold && gpCurrent.Triggers.Left < gamepadTriggerThreshold)  ||
+                (gpPrevious.Triggers.Right >= gamepadTriggerThreshold && gpCurrent.Triggers.Right < gamepadTriggerThreshold)))
             {
                 if (OnKeyRelease != null)
                     OnKeyRelease(player_index, KeyPressed.Defend);
             }
 
             if ((kbPrevious.IsKeyDown(kbJump) && kbCurrent.IsKeyUp(kbJump)) || 
-                (gpPrevious.IsButtonDown(Buttons.A) && gpCurrent.IsButtonUp(Buttons.A)))
+                (gpPrevious.IsButtonDown(Buttons.DPadUp) && gpCurrent.IsButtonUp(Buttons.DPadUp)))
             {
                 if (OnKeyRelease != null)
                     OnKeyRelease(player_index, KeyPressed.Jump);
             }
-            if ((kbPrevious.IsKeyDown(kbAttack) && kbCurrent.IsKeyUp(kbAttack)) || 
-                (gpPrevious.IsButtonDown(Buttons.B) && gpCurrent.IsButtonUp(Buttons.B)))
+
+            //Attack 1
+            if ((kbPrevious.IsKeyDown(kbAttack) && kbCurrent.IsKeyUp(kbAttack)) ||
+                (gpPrevious.IsButtonDown(Buttons.A) && gpCurrent.IsButtonUp(Buttons.A)))
             {
                 if (OnKeyRelease != null)
-                    OnKeyRelease(player_index, KeyPressed.Attack);
+                    OnKeyRelease(player_index, KeyPressed.Attack1);
             }
-            if (//(kbPrevious.IsKeyDown(kbAttack) && kbCurrent.IsKeyUp(kbAttack)) ||
-               (gpPrevious.IsButtonDown(Buttons.Y) && gpCurrent.IsButtonUp(Buttons.Y)))
+
+            // Attack 2
+            if ((gpPrevious.IsButtonDown(Buttons.B) && gpCurrent.IsButtonUp(Buttons.B)))
             {
                 if (OnKeyRelease != null)
-                    OnKeyRelease(player_index, KeyPressed.Kick);
+                    OnKeyRelease(player_index, KeyPressed.Attack2);
+            }
+             
+            // Attack 3
+            if (gpPrevious.IsButtonDown(Buttons.X) && gpCurrent.IsButtonUp(Buttons.X))
+            {
+                if (OnKeyRelease != null)
+                    OnKeyRelease(player_index, KeyPressed.Attack3);
+            }
+
+            // Attack 4
+            if (gpPrevious.IsButtonDown(Buttons.Y) && gpCurrent.IsButtonUp(Buttons.Y))
+            {
+                if (OnKeyRelease != null)
+                    OnKeyRelease(player_index, KeyPressed.Attack4);
             }
         }
 

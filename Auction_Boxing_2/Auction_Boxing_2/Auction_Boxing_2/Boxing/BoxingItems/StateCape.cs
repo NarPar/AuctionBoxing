@@ -27,12 +27,16 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
         int direction; // moves backwards towards target
         int itemIndex;
 
-        public StateCape(int itemIndex, BoxingPlayer player)
+        KeyPressed itemButton; // the button mapped to this item
+
+        public StateCape(int itemIndex, BoxingPlayer player, KeyPressed key)
             : base(player, "Cape")
         {
             this.itemIndex = itemIndex;
             state = CapeState.draw;
             Debug.WriteLine("In cape!");
+
+            this.itemButton = key;
             
         }
 
@@ -49,7 +53,7 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
                     break;
                 case(CapeState.hide):
                      // Hold to continue hiding
-                    if (player.IsKeyDown(KeyPressed.Kick))
+                    if (player.IsKeyDown(itemButton))
                     {
                         player.sprite.FrameIndex = 9;
 

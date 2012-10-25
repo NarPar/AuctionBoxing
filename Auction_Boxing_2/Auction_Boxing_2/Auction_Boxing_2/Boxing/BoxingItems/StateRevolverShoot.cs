@@ -12,12 +12,13 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
     {
         Item item;
         int itemindex;
+        KeyPressed itemButton;
 
         int shootCounter;
 
         public bool isShooting;
 
-        public StateRevolverShoot(int itemIndex, BoxingPlayer player)
+        public StateRevolverShoot(int itemIndex, BoxingPlayer player, KeyPressed key)
             : base(player, "RevolverShoot")
         {
            
@@ -26,6 +27,8 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
             player.input.OnKeyDown += HandleKeyDownInput;
 
             shootCounter = 0;
+
+            this.itemButton = key;
             
         }
 
@@ -69,36 +72,38 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
 
         public override void HandleKeyDownInput(int player_index, KeyPressed key)
         {
-
-            if (shootCounter == 0 && (player.sprite.FrameIndex == 4 || player.sprite.FrameIndex == 5))
+            if (key == itemButton) // pressing the item button?
             {
-                shootCounter++;
-                BoxingPlayer p = player.BoxingManager.GetPlayerInFront(player, player.position.Y - 7 * player.GetHeight / 9, player.direction);
-                if (p != null)
+                if (shootCounter == 0 && (player.sprite.FrameIndex == 4 || player.sprite.FrameIndex == 5))
                 {
-                    p.state.isHit(p, new StateRevolverHit(p), 5);
-                    /*if(p.state is StateRevolverHit)
+                    shootCounter++;
+                    BoxingPlayer p = player.BoxingManager.GetPlayerInFront(player, player.position.Y - 7 * player.GetHeight / 9, player.direction);
+                    if (p != null)
                     {
-                        StateRevolverHit s = (StateRevolverHit)p.state
-                        s.hitCounter = shootCounter;
-                    }*/
+                        p.state.isHit(p, new StateRevolverHit(p), 5);
+                        /*if(p.state is StateRevolverHit)
+                        {
+                            StateRevolverHit s = (StateRevolverHit)p.state
+                            s.hitCounter = shootCounter;
+                        }*/
+                    }
                 }
-            }
-            else if(shootCounter < 5 && (player.sprite.FrameIndex == 8 || player.sprite.FrameIndex == 9))
-            {
-                player.sprite.FrameIndex = 5;
-
-                shootCounter++;
-
-                BoxingPlayer p = player.BoxingManager.GetPlayerInFront(player, player.position.Y - 2 * player.GetHeight / 3, player.direction);
-                if (p != null)
+                else if (shootCounter < 5 && (player.sprite.FrameIndex == 8 || player.sprite.FrameIndex == 9))
                 {
-                    p.state.isHit(player, new StateRevolverHit(p), 5);
-                    /*if(p.state is StateRevolverHit)
+                    player.sprite.FrameIndex = 5;
+
+                    shootCounter++;
+
+                    BoxingPlayer p = player.BoxingManager.GetPlayerInFront(player, player.position.Y - 2 * player.GetHeight / 3, player.direction);
+                    if (p != null)
                     {
-                        StateRevolverHit s = (StateRevolverHit)p.state
-                        s.hitCounter = shootCounter;
-                    }*/
+                        p.state.isHit(player, new StateRevolverHit(p), 5);
+                        /*if(p.state is StateRevolverHit)
+                        {
+                            StateRevolverHit s = (StateRevolverHit)p.state
+                            s.hitCounter = shootCounter;
+                        }*/
+                    }
                 }
             }
 

@@ -39,11 +39,11 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
                 // Ollie!
                 ChangeState(new StateJump(player));
             }
-            else if (player.IsKeyDown(KeyPressed.Attack))
+            /*else if (player.IsKeyDown(KeyPressed.Attack))
             {
                 // Punch it!
                 ChangeState(new StatePunch(player));
-            }
+            }*/
 
             else if (player.IsKeyDown(KeyPressed.Defend))
             {

@@ -241,11 +241,11 @@ namespace Auction_Boxing_2
 
         #region Items
 
-        //public Item[] items = new Item[4];
+        public Item[] items;
         public bool isReloadingRevolver = false;
         public bool hasThrownBowlerHat = false;
 
-        bool[] items = new bool[4];
+        //bool[] items = new bool[4];
 
         // an array of size 4 containing the animations of the items.
         //public Dictionary<string, Animation>[] itemAnimations = new Dictionary<string, Animation>[4];
@@ -377,9 +377,11 @@ namespace Auction_Boxing_2
         public bool isBumping = false;
 
         public BoxingPlayer(Boxing_Manager bm, int playerIndex, Vector2 startPosition, Dictionary<string, Animation> animations, Input_Handler input, Color color,
-            Texture2D blank, Rectangle healthBar, Rectangle platform)//items)
+            Texture2D blank, Rectangle healthBar, Rectangle platfor, Item[] items)
         {
             this.BoxingManager = bm;
+
+            this.items = items; // set the items. The items know the states to be called.
 
             // To test the accuracy of the collision rect
             this.blank = blank;
@@ -404,12 +406,12 @@ namespace Auction_Boxing_2
             input.OnKeyRelease += HandleKeyRelease;
 
             // 
-            items[0] = true;
-            items[1] = true;
-            items[2] = true;
-            items[3] = true;
+            //items[0] = true;
+            //items[1] = true;
+            //items[2] = true;
+            //items[3] = true;
 
-            combinations[0, 0] = KeyPressed.Defend;
+            /*combinations[0, 0] = KeyPressed.Defend;
             combinations[0, 1] = KeyPressed.Up;
             combinations[0, 2] = KeyPressed.Attack;
 
@@ -423,7 +425,7 @@ namespace Auction_Boxing_2
 
             combinations[3, 0] = KeyPressed.Defend;
             combinations[3, 1] = KeyPressed.Down;
-            combinations[3, 2] = KeyPressed.Kick;
+            combinations[3, 2] = KeyPressed.Kick;*/
 
             // Set players for first round.
             Reset(startPosition);
@@ -508,7 +510,7 @@ namespace Auction_Boxing_2
                     levellevel = platform.Y;
                     position.Y += 2;
                     state.ChangeState(new StateFall(this, true));
-                    Debug.WriteLine("Falling after off ledge!");
+                    //Debug.WriteLine("Falling after off ledge!");
                 }
             }
             // else, if your falling after jumping
@@ -581,6 +583,32 @@ namespace Auction_Boxing_2
 
             //-----Combo detection-----
 
+            if (state.canCombo) // if this state can combo
+            {
+                // which item?
+                switch (key)
+                {
+                    // Switch to first item
+                    case (KeyPressed.Attack1):
+                        state.ChangeState(items[0].GetState(0, this, key));
+                        break;
+                    // switch to second
+                    case (KeyPressed.Attack2):
+                        state.ChangeState(items[1].GetState(1, this, key));
+                        break;
+                    // switch to third
+                    case (KeyPressed.Attack3):
+                        state.ChangeState(items[2].GetState(2, this, key));
+                        break;
+                    // switch to fourth
+                    case (KeyPressed.Attack4):
+                        state.ChangeState(items[3].GetState(3, this, key));
+                        break;
+                }
+            }
+
+
+
             // Add the new key, there will always be 3 keys in comboKeys.
             comboKeys.Add(key);
             if (comboKeys.Count > 3)
@@ -610,9 +638,10 @@ namespace Auction_Boxing_2
             prevKey = key;
         }
 
+        // Not currently in use since input changed to buttons instead of combos
         public void CheckForCombo()
         {
-            // Loop through the combinations list (set in the constructor) and look for 
+            /*// Loop through the combinations list (set in the constructor) and look for 
             // a match in the comboKeys.
             for (int i = 0; i < 4; i++)
             {
@@ -623,7 +652,7 @@ namespace Auction_Boxing_2
                     // We have a combo if all keys match!
                     if (c == 3) { state.OnCombo(i); Debug.WriteLine("Combo request! " + i);  }
                 }
-            }
+            }*/
         }
 
         public void HandleState()

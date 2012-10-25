@@ -214,7 +214,7 @@ namespace Auction_Boxing_2
                 // Find the player
                 if (player_index == i)
                 {
-                    if (key == KeyPressed.Jump)
+                    if (key == KeyPressed.Attack1)
                     {
                         // Are they joining?
                         if (!playerAdded[i])
@@ -235,9 +235,15 @@ namespace Auction_Boxing_2
                         {
                             // Are they readying or unreadying?
                             if (!ready[i])
+                            {
                                 ready[i] = true;
+                                menus[i].ready = true;
+                            }
                             else
+                            {
+                                menus[i].ready = false;
                                 ready[i] = false;
+                            }
                         }
                     }
 

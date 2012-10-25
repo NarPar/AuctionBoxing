@@ -82,7 +82,7 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
 
         }
 
-        public override void OnCombo(int itemIndex)
+        /*public override void OnCombo(int itemIndex)
         {
             Debug.WriteLine("COMBO " + itemIndex + " Executed!");
             // COMBO MOVE!
@@ -100,7 +100,7 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
                     break;
             }
 
-        }
+        }*/
 
     }
 }

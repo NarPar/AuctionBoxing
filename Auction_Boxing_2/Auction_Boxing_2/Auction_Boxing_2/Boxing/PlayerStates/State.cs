@@ -15,7 +15,7 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
         protected Color color;
         public bool isAttack;
         public bool canCatch = false;
-        protected bool canCombo = false;
+        public bool canCombo = false;
         protected bool canAirTime = true;
 
         protected string key;
@@ -136,6 +136,7 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
 
         public virtual void OnCombo(int itemIndex)
         {
+            /*
             // canCombo is set in the child-states constructer
             if (canCombo) // If you're a state that can combo, change the state.
             {
@@ -158,7 +159,7 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
                         
                         break;
                 }
-            }
+            }*/
         }
 
         public virtual void HandleMovement()
@@ -172,6 +173,7 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
 
         public virtual void Update(GameTime gameTime)
         {
+
             if (canAirTime)
             {
 

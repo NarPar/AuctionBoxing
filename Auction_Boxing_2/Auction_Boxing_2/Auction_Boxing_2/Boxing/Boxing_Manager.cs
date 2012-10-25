@@ -149,6 +149,9 @@ namespace Auction_Boxing_2
             }
         }
 
+
+        Item[] defaultItems = new Item[4];
+
         public Boxing_Manager(ContentManager content, Rectangle ClientBounds, Input_Handler[] inputs,
             GraphicsDevice gd, Camera camera)
         {
@@ -200,7 +203,11 @@ namespace Auction_Boxing_2
 
         public void LoadContent(ContentManager Content)
         {
-            
+            // load content for items // JUST FOR TESTING// willbe given items from loadout in full game.
+            defaultItems[0] = new Cane(Content.Load<Texture2D>("LoadOut/cane_icon"));
+            defaultItems[1] = new Revolver(Content.Load<Texture2D>("LoadOut/revolver_icon"));
+            defaultItems[2] = new Bowler_Hat(Content.Load<Texture2D>("LoadOut/bowlerhat_icon"));
+            defaultItems[3] = new Cape(Content.Load<Texture2D>("LoadOut/cape_icon"));
 
             //Change to using a text file!!
 
@@ -481,7 +488,7 @@ namespace Auction_Boxing_2
                     }
 
                     players[i] = new BoxingPlayer(this, i, playerStartPositions[i], coloredAnims, inputs[i], colors[i], blank,
-                        healthBarDimensions, level.platforms[level.platforms.Length - 1]); // Figure out the boxing players.
+                        healthBarDimensions, level.platforms[level.platforms.Length - 1], defaultItems); // Figure out the boxing players.
                 }
             }
         }

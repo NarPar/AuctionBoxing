@@ -82,13 +82,14 @@ namespace Auction_Boxing_2
         
         public virtual void ChangeIndex(int playerIndex, KeyPressed key)
         {
+            Debug.WriteLine("Key Pressed = " + key);
             // When the up or down event is fired, move the index.
             if (key == KeyPressed.Up)
                 Index--;
             else if(key == KeyPressed.Down)
                 Index++;
 
-            if (key == KeyPressed.Jump)
+            if (key == KeyPressed.Attack1)
             {
                 if (OnEntrySelect != null)
                 {

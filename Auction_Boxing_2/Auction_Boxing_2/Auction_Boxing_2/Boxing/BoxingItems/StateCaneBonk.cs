@@ -12,6 +12,7 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
     {
         Item item;
         int itemindex;
+        KeyPressed itemButton;
 
         float dodgedWaitPenalty = 1f;
         float dodgedWaitTimer = 0;
@@ -21,11 +22,12 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
 
         bool buttonHeld = true;
 
-        public StateCaneBonk(int itemIndex, BoxingPlayer player)
+        public StateCaneBonk(int itemIndex, BoxingPlayer player, KeyPressed key)
             : base(player, "CaneBonk")
         {
             isAttack = true;
             holdTimer = holdTime;
+            this.itemButton = key;
         }
 
         public override void Update(GameTime gameTime)
@@ -38,7 +40,7 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
             if (holdTimer > 0)
                 holdTimer -= (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-            if (!player.IsKeyDown(KeyPressed.Attack))
+            if (!player.IsKeyDown(itemButton))
                 buttonHeld = false;
 
             if(buttonHeld && holdTimer <= 0)
