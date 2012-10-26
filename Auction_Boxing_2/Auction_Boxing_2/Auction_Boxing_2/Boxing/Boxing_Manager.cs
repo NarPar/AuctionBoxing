@@ -301,7 +301,7 @@ namespace Auction_Boxing_2
                 0.1f, // cane balance
 
                 0.08f, // Revolver shoot
-                0.03f, // Revolver hit
+                0.05f, // Revolver hit
                 0.08f, // Revovler reload
 
                 0.07f, // Bowler hat
@@ -827,15 +827,6 @@ namespace Auction_Boxing_2
 
                         }
 
-
-
-                        //If they're bumping into each other
-                        /*if (Math.Abs(thisPlayer.currentHorizontalSpeed) > 0 && thisPlayer.IntersectPixels(otherPlayer))
-                        {
-                            thisPlayer.position.X += //isBumping = true;
-                            otherPlayer.position.X += (float)(thisPlayer.direction * -1 * thisPlayer.currentHorizontalSpeed / 2); 
-                        }*/
-
                     }
                     
                     if (thisPlayer.GetMinimumRectangle.Intersects(otherPlayer.GetMinimumRectangle))
@@ -845,8 +836,8 @@ namespace Auction_Boxing_2
                         thisPlayer.isBumping = true;
 
                         // they're falling
-                        if (thisPlayer.currentVerticalSpeed != 0)
-                        {
+                        //if (thisPlayer.currentVerticalSpeed != 0)
+                        //{
                             float diff = thisPlayer.position.X - otherPlayer.position.X;
                             float toMove = thisPlayer.GetWidth - Math.Abs(diff) + 2;
 
@@ -856,7 +847,7 @@ namespace Auction_Boxing_2
 
                                 otherPlayer.position.X += (int)toMove;
                             }
-                            else
+                            else if(diff > 0)
                             {
                                 thisPlayer.position.X += (int)toMove;
 
@@ -870,7 +861,7 @@ namespace Auction_Boxing_2
                                 int diff = thisPlayer.position.X -
                             }*/
                             //thisPlayer.position.Y = otherPlayer.position.Y - otherPlayer.GetHeight;
-                        }
+                        //}
                     }
                 }
             }

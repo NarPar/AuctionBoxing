@@ -31,7 +31,6 @@ To-Do:
     	- people flying really high upwards (getting hit while in the air?, no max upwards velocity?)
     	- Camera is slightly dissorienting when jumping (fast vertical changing?), maybe make camera changes gradual?
 	- hitting people when reloading (not confirmed)
-	- getting stuck on other person
 
   ITEMS:
     - daisy on suit that douses enemies in water, stunning them while they dry off

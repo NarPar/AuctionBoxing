@@ -251,6 +251,9 @@ namespace Auction_Boxing_2
         #region Items
 
         public Item[] items;
+        public int revolverHitCounter = 0;
+        public float beingComboedTimer = 0;
+        public float beingComboedCooldown = .3f;
         public bool isReloadingRevolver = false;
         public bool hasThrownBowlerHat = false;
 
@@ -511,6 +514,11 @@ namespace Auction_Boxing_2
                 comboTimer -= (float)gameTime.ElapsedGameTime.TotalSeconds;
             else
                 comboKeys.Clear();
+
+            if (beingComboedTimer > 0)
+                beingComboedTimer -= (float)gameTime.ElapsedGameTime.TotalSeconds;
+            else
+                revolverHitCounter = 0;
 
             sprite.Update(gameTime);
 

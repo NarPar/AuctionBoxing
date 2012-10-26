@@ -39,6 +39,9 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
 
         public override void Update(GameTime gameTime)
         {
+            if (player.currentVerticalSpeed < 0)
+                player.currentVerticalSpeed = player.currentVerticalSpeed / 2;
+
             // If player is falling
             if (player.position.Y < player.GetGroundLevel)
             {
@@ -49,10 +52,21 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
                 if (player.sprite.FrameIndex >= 5)
                     player.sprite.FrameIndex = 5;
             }
+
+
             else if (player.isDead)
                 player.sprite.FrameIndex = 5;
             else if (player.sprite.FrameIndex == player.animations[key].FrameCount - 1 && !player.isDead)
                 ChangeState(new StateStopped(player));
+
+
+
+            if (player.position.Y >= player.levellevel)
+            {
+                //Debug.WriteLine("Landed! ");
+                player.currentVerticalSpeed = 0;
+                player.position.Y = player.levellevel;
+            }
 
             /*player.position.X += player.currentHorizontalSpeed;
 
@@ -74,10 +88,17 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
             
         }
 
+        // if you're knocked down, nothing can hit you
         public override void isHit(BoxingPlayer attackingPlayer, State expectedHitState, int damage)
         {
             
         }
+        // Not even items!
+        public override void  isHitByItem(ItemInstance item, State expectedHitState)
+        {
+ 	        // base.isHitByItem(item, expectedHitState);
+        }
+
 
 
 

@@ -26,6 +26,12 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
             player.input.OnKeyDown += HandleKeyDownInput;
         }
 
+        public override void LoadState(BoxingPlayer player, Dictionary<string, Animation> ATextures)
+        {
+
+            base.LoadState(player, ATextures);
+        }
+
         public override void Update(GameTime gameTime)
         {
             // check for state change
@@ -45,6 +51,9 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
 
             if (dodgeTryTimer > 0)
                 dodgeTryTimer -= (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+            if (player.currentVerticalSpeed < 0)
+                player.currentVerticalSpeed = player.currentVerticalSpeed / 2;
 
             base.Update(gameTime);
         }

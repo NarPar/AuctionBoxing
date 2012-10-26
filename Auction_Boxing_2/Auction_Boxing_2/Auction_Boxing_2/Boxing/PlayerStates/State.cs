@@ -83,7 +83,7 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
             
             //Debug.WriteLine("isHit virtual!");
 
-            if (attackingPlayer.state.isAttack)
+            if (attackingPlayer.state.isAttack || attackingPlayer.state is StateRevolverShoot)
                 player.CurrentHealth -= damage;
 
             if (player.CurrentHealth <= 0)
@@ -96,8 +96,8 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
         {
             player.CurrentHealth -= item.damage;
 
-            if(player.CurrentHealth <= 0)
-                player.state.ChangeState(new StateKnockedDown(player, item.direction));
+            if(player.CurrentHealth <= 0 || player.state is StateJump)
+                player.state.ChangeState(new StateKnockedDown(player, item.moveDirection));
             else
                 player.state.ChangeState(expectedHitState);
         }

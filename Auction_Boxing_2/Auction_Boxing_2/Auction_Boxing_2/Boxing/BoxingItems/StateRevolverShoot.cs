@@ -18,6 +18,8 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
 
         public bool isShooting;
 
+        int damage = 2;
+
         public StateRevolverShoot(int itemIndex, BoxingPlayer player, KeyPressed key)
             : base(player, "RevolverShoot")
         {
@@ -80,9 +82,12 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
                 {
                     shootCounter++;
                     BoxingPlayer p = player.BoxingManager.GetPlayerInFront(player, player.position.Y - 7 * player.GetHeight / 9, player.direction);
-                    if (p != null)
+                    if (p != null && !(p.state is StateKnockedDown))
                     {
-                        p.state.isHit(p, new StateRevolverHit(p), 5);
+
+                        p.beingComboedTimer = p.beingComboedCooldown;
+                        p.revolverHitCounter++;
+                        p.state.isHit(p, new StateRevolverHit(p), damage);
                         /*if(p.state is StateRevolverHit)
                         {
                             StateRevolverHit s = (StateRevolverHit)p.state
@@ -97,14 +102,24 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
                     shootCounter++;
 
                     BoxingPlayer p = player.BoxingManager.GetPlayerInFront(player, player.position.Y - 2 * player.GetHeight / 3, player.direction);
-                    if (p != null)
+                    if (p != null && !(p.state is StateKnockedDown))
                     {
-                        p.state.isHit(player, new StateRevolverHit(p), 5);
+                        p.state.isHit(player, new StateRevolverHit(p), damage);
                         /*if(p.state is StateRevolverHit)
                         {
                             StateRevolverHit s = (StateRevolverHit)p.state
                             s.hitCounter = shootCounter;
                         }*/
+                        // reset combo counter
+
+                        p.beingComboedTimer = p.beingComboedCooldown;
+                        p.revolverHitCounter++;
+                        Debug.WriteLine("Hit " + p.revolverHitCounter + " times!");
+                        if (p.beingComboedTimer > 0 && p.revolverHitCounter >= 5)
+                        {
+                            p.state.ChangeState(new StateKnockedDown(p, player.direction));
+                            //player.CurrentHealth -= damage;
+                        }
                     }
                 }
             }
