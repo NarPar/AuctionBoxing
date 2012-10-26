@@ -295,21 +295,21 @@ namespace Auction_Boxing_2
                 0.08f,
                 0.08f,
 
-                0.1f,
-                0.1f,
-                0.1f,
-                0.1f,
+                0.07f, // cane bonk
+                0.08f, // cane hit
+                0.07f, // cane pull
+                0.1f, // cane balance
 
-                0.1f,
-                0.05f,
-                0.1f,
+                0.08f, // Revolver shoot
+                0.03f, // Revolver hit
+                0.08f, // Revovler reload
 
-                0.1f,
-                0.05f,
-                0.1f,
+                0.07f, // Bowler hat
+                0.05f, // Bowler catch
+                0.07f, // bowler re throws
 
-                0.1f,
-                0.1f
+                0.06f, // cape
+                0.07f // cape stuck
                 };
 
             #endregion
@@ -564,7 +564,7 @@ namespace Auction_Boxing_2
         public bool Update(GameTime gameTime)
         {
 
-            camera.UpdateCamera(players.ToList<BoxingPlayer>(), graphicsDevice);
+            //camera.UpdateCamera(players.ToList<BoxingPlayer>(), graphicsDevice);
 
             switch (state)
             {
@@ -810,22 +810,67 @@ namespace Auction_Boxing_2
                     BoxingPlayer thisPlayer = players[player];
                     BoxingPlayer otherPlayer = players[i];
 
+                    thisPlayer.isBumping = false;
+
+                   
+
                     if (thisPlayer.BoundingRectangle.Intersects(otherPlayer.BoundingRectangle))
                     {
-                        if (thisPlayer.isAttacking && (thisPlayer.GetGroundLevel == otherPlayer.GetGroundLevel))
+                        if (thisPlayer.GetGroundLevel == otherPlayer.GetGroundLevel)
                         {
-                            collide = thisPlayer.IntersectAttackPixels(otherPlayer);
-                            if (collide)
-                                thisPlayer.HitOtherPlayer(otherPlayer);
+                            if (thisPlayer.isAttacking)
+                            {
+                                collide = thisPlayer.IntersectAttackPixels(otherPlayer);
+                                if (collide)
+                                    thisPlayer.HitOtherPlayer(otherPlayer);
+                            }
+
                         }
 
-                        /*//If they're bumping into each other
-                        if (Math.Abs(thisPlayer.currentHorizontalSpeed) > 0 && thisPlayer.IntersectPixels(otherPlayer))
+
+
+                        //If they're bumping into each other
+                        /*if (Math.Abs(thisPlayer.currentHorizontalSpeed) > 0 && thisPlayer.IntersectPixels(otherPlayer))
                         {
                             thisPlayer.position.X += //isBumping = true;
                             otherPlayer.position.X += (float)(thisPlayer.direction * -1 * thisPlayer.currentHorizontalSpeed / 2); 
                         }*/
 
+                    }
+                    
+                    if (thisPlayer.GetMinimumRectangle.Intersects(otherPlayer.GetMinimumRectangle))
+                    {
+                        collide = thisPlayer.IntersectPixels(otherPlayer);
+                        otherPlayer.position.X += (float)thisPlayer.direction * Math.Abs(thisPlayer.currentHorizontalSpeed) / 2 * (float)gameTime.ElapsedGameTime.TotalSeconds;
+                        thisPlayer.isBumping = true;
+
+                        // they're falling
+                        if (thisPlayer.currentVerticalSpeed != 0)
+                        {
+                            float diff = thisPlayer.position.X - otherPlayer.position.X;
+                            float toMove = thisPlayer.GetWidth - Math.Abs(diff) + 2;
+
+                            if (diff < 0)
+                            {
+                                thisPlayer.position.X -= (int)toMove;
+
+                                otherPlayer.position.X += (int)toMove;
+                            }
+                            else
+                            {
+                                thisPlayer.position.X += (int)toMove;
+
+                                otherPlayer.position.X -= (int)toMove;
+                            }
+
+
+                            
+                            /*if (thisPlayer.position.X < otherPlayer.position.X)
+                            {
+                                int diff = thisPlayer.position.X -
+                            }*/
+                            //thisPlayer.position.Y = otherPlayer.position.Y - otherPlayer.GetHeight;
+                        }
                     }
                 }
             }
@@ -902,14 +947,14 @@ namespace Auction_Boxing_2
                     {
                         if (player != null)
                         {
-                            Vector2 bottomLeft = new Vector2(player.position.X - player.GetWidth / 2,
+                            /*Vector2 bottomLeft = new Vector2(player.position.X - player.GetWidth / 2,
                                 player.position.Y);// + player.GetHeight - player.GetHeight / 2);
                             Vector2 bottomRight = new Vector2(player.position.X + player.GetWidth - player.GetWidth / 2,
                                 player.position.Y);// + player.GetHeight - player.GetHeight / 2);
 
                             spriteBatch.Draw(blank, new Rectangle((int)bottomLeft.X, (int)bottomLeft.Y, 3, 3), Color.Red);
                             spriteBatch.Draw(blank, new Rectangle((int)bottomRight.X, (int)bottomRight.Y, 3, 3), Color.Red);
-
+                            */
                             if (drawCollisionBoxes)
                             {
                                 Rectangle playerRectangle = player.CalculateCollisionRectangle();

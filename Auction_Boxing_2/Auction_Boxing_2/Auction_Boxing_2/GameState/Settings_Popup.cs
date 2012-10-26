@@ -31,7 +31,7 @@ namespace Auction_Boxing_2
 
         public void Reset(Input_Handler[] inputs)
         {
-            inputs[0].OnKeyRelease += menu.ChangeIndex;
+            //inputs[0].OnKeyRelease += menu.ChangeIndex;
         }
 
         public override void Draw(SpriteBatch spriteBatch, SpriteFont font)

@@ -18,6 +18,11 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
         public bool canCombo = false;
         protected bool canAirTime = true;
 
+
+        protected bool isStopping = true; // if you're stopping, apply friction and gravity.
+        protected float horizontalDecelleration = 500;
+        protected float gravity = 375f;
+
         protected string key;
 
         public bool IsKeyDown(KeyPressed key)
@@ -173,6 +178,28 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
 
         public virtual void Update(GameTime gameTime)
         {
+            if (isStopping)
+            {
+                // Horizontal
+                if (player.currentHorizontalSpeed > 1 || player.currentHorizontalSpeed < -1)
+                {
+                    player.currentHorizontalSpeed -= (float)(player.currentHorizontalSpeed / 4);
+                }
+                else
+                    player.currentHorizontalSpeed = 0;
+
+                // If player is falling
+                if (player.position.Y < player.GetGroundLevel)
+                {
+                    // Add gravity
+                    player.currentVerticalSpeed += (float)(gravity * gameTime.ElapsedGameTime.TotalSeconds);
+                }
+                else
+                {
+                    player.position.Y = player.GetGroundLevel;
+                    player.currentVerticalSpeed = 0;
+                }
+            }
 
             if (canAirTime)
             {

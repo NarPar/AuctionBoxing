@@ -21,15 +21,21 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
 
         //float speedReductionValue = .5f;
 
-        float knockbackVelocity = 10;
+        float knockbackVelocity = 400;
 
         public StateKnockedDown(BoxingPlayer player, int dir)
             : base(player, "Down")
         {
+            isStopping = false;
             this.dir = dir; // The direction which they are knocked down.
             //Debug.WriteLine("Fall direction = " + dir);
         }
 
+        public override void ChangeState(State state)
+        {
+            player.currentHorizontalSpeed = -knockbackVelocity;
+            base.ChangeState(state);
+        }
 
         public override void Update(GameTime gameTime)
         {
@@ -48,11 +54,21 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
             else if (player.sprite.FrameIndex == player.animations[key].FrameCount - 1 && !player.isDead)
                 ChangeState(new StateStopped(player));
 
-            // Knock them back
-            player.position.X += dir * knockbackVelocity;
+            /*player.position.X += player.currentHorizontalSpeed;
 
-            knockbackVelocity -= .2f;
-            if (knockbackVelocity < 0)
+            // Horizontal
+            if (player.currentHorizontalSpeed > 1 || player.currentHorizontalSpeed < -1)
+            {
+                player.currentHorizontalSpeed += (float)(player.currentHorizontalSpeed / 6);
+            }
+            else
+                player.currentHorizontalSpeed = 0;*/
+
+            // Knock them back
+            player.position.X += dir * knockbackVelocity * (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+            knockbackVelocity -= knockbackVelocity / 12;
+            if (knockbackVelocity < 1 && knockbackVelocity > -1)
                 knockbackVelocity = 0;
 
             

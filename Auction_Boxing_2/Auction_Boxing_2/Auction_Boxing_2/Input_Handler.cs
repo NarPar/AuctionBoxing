@@ -44,7 +44,10 @@ namespace Auction_Boxing_2
 
         public Keys kbDefend;
         public Keys kbJump;
-        public Keys kbAttack;
+        public Keys kbAttack1;
+        public Keys kbAttack2;
+        public Keys kbAttack3;
+        public Keys kbAttack4;
 
 
         //-----Gamepad-----//
@@ -105,9 +108,12 @@ namespace Auction_Boxing_2
                     kbLeft = Keys.A;
                     kbRight = Keys.D;
 
-                    kbDefend = Keys.Z;
-                    kbJump = Keys.X;
-                    kbAttack = Keys.C;
+                    kbDefend = Keys.Q;
+                    kbJump = Keys.W;
+                    kbAttack1 = Keys.Z;
+                    kbAttack2 = Keys.X;
+                    kbAttack3 = Keys.C;
+                    kbAttack4 = Keys.V;
 
                     gamePadPlayerIndex = PlayerIndex.One;
                     break;
@@ -118,9 +124,12 @@ namespace Auction_Boxing_2
                     kbLeft = Keys.J;
                     kbRight = Keys.L;
 
-                    kbDefend = Keys.N;
-                    kbJump = Keys.M;
-                    kbAttack = Keys.OemComma;
+                    kbDefend = Keys.U;
+                    kbJump = Keys.I;
+                    kbAttack1 = Keys.N;
+                    kbAttack2 = Keys.M;
+                    kbAttack3 = Keys.OemComma;
+                    kbAttack4 = Keys.OemPeriod;
 
                     gamePadPlayerIndex = PlayerIndex.Two;
                     break;
@@ -133,7 +142,7 @@ namespace Auction_Boxing_2
 
                     kbDefend = Keys.OemBackslash;
                     kbJump = Keys.Delete;
-                    kbAttack = Keys.End;
+                    //kbAttack = Keys.End;
 
                     gamePadPlayerIndex = PlayerIndex.Three;
                     break;
@@ -146,7 +155,7 @@ namespace Auction_Boxing_2
 
                     kbDefend= Keys.NumPad1;
                     kbJump = Keys.NumPad2;
-                    kbAttack = Keys.NumPad3;
+                    //kbAttack = Keys.NumPad3;
 
                     gamePadPlayerIndex = PlayerIndex.Four;
                     break;
@@ -213,7 +222,7 @@ namespace Auction_Boxing_2
                     OnKeyDown(player_index, KeyPressed.Jump);
             }
             //Attack 1
-            if ((kbPrevious.IsKeyUp(kbAttack) && kbCurrent.IsKeyDown(kbAttack)) ||
+            if ((kbPrevious.IsKeyUp(kbAttack1) && kbCurrent.IsKeyDown(kbAttack1)) ||
                 (gpPrevious.IsButtonUp(Buttons.A) && gpCurrent.IsButtonDown(Buttons.A)))
             {
                 if (OnKeyDown != null)
@@ -221,21 +230,24 @@ namespace Auction_Boxing_2
             }
 
             // Attack 2
-            if ((gpPrevious.IsButtonUp(Buttons.B) && gpCurrent.IsButtonDown(Buttons.B)))
+            if ((kbPrevious.IsKeyUp(kbAttack2) && kbCurrent.IsKeyDown(kbAttack2)) || 
+                (gpPrevious.IsButtonUp(Buttons.B) && gpCurrent.IsButtonDown(Buttons.B)))
             {
                 if (OnKeyDown != null)
                     OnKeyDown(player_index, KeyPressed.Attack2);
             }
              
             // Attack 3
-            if (gpPrevious.IsButtonUp(Buttons.X) && gpCurrent.IsButtonDown(Buttons.X))
+            if ((kbPrevious.IsKeyUp(kbAttack3) && kbCurrent.IsKeyDown(kbAttack3)) || 
+                gpPrevious.IsButtonUp(Buttons.X) && gpCurrent.IsButtonDown(Buttons.X))
             {
                 if (OnKeyDown != null)
                     OnKeyDown(player_index, KeyPressed.Attack3);
             }
 
             // Attack 4
-            if (gpPrevious.IsButtonUp(Buttons.Y) && gpCurrent.IsButtonDown(Buttons.Y))
+            if ((kbPrevious.IsKeyUp(kbAttack4) && kbCurrent.IsKeyDown(kbAttack4)) || 
+                gpPrevious.IsButtonUp(Buttons.Y) && gpCurrent.IsButtonDown(Buttons.Y))
             {
                 if (OnKeyDown != null)
                     OnKeyDown(player_index, KeyPressed.Attack4);
@@ -285,25 +297,25 @@ namespace Auction_Boxing_2
                     OnKeyHold(player_index, KeyPressed.Jump);
             }
             // attack 1 = A
-            if (kbCurrent.IsKeyDown(kbAttack) || gpCurrent.IsButtonDown(Buttons.A))
+            if (kbCurrent.IsKeyDown(kbAttack1) || gpCurrent.IsButtonDown(Buttons.A))
             {
                 if (OnKeyHold != null)
                     OnKeyHold(player_index, KeyPressed.Attack1);
             }
             // Attack 2 = B
-            if (gpCurrent.IsButtonDown(Buttons.B))
+            if (kbCurrent.IsKeyDown(kbAttack2) || gpCurrent.IsButtonDown(Buttons.B))
             {
                 if (OnKeyHold != null)
                     OnKeyHold(player_index, KeyPressed.Attack2);
             }
             // Attack 3 = X
-            if (gpCurrent.IsButtonDown(Buttons.X))
+            if (kbCurrent.IsKeyDown(kbAttack3) || gpCurrent.IsButtonDown(Buttons.X))
             {
                 if (OnKeyHold != null)
                     OnKeyHold(player_index, KeyPressed.Attack3);
             }
             // Attack 4 = Y
-            if (gpCurrent.IsButtonDown(Buttons.Y))
+            if (kbCurrent.IsKeyDown(kbAttack4) || gpCurrent.IsButtonDown(Buttons.Y))
             {
                 if (OnKeyHold != null)
                     OnKeyHold(player_index, KeyPressed.Attack4);
@@ -361,7 +373,7 @@ namespace Auction_Boxing_2
             }
 
             //Attack 1
-            if ((kbPrevious.IsKeyDown(kbAttack) && kbCurrent.IsKeyUp(kbAttack)) ||
+            if ((kbPrevious.IsKeyDown(kbAttack1) && kbCurrent.IsKeyUp(kbAttack1)) ||
                 (gpPrevious.IsButtonDown(Buttons.A) && gpCurrent.IsButtonUp(Buttons.A)))
             {
                 if (OnKeyRelease != null)
@@ -369,21 +381,24 @@ namespace Auction_Boxing_2
             }
 
             // Attack 2
-            if ((gpPrevious.IsButtonDown(Buttons.B) && gpCurrent.IsButtonUp(Buttons.B)))
+            if ((kbPrevious.IsKeyDown(kbAttack2) && kbCurrent.IsKeyUp(kbAttack2)) || 
+                (gpPrevious.IsButtonDown(Buttons.B) && gpCurrent.IsButtonUp(Buttons.B)))
             {
                 if (OnKeyRelease != null)
                     OnKeyRelease(player_index, KeyPressed.Attack2);
             }
              
             // Attack 3
-            if (gpPrevious.IsButtonDown(Buttons.X) && gpCurrent.IsButtonUp(Buttons.X))
+            if ((kbPrevious.IsKeyDown(kbAttack3) && kbCurrent.IsKeyUp(kbAttack3)) || 
+                gpPrevious.IsButtonDown(Buttons.X) && gpCurrent.IsButtonUp(Buttons.X))
             {
                 if (OnKeyRelease != null)
                     OnKeyRelease(player_index, KeyPressed.Attack3);
             }
 
             // Attack 4
-            if (gpPrevious.IsButtonDown(Buttons.Y) && gpCurrent.IsButtonUp(Buttons.Y))
+            if ((kbPrevious.IsKeyDown(kbAttack4) && kbCurrent.IsKeyUp(kbAttack4)) || 
+                gpPrevious.IsButtonDown(Buttons.Y) && gpCurrent.IsButtonUp(Buttons.Y))
             {
                 if (OnKeyRelease != null)
                     OnKeyRelease(player_index, KeyPressed.Attack4);

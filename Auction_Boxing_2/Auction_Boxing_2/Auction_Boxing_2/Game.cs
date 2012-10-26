@@ -25,10 +25,12 @@ namespace Auction_Boxing_2
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
 
+
+
+            this.graphics.IsFullScreen = true;
+
             this.graphics.PreferredBackBufferWidth = 800;
             this.graphics.PreferredBackBufferHeight = 600;
-
-            this.graphics.IsFullScreen = false;
 
             camera = new Camera(new Rectangle(0,0, 800, 600));
         }
@@ -133,9 +135,13 @@ namespace Auction_Boxing_2
 
             GraphicsDevice.SetRenderTarget(null);
 
-            spriteBatch.Begin();
+            GraphicsDevice.Clear(Color.Black);
 
-            spriteBatch.Draw(renderTarget, new Rectangle(0, 0, Window.ClientBounds.Width, Window.ClientBounds.Height),
+            spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.Default, RasterizerState.CullCounterClockwise);
+
+            int width = Window.ClientBounds.Height * (800 / 600);
+
+            spriteBatch.Draw(renderTarget, new Rectangle((Window.ClientBounds.Width - width) / 2, 0, width, Window.ClientBounds.Height),
                 camera.DrawToRectangle, Color.White);
 
             spriteBatch.End();

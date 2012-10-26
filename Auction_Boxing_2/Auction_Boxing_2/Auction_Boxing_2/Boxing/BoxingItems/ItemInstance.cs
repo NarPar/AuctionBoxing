@@ -45,9 +45,10 @@ namespace Auction_Boxing_2
         protected SpriteEffects effect;
 
 
-
+        public float speed = 500;
         public float damage;
 
+        public int moveDirection;
         public bool Finished;
         public int noCatch = 0;
         public bool isEffect;
@@ -111,7 +112,7 @@ namespace Auction_Boxing_2
     {
         int width = 6, height = 4;
 
-        float speed = 300;
+        
         double speedFactor = 1;
         float scale;
 
@@ -126,6 +127,7 @@ namespace Auction_Boxing_2
             base(player, false, id)
         {
             direction = player.direction;
+            moveDirection = player.direction;
             damage = 1;
 
             speed *= speedFactor;
@@ -182,10 +184,12 @@ namespace Auction_Boxing_2
                     {
                         speedFactor = 0;
                         isReturning = true;
+                        moveDirection *= -1;
                     }
                 }
                 else // return to sender
                 {
+                    
                     speedFactor += gameTime.ElapsedGameTime.TotalSeconds;
                     if (speedFactor > 1)
                     {

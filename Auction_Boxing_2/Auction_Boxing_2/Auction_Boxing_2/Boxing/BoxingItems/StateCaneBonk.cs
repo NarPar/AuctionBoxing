@@ -48,6 +48,8 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
             
             if (dodgedWaitTimer > 0)
                 dodgedWaitTimer -= (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+            base.Update(gameTime);
         }
 
         /// <summary>

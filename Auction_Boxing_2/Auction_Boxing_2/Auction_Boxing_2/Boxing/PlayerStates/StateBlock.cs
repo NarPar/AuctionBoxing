@@ -38,10 +38,9 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
             if (dodgeThreshold > 0)
                 dodgeThreshold -= (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-            // handle any horizontal movement
-            player.position.X += (float)(player.currentHorizontalSpeed * gameTime.ElapsedGameTime.TotalSeconds);
-
             player.currentHorizontalSpeed -= (float)(player.currentHorizontalSpeed / 6);
+
+            base.Update(gameTime);
                 
         }
 
@@ -72,6 +71,28 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
                 {
                     // You're facing the wrong way and get knocked down, homie!
                     base.isHit(attackingPlayer, expectedHitState, damage);
+                }
+            }
+        }
+
+        public override void isHitByItem(Auction_Boxing_2.ItemInstance item, Auction_Boxing_2.Boxing.PlayerStates.State expectedHitState)
+        {
+            if (timer <= 0)
+            {
+                if ((player.direction == 1 && player.position.X < item.position.X)
+                || (player.direction == -1 && player.position.X > item.position.X))
+                {
+                    timer = waitTime;
+                    player.position.X += item.moveDirection * hitVelocity;
+
+
+                    // and some chip damage
+                    player.CurrentHealth -= 5;
+                }
+                else
+                {
+                    // You're facing the wrong way and get knocked down, homie!
+                    base.isHitByItem(item, expectedHitState);
                 }
             }
         }

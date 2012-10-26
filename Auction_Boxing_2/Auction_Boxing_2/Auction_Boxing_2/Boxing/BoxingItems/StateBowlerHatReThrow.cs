@@ -48,7 +48,7 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
                 // Hold your hand out!
                 if (player.IsKeyDown(itemButton))
                 {
-                    Debug.WriteLine("WAITING TO RETHROW! " + caught);
+                    //Debug.WriteLine("WAITING TO RETHROW! " + caught);
                     player.sprite.FrameIndex = 0;
                 }
                 else
@@ -72,6 +72,8 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
                     ChangeState(new StateStopped(player));
                 }
             }
+
+            base.Update(gameTime);
 
         }
 

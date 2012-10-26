@@ -18,8 +18,9 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
         public StateRunning(BoxingPlayer player, KeyPressed key)
             : base(player, "Run")
         {
+            isStopping = false;
             this.key = key;
-            player.currentHorizontalSpeed = player.direction* runSpeed;
+            player.currentHorizontalSpeed = runSpeed;//player.direction* runSpeed;
             canCombo = true;
             canCatch = true;
             runSpeed *= BoxingPlayer.Scale;
@@ -27,9 +28,20 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
 
         public override void Update(GameTime gameTime)
         {
-            if (player.IsKeyDown(key))
-                player.position.X += (float)(player.currentHorizontalSpeed * gameTime.ElapsedGameTime.TotalSeconds);
-            else
+            /*if (player.IsKeyDown(key))
+            {
+                float add = 0;
+                if (player.isBumping)
+                {
+                    add = (float)(player.currentHorizontalSpeed * gameTime.ElapsedGameTime.TotalSeconds / 2);
+                }
+                else
+                    add = (float)(player.currentHorizontalSpeed * gameTime.ElapsedGameTime.TotalSeconds);
+                //float add = (float)(player.currentHorizontalSpeed * gameTime.ElapsedGameTime.TotalSeconds);
+                player.position.X += add;
+            }
+            else*/
+            if(!player.IsKeyDown(key))
                 ChangeState(new StateStopped(player));
             // handle any horizontal movement
 
@@ -52,6 +64,7 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
                 ChangeState(new StateBlock(player));
             }
 
+            base.Update(gameTime);
         }
 
 

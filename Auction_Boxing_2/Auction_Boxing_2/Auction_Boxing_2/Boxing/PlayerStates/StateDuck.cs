@@ -64,6 +64,8 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
                     }
                 }
             }
+
+            base.Update(gameTime);
         }
 
         public override void isHit(BoxingPlayer attackingPlayer, State expectedHitState, int damage)

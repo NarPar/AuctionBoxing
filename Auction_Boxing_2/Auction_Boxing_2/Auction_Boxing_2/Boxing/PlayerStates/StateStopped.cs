@@ -23,9 +23,9 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
 
         public override void Update(GameTime gameTime)
         {
-            if (player.currentHorizontalSpeed > 1 || player.currentHorizontalSpeed < -1)
+            /*if (player.currentHorizontalSpeed > 1 || player.currentHorizontalSpeed < -1)
             {
-                player.position.X += (float)(player.currentHorizontalSpeed * gameTime.ElapsedGameTime.TotalSeconds);
+                //player.position.X += (float)(player.currentHorizontalSpeed * gameTime.ElapsedGameTime.TotalSeconds);
 
                 player.currentHorizontalSpeed -= (float)(player.currentHorizontalSpeed / 4);
             }
@@ -35,10 +35,12 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
             // If player is falling
             if (player.position.Y < player.GetGroundLevel)
             {
-                player.position.Y += (float)(player.currentVerticalSpeed * gameTime.ElapsedGameTime.TotalSeconds);
+                //player.position.Y += (float)(player.currentVerticalSpeed * gameTime.ElapsedGameTime.TotalSeconds);
                 // add acceleration
                 player.currentVerticalSpeed += (float)(gravity * gameTime.ElapsedGameTime.TotalSeconds);
-            }
+            }*/
+
+            base.Update(gameTime);
 
             #region KeyPress State Changes
 

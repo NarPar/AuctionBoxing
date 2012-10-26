@@ -57,6 +57,8 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
                 player.direction = 1;
                 player.position.X += (float)(player.direction * moveSpeed * gameTime.ElapsedGameTime.TotalSeconds);
             }
+
+            base.Update(gameTime);
         }
 
 

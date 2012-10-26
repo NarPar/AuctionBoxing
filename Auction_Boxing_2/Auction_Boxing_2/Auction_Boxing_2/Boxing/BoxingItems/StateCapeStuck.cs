@@ -62,8 +62,10 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
                         ChangeState(new StateStopped(player));
                     }
                     break;
-               
+
+                
             }
+            base.Update(gameTime);
         }
 
     }

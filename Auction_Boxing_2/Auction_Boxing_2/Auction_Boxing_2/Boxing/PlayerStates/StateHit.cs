@@ -45,6 +45,8 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
 
             if (dodgeTryTimer > 0)
                 dodgeTryTimer -= (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+            base.Update(gameTime);
         }
 
         public override void HandleKeyDownInput(int player_index, KeyPressed key)

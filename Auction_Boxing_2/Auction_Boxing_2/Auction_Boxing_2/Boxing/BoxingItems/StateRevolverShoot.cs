@@ -54,6 +54,8 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
 
             }
 
+
+            base.Update(gameTime);
             /*if (player.sprite.FrameIndex == 8)
             {
                 isShooting = true;

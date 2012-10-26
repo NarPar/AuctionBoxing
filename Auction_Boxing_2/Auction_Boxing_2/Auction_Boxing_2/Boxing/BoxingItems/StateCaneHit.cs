@@ -36,6 +36,7 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
             if (timer > 0)
                 timer -= (float)gameTime.ElapsedGameTime.TotalSeconds;
 
+            base.Update(gameTime);
         }
 
 

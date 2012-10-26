@@ -61,6 +61,8 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
                 ChangeState(new StateBowlerHatReThrow(itemIndex, player, itemButton));
             else if (!buttonHeld && holdTimer <=0 && noHat)
                 ChangeState(new StateStopped(player));
+
+            base.Update(gameTime);
         }
     }
 }

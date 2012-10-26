@@ -22,6 +22,8 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
 
         float speed = 500;
 
+        bool traveled = false;
+
         BoxingPlayer targetPlayer;
         float target;
         int direction; // moves backwards towards target
@@ -34,7 +36,6 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
         {
             this.itemIndex = itemIndex;
             state = CapeState.draw;
-            Debug.WriteLine("In cape!");
 
             this.itemButton = key;
             
@@ -97,8 +98,10 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
                 case(CapeState.reveal):
                     if (player.sprite.FrameIndex == player.animations[key].FrameCount - 1)
                     {
+                        if(traveled)
+                            player.isFreeingCape = true;
                         ChangeState(new StateStopped(player));
-                        player.isFreeingCape = true;
+                        
                     }
                     break;
                 case(CapeState.travel):
@@ -106,17 +109,38 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
                     if (player.sprite.FrameIndex == 15)
                         player.sprite.FrameIndex = 13;
 
+                    
+
                     player.position.X += (float)(direction * speed * gameTime.ElapsedGameTime.TotalSeconds);
                     float dif = Math.Abs(player.position.X - target);
                     // You're behind'm!
-                    if (dif < 5 && dif > 0 
+                    if (dif < 5 && dif > 0
                         || player.position.X - player.GetWidth / 2 <= player.BoxingManager.bounds.X
-                        || player.position.X + player.GetWidth / 2 >= player.BoxingManager.bounds.X + player.BoxingManager.bounds.Width 
+                        || player.position.X + player.GetWidth / 2 >= player.BoxingManager.bounds.X + player.BoxingManager.bounds.Width
                         )
+                    {
                         state = CapeState.reveal;
+                        traveled = true;
+                    }
 
                     break;
+
+
+
             }
+
+            base.Update(gameTime);
+        }
+
+        public override void isHit(BoxingPlayer attackingPlayer, State expectedHitState, int damage)
+        {
+            if(!(state == CapeState.travel))
+                base.isHit(attackingPlayer, expectedHitState, damage);
+        }
+        public override void isHitByItem(ItemInstance item, State expectedHitState)
+        {
+            if (!(state == CapeState.travel))
+                base.isHitByItem(item, expectedHitState);
         }
 
     }

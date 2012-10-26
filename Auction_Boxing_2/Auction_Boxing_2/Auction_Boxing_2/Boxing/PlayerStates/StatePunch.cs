@@ -65,6 +65,8 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
             }
             else
                 player.position.Y = player.GetGroundLevel;
+
+            base.Update(gameTime);
         }
 
         /// <summary>

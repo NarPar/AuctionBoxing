@@ -29,17 +29,17 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
                 ChangeState(new StateStopped(player));
             }
 
-            if (player.currentHorizontalSpeed > 1 || player.currentHorizontalSpeed < -1)
+            /*if (player.currentHorizontalSpeed > 1 || player.currentHorizontalSpeed < -1)
             {
-                player.position.X += (float)(player.currentHorizontalSpeed * gameTime.ElapsedGameTime.TotalSeconds);
+                //player.position.X += (float)(player.currentHorizontalSpeed * gameTime.ElapsedGameTime.TotalSeconds);
 
                 player.currentHorizontalSpeed -= (float)(player.currentHorizontalSpeed / 4);
             }
             else
-                player.currentHorizontalSpeed = 0;
+                player.currentHorizontalSpeed = 0;*/
 
             #region KeyPress State Changes
-
+            /*
             if (player.IsKeyDown(KeyPressed.Left))
             {
                 // Change the direction
@@ -76,9 +76,11 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
                     // Start walking!
                     ChangeState(new StateWalking(player, KeyPressed.Right));
                 }
-            }
+            }*/
 
             #endregion
+
+            base.Update(gameTime);
 
         }
 

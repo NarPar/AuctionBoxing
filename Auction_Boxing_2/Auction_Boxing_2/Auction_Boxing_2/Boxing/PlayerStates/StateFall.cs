@@ -23,7 +23,7 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
         {
             if (drop)
             {
-                player.position.Y += 5;
+                //player.position.Y += 5;
                 player.currentVerticalSpeed = 20;
             }
             else
@@ -41,7 +41,7 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
                 player.sprite.FrameIndex = 5;
 
             // handle any horizontal movement
-            player.position.X += (float)(player.currentHorizontalSpeed * gameTime.ElapsedGameTime.TotalSeconds);
+            //player.position.X += (float)(player.currentHorizontalSpeed * gameTime.ElapsedGameTime.TotalSeconds);
             if (player.IsKeyDown(KeyPressed.Left))
             {
                 player.currentHorizontalSpeed -= (float)(horizontalAcceleration * gameTime.ElapsedGameTime.TotalSeconds);

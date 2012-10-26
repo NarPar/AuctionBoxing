@@ -30,6 +30,15 @@ namespace Auction_Boxing_2
             get { return (int)(38 * Scale); }
         }
 
+        public Rectangle GetMinimumRectangle
+        {
+            get
+            {
+                return new Rectangle((int)(position.X - GetWidth / 2), (int)(position.Y - GetHeight),
+                  GetWidth, GetHeight);
+            }
+        }
+
         #region stats
 
         // the health everyone starts with without item mods.
@@ -224,6 +233,7 @@ namespace Auction_Boxing_2
             get { return levellevel; }
         }
         public Rectangle platform;
+        public Rectangle startPlatform;
 
         public float currentVerticalSpeed = 0;
         public float currentHorizontalSpeed = 0;
@@ -237,7 +247,6 @@ namespace Auction_Boxing_2
         public bool isCaught = false; // can't do anything (getting pulled by cane)
         public float numBowlerReThrows = 1;
         public bool isFreeingCape = false;
-
 
         #region Items
 
@@ -377,7 +386,7 @@ namespace Auction_Boxing_2
         public bool isBumping = false;
 
         public BoxingPlayer(Boxing_Manager bm, int playerIndex, Vector2 startPosition, Dictionary<string, Animation> animations, Input_Handler input, Color color,
-            Texture2D blank, Rectangle healthBar, Rectangle platfor, Item[] items)
+            Texture2D blank, Rectangle healthBar, Rectangle platform, Item[] items)
         {
             this.BoxingManager = bm;
 
@@ -396,6 +405,7 @@ namespace Auction_Boxing_2
 
             this.startPosition = startPosition;
             this.platform = platform;
+            this.startPlatform = platform;
             levellevel = platform.Y;
 
             this.rHealthBar = healthBar;
@@ -442,7 +452,8 @@ namespace Auction_Boxing_2
 
             position = startPosition;
             levellevel = startPosition.Y;
-            sprite.PlayAnimation(animations[currentAnimationKey]);
+            platform = startPlatform;
+            //sprite.PlayAnimation(animations[currentAnimationKey]);
             
             // Set our collision rect. The position represents the bottom center of the sprite.
             ChangeAnimation(currentAnimationKey);
@@ -456,13 +467,15 @@ namespace Auction_Boxing_2
             {
                 case (0):
                 case (2):
-                    direction = 1;
-                    spriteEffect = SpriteEffects.None;
+                    ChangeDirection(1);
+                    //direction = 1;
+                    //spriteEffect = SpriteEffects.None;
                     break;
                 case (1):
                 case (3):
-                    direction = -1;
-                    spriteEffect = SpriteEffects.FlipHorizontally;
+                    ChangeDirection(-1);
+                    //direction = -1;
+                    //spriteEffect = SpriteEffects.FlipHorizontally;
                     break;
             }
 
@@ -474,6 +487,13 @@ namespace Auction_Boxing_2
             isDead = false;
             isReloadingRevolver = false;
             isHit = false;
+            isBumping = false;
+            isFalling = false;
+            isCaught = false;
+            isFreeingCape = false;
+            hasThrownBowlerHat = false;
+            numBowlerReThrows = 1;
+
             //CurrentStamina = MaxStamina;
 
             //maxcooldown = Tools.BASE_COOLDOWN;
@@ -496,10 +516,17 @@ namespace Auction_Boxing_2
 
             state.Update(gameTime);
 
-            /*if (!(state is StateJump ))//|| state is StateFall))
-            {
-                isFalling = false;
-            }*/
+            //=====
+
+            // If you're bumping, reduce speed!
+            float add = (float)(direction * currentHorizontalSpeed * gameTime.ElapsedGameTime.TotalSeconds);
+            // Apply speeds
+            if(isBumping)
+                add = (float)(direction * currentHorizontalSpeed * gameTime.ElapsedGameTime.TotalSeconds / 2);
+            position.X += add;
+            position.Y += (float)(currentVerticalSpeed * gameTime.ElapsedGameTime.TotalSeconds);
+
+            //=====
 
             // If the player walks off a platform, they fall!
             if (!(state is StateJump))

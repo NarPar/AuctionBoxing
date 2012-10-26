@@ -27,6 +27,8 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
             player.position.X += (float)(player.currentHorizontalSpeed * gameTime.ElapsedGameTime.TotalSeconds);
 
             player.currentHorizontalSpeed -= (float)(player.currentHorizontalSpeed / 4);
+
+            base.Update(gameTime);
         }
 
         public override void isHit(BoxingPlayer attackingPlayer, State expectedHitState, int damage)

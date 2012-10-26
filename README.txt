@@ -8,31 +8,30 @@ Current Features:
 To-Do:
 
   PRIORITY:
-    - proper gui drawing (the "Round start in x" isn't in the center of the camera)
-    - end-of-match stats
+    	- proper gui drawing (the "Round start in x" isn't in the center of the camera)
+	- State deconstructers
+    	- end-of-match stats
+	- extend cane pull range
+	- 
 
   PROGRAMMING:
-    - bitmasks for accurate pixel collision
-    - projectile instances
-    - jump punch
-    - victory taunts (Ministry of Silly Walks)
-    - kick (Ministry of Silly Walks)
-    - pause menu
-    - different levels
-    - auction
-    - loadouts
-    //- punch combo so can't dodge second punch? (maybe)
+    	- victory taunts (Ministry of Silly Walks)
+    	- pause menu
+    	- different levels
+    	- auction
+    	- loadouts
   
   ART:
-    - bitmask assets for all state animations
     - victory taunts (Ministry of Silly Walks)
-    - kick (Ministry of Silly Walks)
     - cane pull animation is them trying to claw back to their position (being torn away off the stage)
     
   BUGFIXES:
-    - jump and punch not getting upper level set. (something to do with isFalling?)
-    - jump fall direction backwards
-    - hitting people when reloading (not confirmed)
+
+    	- People with zero health and not dying: -rounds after first, health subtracting?
+    	- people flying really high upwards (getting hit while in the air?, no max upwards velocity?)
+    	- Camera is slightly dissorienting when jumping (fast vertical changing?), maybe make camera changes gradual?
+	- hitting people when reloading (not confirmed)
+	- getting stuck on other person
 
   ITEMS:
     - daisy on suit that douses enemies in water, stunning them while they dry off

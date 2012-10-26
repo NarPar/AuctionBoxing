@@ -35,6 +35,8 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
             {
                     ChangeState(originalState);
             }
+
+            base.Update(gameTime);
         }
     }
 }

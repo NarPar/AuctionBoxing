@@ -42,12 +42,25 @@ namespace Auction_Boxing_2
             if (entry == "Brawl")
             {
                 ChangeState(new Brawl_Game_State(game, inputs, bounds));
-                inputs[0].OnKeyRelease -= menu.ChangeIndex;
-                menu.OnEntrySelect -= MenuEntrySelect;
+                //inputs[0].OnKeyRelease -= menu.ChangeIndex;
+                //menu.OnEntrySelect -= MenuEntrySelect;
             }
             // Exit
             else if (entry == "Exit")
                 game.Exit();
+        }
+
+        /// <summary>
+        /// Stop listening
+        /// </summary>
+        /// <param name="state"></param>
+        protected override void ChangeState(Game_State state)
+        {
+            // Stop listening
+            inputs[0].OnKeyRelease -= menu.ChangeIndex;
+            menu.OnEntrySelect -= MenuEntrySelect;
+
+            base.ChangeState(state);
         }
 
         public override void Draw(GameTime gameTime, SpriteBatch spriteBatch)

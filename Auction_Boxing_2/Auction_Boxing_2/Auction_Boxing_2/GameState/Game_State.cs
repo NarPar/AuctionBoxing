@@ -24,7 +24,9 @@ namespace Auction_Boxing_2
 
         }
 
-        protected void ChangeState(Game_State state)
+
+
+        protected virtual void ChangeState(Game_State state)
         {
             game.currentState = state;
         }
