@@ -14,7 +14,8 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
 
         //Item item;
         int hitCounter = 0;
-        float timer = .3f;
+        float timer = .07f;
+        float time = .07f;
 
         float dodgeThreshold = .2f;
         float dodgeTimer = 0;
@@ -25,10 +26,21 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
         public StateCaneHit(BoxingPlayer player)
             : base(player, "CaneHit")
         {
+
+        }
+
+        public override void LoadState(BoxingPlayer player, Dictionary<string, Animation> ATextures)
+        {
+            //player.soundEffects["CaneHit"].Play(); // play the sound effect!
+            base.LoadState(player, ATextures);
         }
 
         public override void Update(GameTime gameTime)
         {
+            if (!hasPlayedSound)
+                PlaySound(player.soundEffects["CaneHit"]); // play the sound effect!
+
+
             // check for state change
             if (player.sprite.FrameIndex == player.animations[key].FrameCount - 1)
                 ChangeState(new StateStopped(player));
@@ -48,15 +60,17 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
         {
             if (timer <= 0)
             {
-                if (hitCounter >= 1)
-                {
-                    ChangeState(new StateKnockedDown(player, attackingPlayer.direction));
-                    player.CurrentHealth -= 20;
-                }
-                else
-                {
-                    hitCounter++;
-                }
+
+                ChangeState(new StateKnockedDown(player, attackingPlayer.direction, true));
+                player.CurrentHealth -= damage;
+                
+
+                if(attackingPlayer.state is StateCaneBonk)
+                    player.soundEffects["CaneHit"].Play(); // play the sound effect!
+                //else
+                    //player.soundEffects["
+
+                timer = time;
             }
         }
     }

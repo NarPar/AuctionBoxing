@@ -11,7 +11,7 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
     class StateBowlerHatThrow : State
     {
         float holdTimer = 0;
-        float MAX_HOLD_TIME = .16f;
+        float MAX_HOLD_TIME = .1f;
 
         bool buttonHeld = true;
         int THROWN_INDEX = 9;
@@ -35,8 +35,13 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
 
         public override void Update(GameTime gameTime)
         {
+
+
             if (!player.hasThrownBowlerHat && player.sprite.FrameIndex == THROWN_INDEX) // !hasThrown
             {
+                if (!hasPlayedSound)
+                    PlaySound(player.soundEffects["BowlerThrow"]); // play the sound effect!
+
                 // create hat projectile
                 player.BoxingManager.addBowlerHat(player, player.numBowlerReThrows);
                 player.hasThrownBowlerHat = true;
@@ -54,10 +59,10 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
             if (!player.IsKeyDown(itemButton))
             {
                 buttonHeld = false;
-                //Debug.WriteLine("Button OFf!");
+                //Debug.WriteLine("Button Off!");
             }
 
-            if (buttonHeld && holdTimer <= 0)
+            if (buttonHeld && holdTimer <= 0 && player.hasThrownBowlerHat)
                 ChangeState(new StateBowlerHatReThrow(itemIndex, player, itemButton));
             else if (!buttonHeld && holdTimer <=0 && noHat)
                 ChangeState(new StateStopped(player));

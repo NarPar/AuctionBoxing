@@ -25,7 +25,8 @@ namespace Auction_Boxing_2
         Attack1,
         Attack2,
         Attack3,
-        Attack4
+        Attack4,
+        Select
     }
 
     public class Input_Handler
@@ -48,6 +49,8 @@ namespace Auction_Boxing_2
         public Keys kbAttack2;
         public Keys kbAttack3;
         public Keys kbAttack4;
+
+        public Keys kbSelect;
 
 
         //-----Gamepad-----//
@@ -115,6 +118,8 @@ namespace Auction_Boxing_2
                     kbAttack3 = Keys.C;
                     kbAttack4 = Keys.V;
 
+                    kbSelect = Keys.F;
+
                     gamePadPlayerIndex = PlayerIndex.One;
                     break;
 
@@ -130,6 +135,8 @@ namespace Auction_Boxing_2
                     kbAttack2 = Keys.M;
                     kbAttack3 = Keys.OemComma;
                     kbAttack4 = Keys.OemPeriod;
+
+                    kbSelect = Keys.OemSemicolon;
 
                     gamePadPlayerIndex = PlayerIndex.Two;
                     break;
@@ -253,6 +260,14 @@ namespace Auction_Boxing_2
                     OnKeyDown(player_index, KeyPressed.Attack4);
             }
 
+            // Select
+            if ((kbPrevious.IsKeyUp(kbSelect) && kbCurrent.IsKeyDown(kbSelect)) ||
+                gpPrevious.IsButtonUp(Buttons.Back) && gpCurrent.IsButtonDown(Buttons.Back))
+            {
+                if (OnKeyDown != null)
+                    OnKeyDown(player_index, KeyPressed.Select);
+            }
+
             // ================= Keys held? ==========================
 
             //Up Key held down?
@@ -319,6 +334,13 @@ namespace Auction_Boxing_2
             {
                 if (OnKeyHold != null)
                     OnKeyHold(player_index, KeyPressed.Attack4);
+            }
+
+            // Attack 4 = Y
+            if (kbCurrent.IsKeyDown(kbSelect) || gpCurrent.IsButtonDown(Buttons.Back))
+            {
+                if (OnKeyHold != null)
+                    OnKeyHold(player_index, KeyPressed.Select);
             }
 
 
@@ -402,6 +424,14 @@ namespace Auction_Boxing_2
             {
                 if (OnKeyRelease != null)
                     OnKeyRelease(player_index, KeyPressed.Attack4);
+            }
+
+            // Attack 4
+            if ((kbPrevious.IsKeyDown(kbSelect) && kbCurrent.IsKeyUp(kbSelect)) ||
+                gpPrevious.IsButtonDown(Buttons.Back) && gpCurrent.IsButtonUp(Buttons.Back))
+            {
+                if (OnKeyRelease != null)
+                    OnKeyRelease(player_index, KeyPressed.Select);
             }
         }
 

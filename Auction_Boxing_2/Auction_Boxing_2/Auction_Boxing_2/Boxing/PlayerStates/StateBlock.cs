@@ -48,15 +48,20 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
         {
             // Nothing happens! You can't phase me bro!
 
+            // unless you're shoot'n me!
+            if ((attackingPlayer.state is StateRevolverShoot))
+            {
+                base.isHit(attackingPlayer, expectedHitState, damage);
+            }
             // well timed? Duck and weave!
-            if (dodgeThreshold > 0)
+            else if (dodgeThreshold > 0)
             {
                 ChangeState(new StateDodge(player));
                 attackingPlayer.state.wasDodged();
             }
 
             // just get knocked back a little
-            else if (timer <= 0)
+            else if (!(attackingPlayer.state is StateRevolverShoot) && timer <= 0)
             {
                 if ((player.direction == 1 && player.position.X < attackingPlayer.position.X)
                 || (player.direction == -1 && player.position.X > attackingPlayer.position.X))
@@ -65,7 +70,7 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
                     player.position.X += attackingPlayer.direction * hitVelocity;
 
                     // and some chip damage
-                    player.CurrentHealth -= 5;
+                    //player.CurrentHealth -= 1;
                 }
                 else
                 {
@@ -73,6 +78,7 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
                     base.isHit(attackingPlayer, expectedHitState, damage);
                 }
             }
+           
         }
 
         public override void isHitByItem(Auction_Boxing_2.ItemInstance item, Auction_Boxing_2.Boxing.PlayerStates.State expectedHitState)
@@ -87,7 +93,7 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
 
 
                     // and some chip damage
-                    player.CurrentHealth -= 5;
+                    //player.CurrentHealth -= 5;
                 }
                 else
                 {

@@ -37,7 +37,7 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
             if (player.IsKeyDown(KeyPressed.Jump))
             {
                 // Ollie!
-                ChangeState(new StateJump(player));
+                ChangeState(new StateJump(player, false));
             }
             /*else if (player.IsKeyDown(KeyPressed.Attack))
             {

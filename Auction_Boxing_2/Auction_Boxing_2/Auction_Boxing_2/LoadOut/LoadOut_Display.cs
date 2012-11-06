@@ -8,7 +8,7 @@ using System.Diagnostics;
 
 namespace Auction_Boxing_2
 {
-    /*class LoadOut_Display
+    class LoadOut_Display
     {
         SpriteFont font;
 
@@ -197,5 +197,5 @@ namespace Auction_Boxing_2
             // Draw the animating description
             spriteBatch.DrawString(font, typedText, vDescription, Color.Black);
         }
-    }*/
+    }
 }

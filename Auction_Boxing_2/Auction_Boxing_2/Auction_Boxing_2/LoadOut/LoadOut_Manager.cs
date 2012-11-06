@@ -13,9 +13,9 @@ namespace Auction_Boxing_2
      * 
      * NOTE: To select a menu entry, press Right key.
      */
-   /* class LoadOut_Manager
+    class LoadOut_Manager
     {
-        State_Manager state_man;
+        Game_State state_man;
 
         //List<Input_Handler> inputs = new List<Input_Handler>();
         Input_Handler[] inputs = new Input_Handler[4];
@@ -26,7 +26,8 @@ namespace Auction_Boxing_2
 
         List<Item>[] items;
 
-        Item[,] equipment;
+        // a 2d array containing the players equipment for the boxing match. Order counts!
+        public Item[][] equipment;
 
         int[] ready = { -1, -1, -1, -1 };
         protected static int totalPlayers = 0;
@@ -43,18 +44,19 @@ namespace Auction_Boxing_2
 
         Rectangle ClientBounds;
 
-        public LoadOut_Manager(State_Manager state, Rectangle ClientBounds, Input_Handler[] inputs)
+        public LoadOut_Manager(Game_State state, Rectangle ClientBounds, Input_Handler[] inputs,
+            List<Item>[] items)
         {
             this.state_man = state;
             this.ClientBounds = ClientBounds;
             this.inputs = inputs;
-            this.items = state.items;
-            this.equipment = state.equipment;
+            this.items = items;
+            //this.equipment = state.equipment;
         }
 
         public void LoadContent(ContentManager Content)
         {
-            background = Content.Load<Texture2D>("Menu/Menu_Background");
+            //background = Content.Load<Texture2D>("Menu/Menu_Background");
             menuBackground = Content.Load<Texture2D>("White");
             font = Content.Load<SpriteFont>("Menu/menufont");
             titlefont = Content.Load<SpriteFont>("Menu/titlefont");
@@ -64,29 +66,6 @@ namespace Auction_Boxing_2
 
         public void Activate(ContentManager Content)
         {
-            // For Debugging-----
-            List<Item>[] debugItems = { new List<Item>(), new List<Item>(), new List<Item>(), new List<Item>() };
-
-            for (int i = 0; i < 4; i++)
-            {
-                debugItems[i].Add(new Cane(Content.Load<Texture2D>("BoxingItems/cane"),
-                    Content.Load<Texture2D>("BoxingItems/Cane_Attack"),
-                    Content.Load<Texture2D>("LoadOut/cane_icon")));
-                debugItems[i].Add(new Bowler_Hat(Content.Load<Texture2D>("Items/bowlerhat_image"), 
-                    Content.Load<Texture2D>("BoxingItems/Bowler_Attack"),
-                    Content.Load<Texture2D>("LoadOut/bowlerhat_icon")));
-                debugItems[i].Add(new Revolver(Content.Load<Texture2D>("Items/revolver_image"), 
-                    Content.Load<Texture2D>("BoxingItems/Revolver_Attack"),
-                    Content.Load<Texture2D>("LoadOut/revolver_icon")));
-                debugItems[i].Add(new Boots(Content.Load<Texture2D>("Items/Boots_Image"),
-                    Content.Load<Texture2D>("BoxingItems/gust_attack"),
-                    Content.Load<Texture2D>("LoadOut/boots_icon"),
-                    Content.Load<Texture2D>("Boxing/ffsp1charge"),
-                    Content.Load<Texture2D>("Boxing/ffsp1jumping")));
-            }
-
-            items = debugItems;
-            //---------
 
             int buffer = 4;
 
@@ -111,16 +90,16 @@ namespace Auction_Boxing_2
             {
                 if(inputs[i].isActive)
                 {
-                    
+                    Debug.WriteLine("Player " + i + " is Active!");
                     loadouts[i] = new LoadOut_Menu(loadoutfont, loadoutdisplayfont, ld_positions[i], menuBackground, items[i]);
-                    for (int j = 0; j < 4; j++)
+                    /*for (int j = 0; j < 4; j++)
                     {
                         equip[i] = state_man.equipment[i, j];
                         Debug.WriteLine("equip[i] = " + equip[i]);
                         if (equip[i] != null)
                             loadouts[i].EquipItem(i, true);
-                    }
-                    loadouts[i].equipment = equip;
+                    }*/
+                    //loadouts[i].equipment = equip;
                     inputs[i].OnKeyRelease += HandleInput;
                     totalPlayers++;
                 }
@@ -128,9 +107,10 @@ namespace Auction_Boxing_2
         }
 
         /* Update returns null until all players have readied. When all players
-         * are ready, it returns a list containing their custom Input_Handlers
+         * are ready, it returns a list containing their custom Input_Handlers 
+         */
          
-        public bool Update(GameTime gameTime)
+        public void Update(GameTime gameTime)
         {
             // update the input states
             kb = Keyboard.GetState();
@@ -153,26 +133,43 @@ namespace Auction_Boxing_2
             // Is everyone ready to start?
             if (totalPlayers != 0 && count == totalPlayers)
             {
+                equipment = new Item[4][];//new Item[4], new Item[4], new Item[4], new Item[4] };
                 //Contents of arrays are passed by value, unlike the array itself. so we must pass back the values
                 for (int i = 0; i < 4; i++)
                 {
-                    for (int j = 0; j < 4; j++)
+                    if (inputs[i].isActive)
                     {
-                        if(inputs[i].isActive)
-                            state_man.equipment[i, j] = loadouts[i].equipment[j];
+                        equipment[i] = new Item[4];
+                        for (int j = 0; j < 4; j++)
+                        {
+                            
+                            equipment[i][j] = loadouts[i].equipment[j];
+
+                            // Let the manager know we're done here.
+
+                            //if(inputs[i].isActive)
+                            //state_man.equipment[i, j] = loadouts[i].equipment[j];
+                        }
                     }
                 }
 
+                state_man.OnStateComplete("LoadOut");
+
                 for (int i = 0; i < ready.Length; i++)
                     ready[i] = -1;
-                return true;
             }
-            else if (kb.IsKeyDown(Keys.P))
-                    return true;
-            else
-                return false;
+        }
 
-            
+        // Clear any listeners
+        public void Destruct()
+        {
+            for (int i = 0; i < 4; i++)
+            {
+                if (inputs[i].isActive)
+                {
+                    inputs[i].OnKeyRelease -= HandleInput;
+                }
+            }
         }
 
 
@@ -202,27 +199,34 @@ namespace Auction_Boxing_2
                 if (loadouts[player_index] != null && loadouts[player_index].Index == 1)  
                     loadouts[player_index].ChangeDisplay(true);
             }
-            if (key == KeyPressed.Defend)
+
+            // Equip the item to the button they pressed
+            if (key == KeyPressed.Attack1)
             {
                 if (loadouts[player_index] != null && loadouts[player_index].Index == 1)
                     loadouts[player_index].EquipItem(0);
             }
-            if (key == KeyPressed.Jump)
+            if (key == KeyPressed.Attack2)
             {
                 if (loadouts[player_index] != null && loadouts[player_index].Index == 1)
                     loadouts[player_index].EquipItem(1);
             }
-            if (key == KeyPressed.Attack)
+            if (key == KeyPressed.Attack3)
             {
                 if (loadouts[player_index] != null && loadouts[player_index].Index == 1)
                     loadouts[player_index].EquipItem(2);
+            }
+            if (key == KeyPressed.Attack4)
+            {
+                if (loadouts[player_index] != null && loadouts[player_index].Index == 1)
+                    loadouts[player_index].EquipItem(3);
             }
 
         }
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(background, new Rectangle(0, 0, ClientBounds.Width, ClientBounds.Height), Color.White);
+            //spriteBatch.Draw(background, new Rectangle(0, 0, ClientBounds.Width, ClientBounds.Height), Color.White);
 
 
             for (int i = 0; i < 4; i++)
@@ -246,5 +250,5 @@ namespace Auction_Boxing_2
                     ClientBounds.Height - font.MeasureString(pass).Y), Color.Black);
         }
 
-    }*/
+    }
 }

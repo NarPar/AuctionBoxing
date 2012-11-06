@@ -9,8 +9,10 @@ namespace Auction_Boxing_2
     public abstract class Game_State
     {
         protected Game game;
-        protected Input_Handler[] inputs;
+        public Input_Handler[] inputs;
         protected Rectangle bounds;
+
+
 
         public Game_State(Game game, Input_Handler[] inputs, Rectangle bounds)
         {
@@ -24,6 +26,11 @@ namespace Auction_Boxing_2
 
         }
 
+
+        public virtual void OnStateComplete(string state)
+        {
+
+        }
 
 
         protected virtual void ChangeState(Game_State state)

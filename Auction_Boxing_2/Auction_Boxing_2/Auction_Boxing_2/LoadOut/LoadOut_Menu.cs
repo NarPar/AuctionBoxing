@@ -6,7 +6,7 @@ using System.Diagnostics;
 
 namespace Auction_Boxing_2
 {
-    /*class LoadOut_Menu
+    class LoadOut_Menu
     {
         public int num_entries;
 
@@ -64,16 +64,16 @@ namespace Auction_Boxing_2
             //Make background slightly smaller than bounds
             this.bounds = new Rectangle(rbounds.X + 10, rbounds.Y + 10, rbounds.Width - 20, rbounds.Height - 20);
             //this.equipment = equip;
-            /*for (int i = 0; i < 4; i++)
+            for (int i = 0; i < 4; i++)
             {
                 if (equipment[i] != null)
                     EquipItem(i, true);
                 else
                     Debug.WriteLine("equipment is null! " + i);
-                if (equip[i] != null)
-                    ;//EquipItem(i, true);
-                else
-                    Debug.WriteLine("equip is null! " + i);
+                //if (equip[i] != null)
+                    //;//EquipItem(i, true);
+                //else
+                  //  Debug.WriteLine("equip is null! " + i);
             }
 
             //player name
@@ -128,10 +128,16 @@ namespace Auction_Boxing_2
 
         public void EquipItem(int index)
         {
-            if (items.Count != 0)
+            if(equipment[index] != null)
+            {
+                items.Add(equipment[index]);
+                equipment[index] = null;
+                displayindex = items.Count - 1;
+            }
+            else if (items.Count != 0)
             {
                 equipment[index] = items[displayindex];
-                items.Remove(equipment[index]);
+                items.Remove(items[displayindex]);
                 DisplayIndex = 0;
 
                 if (items.Count == 0)
@@ -194,5 +200,5 @@ namespace Auction_Boxing_2
             }
 
         }
-    }*/
+    }
 }

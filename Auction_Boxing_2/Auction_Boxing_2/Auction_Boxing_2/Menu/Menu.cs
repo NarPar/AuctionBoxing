@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Audio;
 using System.Diagnostics;
 
 namespace Auction_Boxing_2
@@ -14,6 +15,8 @@ namespace Auction_Boxing_2
     {
 
         #region Fields
+
+        protected SoundEffect soundMenu;
 
         public int index;
         
@@ -51,8 +54,9 @@ namespace Auction_Boxing_2
 
         #endregion
 
-        public Menu(SpriteFont font, string[] entries, Rectangle bounds)
+        public Menu(SpriteFont font, string[] entries, Rectangle bounds, SoundEffect sound)
         {
+            soundMenu = sound;
             
             num_entries = entries.Length;
             this.entries = entries;
@@ -82,12 +86,21 @@ namespace Auction_Boxing_2
         
         public virtual void ChangeIndex(int playerIndex, KeyPressed key)
         {
-            Debug.WriteLine("Key Pressed = " + key);
+            //Debug.WriteLine("Key Pressed = " + key);
+
+            
+
             // When the up or down event is fired, move the index.
             if (key == KeyPressed.Up)
+            {
+                soundMenu.Play();
                 Index--;
-            else if(key == KeyPressed.Down)
+            }
+            else if (key == KeyPressed.Down)
+            {
+                soundMenu.Play();
                 Index++;
+            }
 
             if (key == KeyPressed.Attack1)
             {

@@ -14,8 +14,8 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
 
         //Item item;
         public int hitCounter = 0;
-        float timer = .1f;
-        float time = .1f;
+        float timer = .24f;
+        float time = .24f;
 
         float dodgeThreshold = .2f;
         float dodgeTimer = 0;
@@ -27,6 +27,8 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
 
         float moveSpeed = 45;
 
+        
+
 
         public StateRevolverHit(BoxingPlayer player)
             : base(player, "RevolverHit")
@@ -35,8 +37,17 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
 
         }
 
+        public override void LoadState(BoxingPlayer player, Dictionary<string, Animation> ATextures)
+        {
+            
+            base.LoadState(player, ATextures);
+        }
+
         public override void Update(GameTime gameTime)
         {
+            if(!hasPlayedSound)
+               PlaySound(player.soundEffects["RevolverHit"]); // play the sound effect!
+
             // check for state change
             if (!(timer > 0) && player.sprite.FrameIndex == player.animations[key].FrameCount - 1)
             {

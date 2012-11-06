@@ -23,9 +23,11 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
 
         float knockbackVelocity = 400;
 
-        public StateKnockedDown(BoxingPlayer player, int dir)
+        public StateKnockedDown(BoxingPlayer player, int dir, bool knockback)
             : base(player, "Down")
         {
+            if (!knockback)
+                knockbackVelocity = 0; 
             isStopping = false;
             this.dir = dir; // The direction which they are knocked down.
             //Debug.WriteLine("Fall direction = " + dir);
@@ -49,13 +51,15 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
                 // add acceleration
                 player.currentVerticalSpeed += (float)(gravity * gameTime.ElapsedGameTime.TotalSeconds);
 
-                if (player.sprite.FrameIndex >= 5)
-                    player.sprite.FrameIndex = 5;
+                if (player.sprite.FrameIndex >= 4)
+                    player.sprite.FrameIndex = 4;
             }
 
+            if(player.sprite.FrameIndex == 5)
+                player.soundEffects["KnockedDown"].Play(.5f, 0, 0);
 
             else if (player.isDead)
-                player.sprite.FrameIndex = 5;
+                player.sprite.FrameIndex = 4;
             else if (player.sprite.FrameIndex == player.animations[key].FrameCount - 1 && !player.isDead)
                 ChangeState(new StateStopped(player));
 
@@ -63,6 +67,7 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
 
             if (player.position.Y >= player.levellevel)
             {
+                
                 //Debug.WriteLine("Landed! ");
                 player.currentVerticalSpeed = 0;
                 player.position.Y = player.levellevel;

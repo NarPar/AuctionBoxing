@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System.Diagnostics;
 
 namespace Auction_Boxing_2
 {
@@ -139,9 +140,18 @@ namespace Auction_Boxing_2
 
             spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.Default, RasterizerState.CullCounterClockwise);
 
-            int width = Window.ClientBounds.Height * (800 / 600);
+            
+            int width = Window.ClientBounds.Height * (800/600);
 
-            spriteBatch.Draw(renderTarget, new Rectangle((Window.ClientBounds.Width - width) / 2, 0, width, Window.ClientBounds.Height),
+            //Debug.WriteLine("width = " + width);
+            //Debug.WriteLine("height = " + Window.ClientBounds.Height);
+
+            Rectangle rect = new Rectangle((Window.ClientBounds.Width - width) / 2, 0, width, Window.ClientBounds.Height);
+
+            if(!graphics.IsFullScreen)
+                rect = new Rectangle(0, 0, Window.ClientBounds.Width, Window.ClientBounds.Height);
+
+            spriteBatch.Draw(renderTarget, rect,
                 camera.DrawToRectangle, Color.White);
 
             spriteBatch.End();

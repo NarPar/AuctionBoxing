@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Audio;
 using System.Text;
 
 namespace Auction_Boxing_2
@@ -25,10 +26,10 @@ namespace Auction_Boxing_2
             }
         }
 
-        string[] entries = new string[] { "Rounds: ", "Accept" };
+        public string[] entries = new string[] { "Rounds: ", "Accept" };
 
-        public Settings_Menu(SpriteFont font, Rectangle bounds)
-            : base(font, new string[] { "Rounds: 1", "Accept" }, bounds)
+        public Settings_Menu(SpriteFont font, Rectangle bounds, SoundEffect sound)
+            : base(font, new string[] { "Rounds: 1", "Accept" }, bounds, sound)
         {
 
         }
@@ -37,9 +38,15 @@ namespace Auction_Boxing_2
         {
             // When the up or down event is fired, move the index.
             if (key == KeyPressed.Left)
+            {
+                soundMenu.Play(1, .6f, 0);
                 Rounds--;
+            }
             else if (key == KeyPressed.Right)
+            {
+                soundMenu.Play(1, .6f, 0);
                 Rounds++;
+            }
 
             base.ChangeIndex(playerIndex, key);
         }

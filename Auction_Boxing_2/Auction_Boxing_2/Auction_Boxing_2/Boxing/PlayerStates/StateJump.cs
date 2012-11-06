@@ -19,19 +19,37 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
         public float startPosition;
 
 
-        public StateJump(BoxingPlayer player)
+        public StateJump(BoxingPlayer player, bool fall)
             : base(player, "Jump")
         {
             isStopping = false;
-            startPosition = player.levellevel;
 
-            player.currentVerticalSpeed = -400;
+            if (!fall)
+            {
+                startPosition = player.levellevel;
+
+                player.currentVerticalSpeed = -400;
+            }
             canCatch = true;
+
+            canCombo = true;
+        }
+
+
+        public override void LoadState(BoxingPlayer player, Dictionary<string, Animation> ATextures)
+        {
+            //player.soundEffects["Jump"].Play(); // play the sound effect!
+            player.isAirborn = true;
+            base.LoadState(player, ATextures);
         }
 
 
         public override void Update(GameTime gameTime)
         {
+            if (!hasPlayedSound)
+                PlaySound(player.soundEffects["Jump"]); // play the sound effect!
+
+            player.isAirborn = true;
             // handle any horizontal movement
             //player.position.X += (float)(player.currentHorizontalSpeed * gameTime.ElapsedGameTime.TotalSeconds);
             if (player.IsKeyDown(KeyPressed.Left))
@@ -57,7 +75,7 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
 
 
             // handle virtical stuff after the launch frame
-            if (player.sprite.FrameIndex >= 1)
+            if (player.isAirborn && player.sprite.FrameIndex >= 1)
             {
                 //player.position.Y += (float)(player.currentVerticalSpeed * gameTime.ElapsedGameTime.TotalSeconds);
                 
@@ -74,6 +92,7 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
                     //Debug.WriteLine("Landed! ");
                     player.currentVerticalSpeed = 0;
                     player.position.Y = player.levellevel;
+                    player.isAirborn = false;
                     //player.isFalling = false;
                     ChangeState(new StateLand(player));
                 }
@@ -98,7 +117,7 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
 
         public override void isHit(Auction_Boxing_2.BoxingPlayer attackingPlayer, State expectedHitState, int damage)
         {
-            ChangeState(new StateKnockedDown(player,attackingPlayer.direction));
+            ChangeState(new StateKnockedDown(player,attackingPlayer.direction, true));
         }
     }
 }

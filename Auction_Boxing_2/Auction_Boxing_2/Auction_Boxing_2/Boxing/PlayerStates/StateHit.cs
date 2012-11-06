@@ -13,6 +13,7 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
         //Item item;
         int hitCounter = 0;
         float timer = .3f;
+        float time = .3f;
 
         float dodgeThreshold = .2f;
         float dodgeTimer = 0;
@@ -28,12 +29,16 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
 
         public override void LoadState(BoxingPlayer player, Dictionary<string, Animation> ATextures)
         {
-
+            //player.soundEffects["Hit"].Play(); // play the sound effect!
             base.LoadState(player, ATextures);
         }
 
         public override void Update(GameTime gameTime)
         {
+            if (!hasPlayedSound)
+                PlaySound(player.soundEffects["Hit"]); // play the sound effect!
+
+
             // check for state change
             if (player.sprite.FrameIndex == player.animations[key].FrameCount - 1)
                 ChangeState(new StateStopped(player));
@@ -84,14 +89,46 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
                     attackingPlayer.state.wasDodged();
                 }
                 else
+                {
                     hitCounter++;
+                    PlaySound(player.soundEffects["Hit"]); // play the sound effect!
+
+                }
             }
 
             if (hitCounter >= 1)
             {
-                ChangeState(new StateKnockedDown(player, attackingPlayer.direction));
+                ChangeState(new StateKnockedDown(player, attackingPlayer.direction,true));
                 player.CurrentHealth -= 20;
             }
+        }
+
+        public override void isHitByItem(ItemInstance item, State expectedHitState)
+        {
+            if (timer <= 0)
+            {
+                // well timed? Duck and weave!
+                if (dodgeTimer > 0)
+                {
+                    ChangeState(new StateDodge(player));
+                    //attackingPlayer.state.wasDodged();
+                }
+                else
+                {
+                    hitCounter++;
+                    PlaySound(player.soundEffects["Hit"]); // play the sound effect!
+
+                }
+                timer = time;
+            }
+
+            if (hitCounter >= 1)
+            {
+                ChangeState(new StateKnockedDown(player, item.moveDirection, true));
+                player.CurrentHealth -= 20;
+            }
+
+            //base.isHitByItem(item, expectedHitState);
         }
 
         public override void ChangeState(State state)

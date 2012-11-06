@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Audio;
 using System.Text;
 using System.Diagnostics;
 
@@ -13,6 +14,15 @@ namespace Auction_Boxing_2
 
         SpriteFont font;
 
+        SoundEffect soundMenuA;
+        SoundEffect soundMenuB;
+        SoundEffect soundMenuC;
+        SoundEffect soundMenuD;
+        SoundEffect soundMenuE;
+
+        //SoundEffectInstance soundEngineInstance;
+        //SoundEffect soundHyperspaceActivation;
+
         Menu menu;
 
         bool isStateConfig; // Are we showing the button config?
@@ -20,10 +30,17 @@ namespace Auction_Boxing_2
         public Main_Game_State(Game game, Input_Handler[] inputs, Rectangle bounds) 
             : base(game, inputs, bounds)
         {
+            // Load menu sounds
+            soundMenuA = game.Content.Load<SoundEffect>("Sounds/MenuA");
+            soundMenuC = game.Content.Load<SoundEffect>("Sounds/MenuC");
+            soundMenuE = game.Content.Load<SoundEffect>("Sounds/MenuE");
+
             font = game.Content.Load<SpriteFont>("Menu/menufont");
-            menu = new Menu(font, new string[] { "Brawl", "Auction", "Config", "Exit" }, bounds);
+            menu = new Menu(font, new string[] { "Brawl", "Auction", "Config", "Exit" }, bounds, soundMenuC);
             inputs[0].OnKeyRelease += menu.ChangeIndex;
             menu.OnEntrySelect += MenuEntrySelect;
+
+
 
             //Debug.WriteLine(bounds.X + " " + bounds.Y + " " + bounds.Width + " " + bounds.Height);
 
@@ -41,6 +58,7 @@ namespace Auction_Boxing_2
             // If player 1 selects the brawl button, switch currentState to the Brawl_State.
             if (entry == "Brawl")
             {
+                soundMenuE.Play();
                 ChangeState(new Brawl_Game_State(game, inputs, bounds));
                 //inputs[0].OnKeyRelease -= menu.ChangeIndex;
                 //menu.OnEntrySelect -= MenuEntrySelect;
@@ -48,6 +66,8 @@ namespace Auction_Boxing_2
             // Exit
             else if (entry == "Exit")
                 game.Exit();
+            else
+                soundMenuA.Play();
         }
 
         /// <summary>

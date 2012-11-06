@@ -31,6 +31,7 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
                 
                 player.sprite.FrameIndex = 5;
             }
+            isStopping = true;
             canCatch = true;
         }
 
@@ -40,24 +41,10 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
             if(!drop)
                 player.sprite.FrameIndex = 5;
 
-            // handle any horizontal movement
-            //player.position.X += (float)(player.currentHorizontalSpeed * gameTime.ElapsedGameTime.TotalSeconds);
-            if (player.IsKeyDown(KeyPressed.Left))
-            {
-                player.currentHorizontalSpeed -= (float)(horizontalAcceleration * gameTime.ElapsedGameTime.TotalSeconds);
-
-            }
-            else if (player.IsKeyDown(KeyPressed.Right))
-            {
-                player.currentHorizontalSpeed += (float)(horizontalAcceleration * gameTime.ElapsedGameTime.TotalSeconds);
-            }
-
-            // Note: player.currentHorizontalSpeed will always be positive.
-            if (Math.Abs(player.currentHorizontalSpeed) >= maxHorizontalSpeed * gameTime.ElapsedGameTime.TotalSeconds)
-                player.currentHorizontalSpeed = (float)(player.direction * maxHorizontalSpeed * gameTime.ElapsedGameTime.TotalSeconds);
 
 
 
+            player.isAirborn = true;
 
             // handle virtical stuff after the launch frame
             if (player.sprite.FrameIndex >= 1)
@@ -73,6 +60,7 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
                 if (player.position.Y >= player.levellevel)//startPosition)
                 {
                     player.position.Y = player.levellevel;
+                    player.isAirborn = false;
 
                     ChangeState(new StateLand(player));
                 }
@@ -82,12 +70,12 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
                     player.isFalling = true;
                 }
             }
-
+            //base.Update(gameTime);
         }
 
         public override void isHit(Auction_Boxing_2.BoxingPlayer attackingPlayer, State expectedHitState, int damage)
         {
-            ChangeState(new StateKnockedDown(player, attackingPlayer.direction));
+            ChangeState(new StateKnockedDown(player, attackingPlayer.direction, true));
         }
     }
 }

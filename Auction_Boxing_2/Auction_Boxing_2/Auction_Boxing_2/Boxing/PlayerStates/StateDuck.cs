@@ -73,8 +73,13 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
             //If you get jumped on, you get knocked down!
             if (attackingPlayer.state is StateFall || attackingPlayer.isFalling)
             {
-                ChangeState(new StateKnockedDown(player, 0));
+                ChangeState(new StateKnockedDown(player, 0, false));
             }
+            else if (attackingPlayer.state is StateCaneBonk)
+            {
+                base.isHit(attackingPlayer, new StateKnockedDown(player, 0, false), damage);
+            }
+            
             
         }
 

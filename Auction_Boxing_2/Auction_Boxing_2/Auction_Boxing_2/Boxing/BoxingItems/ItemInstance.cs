@@ -174,7 +174,7 @@ namespace Auction_Boxing_2
                 diff = hatpos - playerpos;
             }
             float distance = diff.Length();
-            if (distance > 4 || noCatch++ < 2)
+            if (distance > 3 || noCatch++ < 2)
             {
                 if (!isReturning)
                 { // go go go

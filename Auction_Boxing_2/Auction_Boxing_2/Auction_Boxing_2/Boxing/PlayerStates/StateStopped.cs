@@ -100,17 +100,25 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
                 else if (player.IsKeyDown(KeyPressed.Jump))
                 {
                     // Ollie!
-                    ChangeState(new StateJump(player));
+                    ChangeState(new StateJump(player, false));
                 }
-                else if (player.IsKeyDown(KeyPressed.Down))
-                {
-                    ChangeState(new StateDuck(player));
-
-                }
+                
             }
 
             #endregion
 
+        }
+
+
+        public override void HandleKeyDownInput(int player_index, KeyPressed key)
+        {
+            if ( key == KeyPressed.Down)
+            {
+                ChangeState(new StateDuck(player));
+
+            }
+
+            base.HandleKeyDownInput(player_index, key);
         }
     }
 }

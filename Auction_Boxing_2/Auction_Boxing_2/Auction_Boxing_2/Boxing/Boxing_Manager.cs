@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Audio;
 using Auction_Boxing_2.Boxing.PlayerStates; // Fix this!
 using System.Diagnostics;
 
@@ -119,6 +120,12 @@ namespace Auction_Boxing_2
 
         #endregion
 
+        #region Sounds
+
+        Dictionary<string, SoundEffect> soundEffects = new Dictionary<string, SoundEffect>();
+
+        #endregion
+
         Rectangle healthBarDimensions;
 
         public int NumRounds { get; set; }
@@ -208,6 +215,22 @@ namespace Auction_Boxing_2
             defaultItems[1] = new Revolver(Content.Load<Texture2D>("LoadOut/revolver_icon"));
             defaultItems[2] = new Bowler_Hat(Content.Load<Texture2D>("LoadOut/bowlerhat_icon"));
             defaultItems[3] = new Cape(Content.Load<Texture2D>("LoadOut/cape_icon"));
+
+            // Load sounds!
+            soundEffects.Add("Block", Content.Load<SoundEffect>("Sounds/Block"));
+            soundEffects.Add("Hit", Content.Load<SoundEffect>("Sounds/BowlerHat_Hit"));
+            soundEffects.Add("BowlerThrow", Content.Load<SoundEffect>("Sounds/BowlerHat_Throw"));
+            soundEffects.Add("RevolverHit", Content.Load<SoundEffect>("Sounds/Bullet_Hit"));
+            soundEffects.Add("CaneHit", Content.Load<SoundEffect>("Sounds/Cane_Hit"));
+            soundEffects.Add("Cape", Content.Load<SoundEffect>("Sounds/Cape"));
+            soundEffects.Add("Jump", Content.Load<SoundEffect>("Sounds/Jump"));
+            soundEffects.Add("RevolverShoot", Content.Load<SoundEffect>("Sounds/Revolver_Fire"));
+            soundEffects.Add("Footstep", Content.Load<SoundEffect>("Sounds/FootStep"));
+            soundEffects.Add("CapeTug", Content.Load<SoundEffect>("Sounds/CapeTug"));
+            soundEffects.Add("CaneWindUp", Content.Load<SoundEffect>("Sounds/CaneWindUp"));
+            soundEffects.Add("GunClick", Content.Load<SoundEffect>("Sounds/Gun_Click"));
+            soundEffects.Add("KnockedDown", Content.Load<SoundEffect>("Sounds/KnockedDown"));
+            soundEffects.Add("CapeDraw", Content.Load<SoundEffect>("Sounds/CapeDraw"));
 
             //Change to using a text file!!
 
@@ -444,7 +467,7 @@ namespace Auction_Boxing_2
         }
 
         // Apply's settings gathered before the boxing begins.
-        public void ApplySettings(Color[] colors)
+        public void ApplySettings(Color[] colors, Item[][] equipment)
         {
             
             //Need to make copies of the textures recolored with the players selected color
@@ -488,7 +511,7 @@ namespace Auction_Boxing_2
                     }
 
                     players[i] = new BoxingPlayer(this, i, playerStartPositions[i], coloredAnims, inputs[i], colors[i], blank,
-                        healthBarDimensions, level.platforms[level.platforms.Length - 1], defaultItems); // Figure out the boxing players.
+                        healthBarDimensions, level.platforms[level.platforms.Length - 1], equipment[i], soundEffects);// defaultItems, soundEffects); // Figure out the boxing players.
                 }
             }
         }
@@ -829,15 +852,23 @@ namespace Auction_Boxing_2
 
                     }
                     
-                    if (thisPlayer.GetMinimumRectangle.Intersects(otherPlayer.GetMinimumRectangle))
+                    if (thisPlayer.GetMinimumRectangle.Intersects(otherPlayer.GetMinimumRectangle)
+                        && !(thisPlayer.state is StateCape || otherPlayer.state is StateCape)
+                        && (thisPlayer.platform == otherPlayer.platform))
                     {
                         collide = thisPlayer.IntersectPixels(otherPlayer);
-                        otherPlayer.position.X += (float)thisPlayer.direction * Math.Abs(thisPlayer.currentHorizontalSpeed) / 2 * (float)gameTime.ElapsedGameTime.TotalSeconds;
-                        thisPlayer.isBumping = true;
+                        if (thisPlayer.isAirborn && thisPlayer.currentVerticalSpeed > 0 && otherPlayer.state is StateDuck)
+                        {
+                            otherPlayer.state.ChangeState(new StateKnockedDown(otherPlayer, otherPlayer.direction, false));
+                        }
+                        else
+                        {
+                            otherPlayer.position.X += (float)thisPlayer.direction * Math.Abs(thisPlayer.currentHorizontalSpeed) / 2 * (float)gameTime.ElapsedGameTime.TotalSeconds;
+                            thisPlayer.isBumping = true;
 
-                        // they're falling
-                        //if (thisPlayer.currentVerticalSpeed != 0)
-                        //{
+                            // they're falling
+                            //if (thisPlayer.currentVerticalSpeed != 0)
+                            //{
                             float diff = thisPlayer.position.X - otherPlayer.position.X;
                             float toMove = thisPlayer.GetWidth - Math.Abs(diff) + 2;
 
@@ -847,13 +878,13 @@ namespace Auction_Boxing_2
 
                                 otherPlayer.position.X += (int)toMove;
                             }
-                            else if(diff > 0)
+                            else if (diff > 0)
                             {
                                 thisPlayer.position.X += (int)toMove;
 
                                 otherPlayer.position.X -= (int)toMove;
                             }
-
+                        }
 
                             
                             /*if (thisPlayer.position.X < otherPlayer.position.X)

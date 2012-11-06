@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Input;
 using System.Diagnostics;
 
@@ -18,10 +19,13 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
         public bool canCombo = false;
         protected bool canAirTime = true;
 
+        protected bool hasPlayedSound = false;
 
+        float horizontalAcceleration = 400;
+        float maxHorizontalSpeed = 12000;
         protected bool isStopping = true; // if you're stopping, apply friction and gravity.
         protected float horizontalDecelleration = 500;
-        protected float gravity = 375f;
+        protected float gravity = 1200f;
 
         protected string key;
 
@@ -74,6 +78,18 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
             
         }
 
+        public virtual void PlaySound(SoundEffect s)
+        {
+            s.Play();
+            hasPlayedSound = true; // the first sound has been played!
+        }
+
+        public virtual void PlaySound(SoundEffect s, float volume)
+        {
+            s.Play(volume, 0, 0);
+            hasPlayedSound = true; // the first sound has been played!
+        }
+
         /// <summary>
         /// Handles any effects to this player.
         /// </summary>
@@ -87,7 +103,7 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
                 player.CurrentHealth -= damage;
 
             if (player.CurrentHealth <= 0)
-                player.state.ChangeState(new StateKnockedDown(player, attackingPlayer.direction));
+                player.state.ChangeState(new StateKnockedDown(player, attackingPlayer.direction, true));
             else
                 player.state.ChangeState(expectedHitState);
         }
@@ -97,7 +113,7 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
             player.CurrentHealth -= item.damage;
 
             if(player.CurrentHealth <= 0 || player.state is StateJump)
-                player.state.ChangeState(new StateKnockedDown(player, item.moveDirection));
+                player.state.ChangeState(new StateKnockedDown(player, item.moveDirection, true));
             else
                 player.state.ChangeState(expectedHitState);
         }
@@ -125,7 +141,12 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
 
         public virtual void HandleKeyDownInput(int player_index, KeyPressed key)
         {
-
+            if (!player.isAirborn && key == KeyPressed.Jump)
+            {
+                player.isAirborn = true;
+                player.position.Y -= 5;
+                player.currentVerticalSpeed = -400;
+            }
         }
 
         public virtual void HandleKeyReleaseInput(int player_index, KeyPressed key)
@@ -135,8 +156,17 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
 
         public virtual void ChangeState(State state)
         {
-            player.ChangeAnimation(state.key);
-            player.state = state;
+            if (player.isAirborn && state is StateStopped)
+            {
+                ChangeState(new StateJump(state.player, true));
+                //player.ChangeAnimation(s.key);
+                //player.state = s;
+            }
+            else
+            {
+                player.ChangeAnimation(state.key);
+                player.state = state;
+            }
         }
 
         public virtual void OnCombo(int itemIndex)
@@ -180,13 +210,34 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
         {
             if (isStopping)
             {
-                // Horizontal
-                if (player.currentHorizontalSpeed > 1 || player.currentHorizontalSpeed < -1)
+                if (player.isAirborn)
                 {
-                    player.currentHorizontalSpeed -= (float)(player.currentHorizontalSpeed / 4);
+                                // handle any horizontal movement
+                    //player.position.X += (float)(player.currentHorizontalSpeed * gameTime.ElapsedGameTime.TotalSeconds);
+                    if (player.IsKeyDown(KeyPressed.Left))
+                    {
+                        player.currentHorizontalSpeed -= (float)(horizontalAcceleration * gameTime.ElapsedGameTime.TotalSeconds);
+
+                    }
+                    else if (player.IsKeyDown(KeyPressed.Right))
+                    {
+                        player.currentHorizontalSpeed += (float)(horizontalAcceleration * gameTime.ElapsedGameTime.TotalSeconds);
+                    }
+
+                    // Note: player.currentHorizontalSpeed will always be positive.
+                    if (Math.Abs(player.currentHorizontalSpeed) >= maxHorizontalSpeed * gameTime.ElapsedGameTime.TotalSeconds)
+                        player.currentHorizontalSpeed = (float)(player.direction * maxHorizontalSpeed * gameTime.ElapsedGameTime.TotalSeconds);
+
                 }
-                else
-                    player.currentHorizontalSpeed = 0;
+                else 
+                {// Horizontal
+                    if (player.currentHorizontalSpeed > 1 || player.currentHorizontalSpeed < -1)
+                    {
+                        player.currentHorizontalSpeed -= (float)(player.currentHorizontalSpeed / 4);
+                    }
+                    else
+                        player.currentHorizontalSpeed = 0;
+                }
 
                 // If player is falling
                 if (player.position.Y < player.GetGroundLevel)
@@ -198,6 +249,7 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
                 {
                     player.position.Y = player.GetGroundLevel;
                     player.currentVerticalSpeed = 0;
+                    player.isAirborn = false;
                 }
             }
 

@@ -4,6 +4,7 @@ using System.Collections;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Input;
 using System.Diagnostics;
 
@@ -31,6 +32,9 @@ namespace Auction_Boxing_2
      */
     class Player_Select_Popup : Popup
     {
+        SoundEffect soundMenuA;
+        SoundEffect soundMenuC;
+        SoundEffect soundMenuD;
 
         //List<Input_Handler> inputs = new List<Input_Handler>();
         Input_Handler[] inputs = new Input_Handler[4];
@@ -57,11 +61,18 @@ namespace Auction_Boxing_2
         // The available textures.
         List<SelectionContent> availableSelections = new List<SelectionContent>();
 
-
+        // The array containing the chosen color of the players.
         Color[] playerColors = new Color[4];
+        public Color[] GetPlayerColors
+        {
+            get{return playerColors;}
+        }
 
         float loadTimer = .5f;
 
+        public bool isActive = true;
+
+        Game_State manager;
 
         #region Events
 
@@ -71,11 +82,16 @@ namespace Auction_Boxing_2
 
         #endregion
 
-        public Player_Select_Popup(ContentManager content, Input_Handler[] inputs, Rectangle bounds, GraphicsDevice graphicsDevice)
+        public Player_Select_Popup(Game_State manager, ContentManager content, Input_Handler[] inputs, Rectangle bounds, GraphicsDevice graphicsDevice)
             : base(content, bounds)
         {
+            this.manager = manager;
             this.inputs = inputs;
             this.ClientBounds = bounds;
+
+            soundMenuA = content.Load<SoundEffect>("Sounds/MenuA");
+            soundMenuC = content.Load<SoundEffect>("Sounds/MenuC");
+            soundMenuD = content.Load<SoundEffect>("Sounds/MenuD");
 
             font = content.Load<SpriteFont>("Menu/menufont");
             for (int i = 0; i < 4; i++)
@@ -93,6 +109,16 @@ namespace Auction_Boxing_2
             }
 
             populateColors(content, graphicsDevice);
+        }
+
+        // Unhook listeners
+        public void Destruct()
+        {
+            for (int i = 0; i < 4; i++)
+            {
+                // Hook up input listener
+                inputs[i].OnKeyRelease -= HandleInput;
+            }
         }
 
 
@@ -139,7 +165,7 @@ namespace Auction_Boxing_2
         {
             if (availableSelections.Count > 0)
             {
-
+                soundMenuC.Play();
                 int pop = 0;
                 int push = availableSelections.Count - 1;
 
@@ -191,23 +217,28 @@ namespace Auction_Boxing_2
                 for (int i = 0; i < 4; i++)
                 {
                     if (playerAdded[i])
+                    {
                         playerColors[i] = menus[i].selection.color;
+                        inputs[i].isActive = true;
+                    }
                     else
                         playerColors[i] = Color.Transparent;
                 }
 
 
-                if (OnReady != null)
+                manager.OnStateComplete("PlayerSelect");
+
+                /*if (OnReady != null)
                 {
                     OnReady(playerColors);
-                }
+                }*/
             }
         }
 
 
         public void HandleInput(int player_index, KeyPressed key)
         {
-            if(loadTimer <= 0)
+            if(loadTimer <= 0 && isActive)
             {
             for (int i = 0; i < 4; i++)
             {
@@ -219,6 +250,7 @@ namespace Auction_Boxing_2
                         // Are they joining?
                         if (!playerAdded[i])
                         {
+                            soundMenuD.Play();
                             totalPlayers++;
                             playerAdded[i] = true;
 
@@ -236,11 +268,13 @@ namespace Auction_Boxing_2
                             // Are they readying or unreadying?
                             if (!ready[i])
                             {
+                                soundMenuD.Play();
                                 ready[i] = true;
                                 menus[i].ready = true;
                             }
                             else
                             {
+                                soundMenuA.Play();
                                 menus[i].ready = false;
                                 ready[i] = false;
                             }

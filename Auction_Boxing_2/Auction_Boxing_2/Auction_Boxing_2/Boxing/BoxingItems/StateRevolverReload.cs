@@ -17,7 +17,7 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
         public StateRevolverReload(BoxingPlayer player)
             : base(player, "RevolverReload")
         {
-
+            canCatch = true;
         }
 
         public override void Update(GameTime gameTime)

@@ -49,6 +49,8 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
             switch (state)
             {
                 case(CapeState.draw):
+                    if (!hasPlayedSound)
+                        PlaySound(player.soundEffects["CapeDraw"], .5f);
                     if (player.sprite.FrameIndex == 9)
                         state = CapeState.hide;
                     break;
@@ -84,7 +86,7 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
                         }
                         if (targetPlayer != null)
                         {
-                            
+                            player.soundEffects["Cape"].Play(.5f, 0,0); // play the sound effect!
                             state = CapeState.travel;
                             player.ChangeDirection(direction * -1);
                         }

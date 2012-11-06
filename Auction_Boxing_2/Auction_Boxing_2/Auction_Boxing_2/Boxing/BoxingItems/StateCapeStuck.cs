@@ -33,7 +33,10 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
             {
                 case (CapeStuckState.draw):
                     if (player.sprite.FrameIndex == 5)
+                    {
+                        player.soundEffects["CapeTug"].Play(.5f, 0, 0);
                         state = CapeStuckState.stuck;
+                    }
                     break;
                 case (CapeStuckState.stuck):
                     // Hold to continue hiding
@@ -41,6 +44,7 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
                     //{
                         if (player.sprite.FrameIndex == 8)
                         {
+                            player.soundEffects["CapeTug"].Play(.5f, 0, 0);
                             player.sprite.FrameIndex = 6;
                             count++;
                         }

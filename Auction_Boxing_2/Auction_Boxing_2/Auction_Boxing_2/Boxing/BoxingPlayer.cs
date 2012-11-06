@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Audio;
 using Auction_Boxing_2.Boxing.PlayerStates;
 using System.Diagnostics;
 
@@ -247,13 +248,20 @@ namespace Auction_Boxing_2
         public bool isCaught = false; // can't do anything (getting pulled by cane)
         public float numBowlerReThrows = 1;
         public bool isFreeingCape = false;
+        public bool isAirborn = false;
+
+        #region Sounds
+
+        public Dictionary<string, SoundEffect> soundEffects = new Dictionary<string, SoundEffect>();
+
+        #endregion
 
         #region Items
 
         public Item[] items;
         public int revolverHitCounter = 0;
         public float beingComboedTimer = 0;
-        public float beingComboedCooldown = .3f;
+        public float beingComboedCooldown = .4f;
         public bool isReloadingRevolver = false;
         public bool hasThrownBowlerHat = false;
 
@@ -389,7 +397,7 @@ namespace Auction_Boxing_2
         public bool isBumping = false;
 
         public BoxingPlayer(Boxing_Manager bm, int playerIndex, Vector2 startPosition, Dictionary<string, Animation> animations, Input_Handler input, Color color,
-            Texture2D blank, Rectangle healthBar, Rectangle platform, Item[] items)
+            Texture2D blank, Rectangle healthBar, Rectangle platform, Item[] items, Dictionary<string, SoundEffect> soundEffects)
         {
             this.BoxingManager = bm;
 
@@ -404,7 +412,9 @@ namespace Auction_Boxing_2
 
             this.input = input;
 
-            this.color = color; 
+            this.color = color;
+
+            this.soundEffects = soundEffects;
 
             this.startPosition = startPosition;
             this.platform = platform;
@@ -589,8 +599,11 @@ namespace Auction_Boxing_2
 
         public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
+            // Collision rectangles
             //spriteBatch.Draw(blank, CollisionRect, Color.Red);
             //spriteBatch.Draw(blank, BoundingRectangle, Color.Red);
+
+
             // Draw sprite
             //sprite.Draw(gameTime, spriteBatch, color, position, 0, Vector2.Zero, 0f, spriteEffect);
             rHealthBar.X = (int)position.X - healthBarMaxWidth / 2;
@@ -598,11 +611,27 @@ namespace Auction_Boxing_2
             spriteBatch.Draw(blank, rHealthBar, Color.Red);
             //sprite.Draw(gameTime, spriteBatch, BoundingRectangle, 0, color, spriteEffect);
             sprite.Draw(gameTime, spriteBatch, Color.White, position, rotation, Origin, Scale, spriteEffect);
+
+            // Item assignment display ( displays item icons in a diamond indicating their button )
+            if (IsKeyDown(KeyPressed.Select))
+            {
+                int offsetFromCenter = GetWidth / 2;
+                if (items[0] != null) // A button, display at bottom center
+                    spriteBatch.Draw(items[0].icon, new Rectangle((int)position.X - GetWidth / 2, (int)position.Y - GetWidth / 2, GetWidth, GetWidth), Color.White * .75f);
+                if (items[1] != null) // B button, display at middle right
+                    spriteBatch.Draw(items[1].icon, new Rectangle((int)position.X, (int)position.Y - GetHeight / 2 - GetWidth / 2, GetWidth, GetWidth), Color.White * .75f);
+                if (items[2] != null) // B button, display at middle left
+                    spriteBatch.Draw(items[2].icon, new Rectangle((int)position.X - GetWidth, (int)position.Y - GetHeight / 2 - GetWidth / 2, GetWidth, GetWidth), Color.White * .75f);
+                if (items[3] != null) // B button, display at top center
+                    spriteBatch.Draw(items[3].icon, new Rectangle((int)position.X - GetWidth / 2, (int)position.Y - GetHeight - GetWidth / 2, GetWidth, GetWidth), Color.White * .75f);
+            }
         }
 
         // Add a key to the list
         public void HandleKeyDown(int player_index, KeyPressed key)
         {
+            state.HandleKeyDownInput(player_index, key);
+
             //Debug.WriteLine("KeyPressed = " + key);
             if (!KeysDown.Contains(key))
                 KeysDown.Add(key);
@@ -625,19 +654,23 @@ namespace Auction_Boxing_2
                 {
                     // Switch to first item
                     case (KeyPressed.Attack1):
-                        state.ChangeState(items[0].GetState(0, this, key));
+                        if(items[0] != null)
+                            state.ChangeState(items[0].GetState(0, this, key)); // A button
                         break;
                     // switch to second
                     case (KeyPressed.Attack2):
-                        state.ChangeState(items[1].GetState(1, this, key));
+                        if (items[1] != null)
+                            state.ChangeState(items[1].GetState(1, this, key)); // B button
                         break;
                     // switch to third
                     case (KeyPressed.Attack3):
-                        state.ChangeState(items[2].GetState(2, this, key));
+                        if (items[2] != null)
+                            state.ChangeState(items[2].GetState(2, this, key)); // X button
                         break;
                     // switch to fourth
                     case (KeyPressed.Attack4):
-                        state.ChangeState(items[3].GetState(3, this, key));
+                        if (items[3] != null)
+                            state.ChangeState(items[3].GetState(3, this, key)); // Y button
                         break;
                 }
             }

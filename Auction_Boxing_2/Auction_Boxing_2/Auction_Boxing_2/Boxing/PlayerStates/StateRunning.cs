@@ -15,6 +15,8 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
 
         KeyPressed key;
 
+        int previousIndex = -1;
+
         public StateRunning(BoxingPlayer player, KeyPressed key)
             : base(player, "Run")
         {
@@ -28,6 +30,11 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
 
         public override void Update(GameTime gameTime)
         {
+
+            if (player.sprite.FrameIndex == 4 && previousIndex != 4)
+                player.soundEffects["Footstep"].Play(.5f,0,0);
+
+
             /*if (player.IsKeyDown(key))
             {
                 float add = 0;
@@ -50,7 +57,7 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
             if (player.IsKeyDown(KeyPressed.Jump))
             {
                 // Ollie!
-                ChangeState(new StateJump(player));
+                ChangeState(new StateJump(player, false));
             }
             /*else if (player.IsKeyDown(KeyPressed.Attack))
             {
@@ -63,6 +70,8 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
                 // Block it!
                 ChangeState(new StateBlock(player));
             }
+
+            previousIndex = player.sprite.FrameIndex;
 
             base.Update(gameTime);
         }

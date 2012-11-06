@@ -18,7 +18,12 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
 
         public bool isShooting;
 
-        int damage = 2;
+        float clickTimer = 0f;
+        float clickTime = .01f;
+        bool hasClicked1 = false;
+        bool hasClicked2 = false;
+
+        int damage = 3;
 
         public StateRevolverShoot(int itemIndex, BoxingPlayer player, KeyPressed key)
             : base(player, "RevolverShoot")
@@ -31,6 +36,8 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
             shootCounter = 0;
 
             this.itemButton = key;
+
+            canCatch = true;
             
         }
 
@@ -56,6 +63,21 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
 
             }
 
+            if (clickTimer > 0)
+                clickTimer -= (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+            // Cock the gun!
+            if (!hasClicked1 && player.sprite.FrameIndex == 3)
+            {
+                player.soundEffects["GunClick"].Play(.5f, 0, 0);
+                hasClicked1 = true;
+                clickTimer = clickTime;
+            }
+            else if (!hasClicked2 && clickTimer <= 0)
+            {
+                hasClicked2 = true;
+                player.soundEffects["GunClick"].Play(.5f, 0, 0);
+            }
 
             base.Update(gameTime);
             /*if (player.sprite.FrameIndex == 8)
@@ -80,6 +102,9 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
             {
                 if (shootCounter == 0 && (player.sprite.FrameIndex == 4 || player.sprite.FrameIndex == 5))
                 {
+
+                    player.soundEffects["RevolverShoot"].Play(.5f,0,0); // play the sound effect!
+
                     shootCounter++;
                     BoxingPlayer p = player.BoxingManager.GetPlayerInFront(player, player.position.Y - 7 * player.GetHeight / 9, player.direction);
                     if (p != null && !(p.state is StateKnockedDown))
@@ -104,6 +129,7 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
                     BoxingPlayer p = player.BoxingManager.GetPlayerInFront(player, player.position.Y - 2 * player.GetHeight / 3, player.direction);
                     if (p != null && !(p.state is StateKnockedDown))
                     {
+                        player.soundEffects["RevolverShoot"].Play(.5f, 0, 0); // play the sound effect!
                         p.state.isHit(player, new StateRevolverHit(p), damage);
                         /*if(p.state is StateRevolverHit)
                         {
@@ -117,13 +143,13 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
                         Debug.WriteLine("Hit " + p.revolverHitCounter + " times!");
                         if (p.beingComboedTimer > 0 && p.revolverHitCounter >= 5)
                         {
-                            p.state.ChangeState(new StateKnockedDown(p, player.direction));
+                            p.state.ChangeState(new StateKnockedDown(p, player.direction, true));
                             //player.CurrentHealth -= damage;
                         }
                     }
                 }
             }
-
+            base.HandleKeyDownInput(player_index, key);
 
         }
 

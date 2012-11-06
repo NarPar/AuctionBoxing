@@ -9,7 +9,7 @@ using System.Diagnostics;
 
 namespace Auction_Boxing_2
 {
-    /*class ItemStatDisplay
+    class ItemStatDisplay
     {
         SpriteFont font;
 
@@ -196,5 +196,5 @@ namespace Auction_Boxing_2
                 }
             }
         }
-    }*/
+    }
 }

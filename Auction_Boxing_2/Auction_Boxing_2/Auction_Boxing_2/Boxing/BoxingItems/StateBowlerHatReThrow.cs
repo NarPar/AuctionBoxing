@@ -36,6 +36,7 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
                 player.BoxingManager.removeBowlerHat(hat);
                 hatRemoved = true;
 
+
                 player.hasThrownBowlerHat = false;
                 caught = true;
 
@@ -59,6 +60,8 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
             {
                 if (player.sprite.FrameIndex == THROWN_INDEX) // !hasThrown
                 {
+                    if (!hasPlayedSound)
+                        PlaySound(player.soundEffects["BowlerThrow"]); // play the sound effect!
                     // create hat projectile
                     player.BoxingManager.addBowlerHat(player, player.numBowlerReThrows);
                     player.hasThrownBowlerHat = true;

@@ -22,6 +22,8 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
 
         bool buttonHeld = true;
 
+        int damage = 8;
+
         public StateCaneBonk(int itemIndex, BoxingPlayer player, KeyPressed key)
             : base(player, "CaneBonk")
         {
@@ -43,8 +45,10 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
             if (!player.IsKeyDown(itemButton))
                 buttonHeld = false;
 
-            if(buttonHeld && holdTimer <= 0)
+            if (buttonHeld && holdTimer <= 0)
                 ChangeState(new StateCanePull(itemindex, player));
+            else if (!hasPlayedSound)
+                PlaySound(player.soundEffects["CaneWindUp"], .5f);//.Play(.5f, 0, 0);
             
             if (dodgedWaitTimer > 0)
                 dodgedWaitTimer -= (float)gameTime.ElapsedGameTime.TotalSeconds;
@@ -66,7 +70,7 @@ namespace Auction_Boxing_2.Boxing.PlayerStates
                      (player.direction == 1 &&
                      player.position.X < hitPlayer.position.X))
                 {
-                    hitPlayer.state.isHit(player, new StateCaneHit(hitPlayer), 10);
+                    hitPlayer.state.isHit(player, new StateCaneHit(hitPlayer), damage);
                     //Debug.WriteLine("Other player hit!");
                 }
             }
